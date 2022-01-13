@@ -66,16 +66,25 @@ subnetPrefixLocation1="10.4.1.0/24"
 subnetPrefixLocation2="10.8.1.0/24"
 
 # ARM Templates
-templateUami="../../template/identity.user-assigned-mi.json"
-templateKeyVault="../../template/key-vault.json"
-templateKeyVaultSecret="../../template/key-vault.secret.json"
-templateNsg="../../template/net.nsg.json"
-templateVnet="../../template/net.vnet.json"
-templateSubnet="../../template/net.vnet.subnet.json"
-templatePublicIp="../../template/net.public-ip.json"
-templateNetworkInterface="../../template/net.network-interface.json"
-templateVirtualMachine="../../template/vm.linux.json"
-templateVirtualMachineExtensionCustomScript="../../template/vm.extension.custom-script.json"
+# Use local files with az deployment group create --template-file
+templateRootLocal="../../template/"
+# Use files elsewhere with az deployment group create --template-uri
+templateRootUri="https://raw.githubusercontent.com/plzm/azure-deploy/main/template/"
+# Use this to choose local or remote templates
+templateRoot=$templateRootUri # We will use remote template files via --template-uri
+# Now assemble all the individual template paths
+templateUami="$templateRoot""identity.user-assigned-mi.json"
+templateKeyVault="$templateRoot""key-vault.json"
+templateKeyVaultSecret="$templateRoot""key-vault.secret.json"
+templateNsg="$templateRoot""net.nsg.json"
+templateVnet="$templateRoot""net.vnet.json"
+templateSubnet="$templateRoot""net.vnet.subnet.json"
+templatePublicIp="$templateRoot""net.public-ip.json"
+templateNetworkInterface="$templateRoot""net.network-interface.json"
+templateVirtualMachine="$templateRoot""vm.linux.json"
+templateVirtualMachineExtensionCustomScript="$templateRoot""vm.extension.custom-script.json"
+templateUami="$templateRoot""identity.user-assigned-mi.json"
+
 
 # VM
 hyperVGeneration="V1"

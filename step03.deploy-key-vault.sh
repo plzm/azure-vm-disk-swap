@@ -4,7 +4,7 @@
 
 echo "Create Key Vault"
 az deployment group create --subscription "$subscriptionId" -n "KV-""$location1" --verbose \
-	-g "$rgNameSecurityLocation1" --template-file "$templateKeyVault" \
+	-g "$rgNameSecurityLocation1" --template-uri "$templateKeyVault" \
 	--parameters \
 	location="$location1" \
 	tenantId="$tenantId" \
@@ -24,14 +24,12 @@ if [ ! -z $userNameUAMILocation1 ]
 then
 	echo "Assign permissions to UAMI to get/set/list secrets and keys"
 
-	# Get UAMI principal ID first
+	# Get UAMI principal ID
 	uamiPrincipalId="$(az identity show --subscription ""$subscriptionId"" -g ""$rgNameSecurityLocation1"" --name ""$userNameUAMILocation1"" -o tsv --query 'principalId')"
-	# Now get the UAMI object ID from the principal ID
-	uamiObjectId="$(az ad sp show --id ""$uamiPrincipalId"" -o tsv --query 'objectId')"
 
 	az keyvault set-policy --subscription "$subscriptionId" --verbose \
 		-g "$rgNameSecurityLocation1" -n "$keyVaultNameLocation1" \
-		--object-id "$uamiObjectId" \
+		--object-id "$uamiPrincipalId" \
 		--key-permissions get \
 		--secret-permissions get \
 		--certificate-permissions get
