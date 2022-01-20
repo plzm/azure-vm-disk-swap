@@ -33,37 +33,35 @@ userObjectId="$(az ad signed-in-user show -o tsv --query 'objectId')"
 osInfix="ubu"
 
 # Deployment
-location1="eastus2"
-location2="centralus"
+location="eastus2"
 
 resourceNamingInfix="pz"
+resourceNamingSuffix="-2"
 
 # Resource Groups
-rgNameSecurityLocation1="vm-security-""$location1"
-rgNameSigLocation1="vm-sig-""$location1"
-rgNameNetLocation1="vm-net-""$location1"
-rgNameSourceLocation1="vm-source-""$location1"
-rgNameDeployLocation1="vm-deploy-""$location1"
+rgNameSecurity="vm-security-""$location"
+rgNameSig="vm-sig-""$location"
+rgNameNet="vm-net-""$location"
+rgNameSource="vm-source-""$location"
+rgNameDeploy="vm-deploy-""$location"
 
 # User-Assigned Managed Identity
-userNameUAMILocation1="$resourceNamingInfix""-vm-uami-""$location1"
+userNameUAMI="$resourceNamingInfix""-vm-uami-""$location"
 
 # Key Vault
 keyVaultSkuName="Standard"
-keyVaultNameLocation1="kv-""$resourceNamingInfix""-""$location1"
+keyVaultName="kv-""$resourceNamingInfix""-""$location""$resourceNamingSuffix"
 keyVaultSecretNameAdminUsername="vmAdminUsername"
 keyVaultSecretNameAdminSshPublicKey="vmAdminSshPublicKey"
 keyVaultSecretNameNewAdminUsername="vmNewAdminUsername"
 keyVaultSecretNameNewAdminSshPublicKey="vmNewAdminSshPublicKey"
 
 # Network
-nsgNameLocation1="vm-test-nsg-""$location1"
-vnetNameLocation1="vm-test-vnet-""$location1"
-vnetPrefixLocation1="10.4.0.0/16"
-vnetPrefixLocation2="10.8.0.0/16"
+nsgName="vm-test-nsg-""$location"
+vnetName="vm-test-vnet-""$location"
+vnetPrefix="10.4.0.0/16"
 subnetName="subnet1"
-subnetPrefixLocation1="10.4.1.0/24"
-subnetPrefixLocation2="10.8.1.0/24"
+subnetPrefix="10.4.1.0/24"
 
 # ARM Templates
 # Use local files with az deployment group create --template-file
@@ -122,7 +120,7 @@ vmPublicIpSku="Basic" # Basic or Standard
 privateIpAllocationMethod="Dynamic"
 ipConfigName="ipConfig1"
 
-vmTimeZoneLocation1="Eastern Standard Time"
+vmTimeZone="Eastern Standard Time"
 
 osDiskStorageType="Premium_LRS" # Accepted values: Premium_LRS, StandardSSD_LRS, Standard_LRS, UltraSSD_LRS
 osDiskSizeInGB=64
@@ -135,20 +133,20 @@ autoShutdownNotificationWebhookURL="" # Provide if set enableAutoShutdownNotific
 autoShutdownNotificationMinutesBefore=15
 
 # Source VMs
-vm1NameLocation1="pz-""$osInfix""-vm1"
-vm2NameLocation1="pz-""$osInfix""-vm2"
-vm1PipNameLocation1="$vm1NameLocation1""-pip"
-vm2PipNameLocation1="$vm2NameLocation1""-pip"
-vm1NicNameLocation1="$vm1NameLocation1""-nic"
-vm2NicNameLocation1="$vm2NameLocation1""-nic"
+vm1Name="pz-""$osInfix""-vm1"
+vm2Name="pz-""$osInfix""-vm2"
+vm1PipName="$vm1Name""-pip"
+vm2PipName="$vm2Name""-pip"
+vm1NicName="$vm1Name""-nic"
+vm2NicName="$vm2Name""-nic"
 
 # Destination VM
-vm3NameLocation1="pz-""$osInfix""-vm3"
-vm3PipNameLocation1="$vm3NameLocation1""-pip"
-vm3NicNameLocation1="$vm3NameLocation1""-nic"
-vm3OsDiskNameVersion0="$vm3NameLocation1""-os-2101"
-vm3OsDiskNameVersion1="$vm3NameLocation1""-os-2102"
-vm3OsDiskNameVersion2="$vm3NameLocation1""-os-2103"
+vm3Name="pz-""$osInfix""-vm3"
+vm3PipName="$vm3Name""-pip"
+vm3NicName="$vm3Name""-nic"
+vm3OsDiskNameVersion0="$vm3Name""-os-2101"
+vm3OsDiskNameVersion1="$vm3Name""-os-2102"
+vm3OsDiskNameVersion2="$vm3Name""-os-2103"
 
 #SIG
 sigName="sig"
@@ -158,5 +156,5 @@ imageVersion1="1.0.0"
 imageDefinition2="custom-""$osInfix""-v2"
 imageVersion2="1.0.0"
 
-vm1ImageName="$vm1NameLocation1""-image"
-vm2ImageName="$vm2NameLocation1""-image"
+vm1ImageName="$vm1Name""-image"
+vm2ImageName="$vm2Name""-image"

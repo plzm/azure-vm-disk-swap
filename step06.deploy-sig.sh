@@ -2,7 +2,7 @@
 
 . ./step00.variables.sh
 
-echo "Create Shared Image Gallery"
+echo "Create Azure Compute Gallery"
 # https://docs.microsoft.com/cli/azure/sig?view=azure-cli-latest#az_sig_create
-az sig create --subscription "$subscriptionId" -g "$rgNameSigLocation1" -l "$location1" --verbose \
+az sig create --subscription "$subscriptionId" -g "$rgNameSig" -l "$location" --verbose \
 	-r "$sigName"

@@ -3,32 +3,32 @@
 . ./step00.variables.sh
 
 echo "Create NSG"
-az deployment group create --subscription "$subscriptionId" -n "NSG-""$location1" --verbose \
-	-g "$rgNameNetLocation1" --template-file "$templateNsg" \
+az deployment group create --subscription "$subscriptionId" -n "NSG-""$location" --verbose \
+	-g "$rgNameNet" --template-uri "$templateNsg" \
 	--parameters \
-	location="$location1" \
-	nsgName="$nsgNameLocation1" \
+	location="$location" \
+	nsgName="$nsgName" \
 	nsgRuleInbound100Src="$nsgRuleInbound100Src"
 
 echo "Create VNet"
-az deployment group create --subscription "$subscriptionId" -n "VNet-""$location1" --verbose \
-	-g "$rgNameNetLocation1" --template-file "$templateVnet" \
+az deployment group create --subscription "$subscriptionId" -n "VNet-""$location" --verbose \
+	-g "$rgNameNet" --template-uri "$templateVnet" \
 	--parameters \
-	location="$location1" \
-	vnetName="$vnetNameLocation1" \
-	vnetPrefix="$vnetPrefixLocation1" \
+	location="$location" \
+	vnetName="$vnetName" \
+	vnetPrefix="$vnetPrefix" \
 	enableDdosProtection="false" \
 	enableVmProtection="false"
 
 echo "Create Subnet"
-az deployment group create --subscription "$subscriptionId" -n "VNet-Subnet-""$location1" --verbose \
-	-g "$rgNameNetLocation1" --template-file "$templateSubnet" \
+az deployment group create --subscription "$subscriptionId" -n "VNet-Subnet-""$location" --verbose \
+	-g "$rgNameNet" --template-uri "$templateSubnet" \
 	--parameters \
-	vnetName="$vnetNameLocation1" \
+	vnetName="$vnetName" \
 	subnetName="$subnetName" \
-	subnetPrefix="$subnetPrefixLocation1" \
-	nsgResourceGroup="$rgNameNetLocation1" \
-	nsgName="$nsgNameLocation1" \
+	subnetPrefix="$subnetPrefix" \
+	nsgResourceGroup="$rgNameNet" \
+	nsgName="$nsgName" \
 	serviceEndpoints="" \
 	privateEndpointNetworkPolicies="Enabled" \
 	privateLinkServiceNetworkPolicies="Enabled"
