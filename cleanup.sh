@@ -1,14 +1,9 @@
 #!/bin/bash
 
-# ==================================================
-# Variables
-. ./step00.variables.sh
-# ==================================================
-
 # WARNING - this will delete ALL resource in all of these Resource Groups
 
-az group delete --subscription "$subscriptionId" -n "$rgNameDeploy" --yes --verbose
-az group delete --subscription "$subscriptionId" -n "$rgNameSource" --yes --verbose
-az group delete --subscription "$subscriptionId" -n "$rgNameSecurity" --yes --verbose
-az group delete --subscription "$subscriptionId" -n "$rgNameSig" --yes --verbose
-az group delete --subscription "$subscriptionId" -n "$rgNameNet" --yes --verbose
+az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_DEPLOY" --yes --verbose
+az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_SOURCE" --yes --verbose
+az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_SECURITY" --yes --verbose
+az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_SIG" --yes --verbose
+az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_NET" --yes --verbose

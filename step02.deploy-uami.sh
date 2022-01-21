@@ -1,18 +1,16 @@
 #!/bin/bash
 
-. ./step00.variables.sh
-
-if [ ! -z $userNameUAMI ]
+if [ ! -z $USERNAME_UAMI ]
 then
 	echo "Create User-Assigned Managed Identity"
-	az deployment group create --subscription "$subscriptionId" -n "UAMI-""$location" --verbose \
-		-g "$rgNameSecurity" --template-uri "$templateUami" \
+	az deployment group create --subscription "$SUBSCRIPTION_ID" -n "UAMI-""$LOCATION" --verbose \
+		-g "$RG_NAME_SECURITY" --template-uri "$TEMPLATE_UAMI" \
 		--parameters \
-		location="$location" \
-		tenantId="$tenantId" \
-		identityName="$userNameUAMI"
+		location="$LOCATION" \
+		tenantId="$TENANT_ID" \
+		identityName="$USERNAME_UAMI"
 
 	#Debug
-	#identityResourceId="$(az identity show --subscription ""$subscriptionId"" -g ""$rgNameSecurity"" --name ""$userNameUAMI"" -o tsv --query 'id')"
+	#identityResourceId="$(az identity show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SECURITY"" --name ""$USERNAME_UAMI"" -o tsv --query 'id')"
 	#echo $identityResourceId
 fi

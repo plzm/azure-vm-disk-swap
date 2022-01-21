@@ -1,122 +1,120 @@
 #!/bin/bash
 
-. ./step00.variables.sh
-
 echo "Deploy Source VMs to use for image capture"
 
 echo "Deploy Source VM1 Public IP"
-az deployment group create --subscription "$subscriptionId" -n "VM1-PIP-""$location" --verbose \
-	-g "$rgNameSource" --template-file "$templatePublicIp" \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-PIP-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
-	location="$location" \
-	publicIpName="$vm1PipName" \
-	publicIpType="$vmPublicIpType" \
-	publicIpSku="$vmPublicIpSku" \
-	domainNameLabel="$vm1Name"
+	location="$LOCATION" \
+	publicIpName="$VM1_PIP_NAME" \
+	publicIpType="$VM_PUBLIC_IP_TYPE" \
+	publicIpSku="$VM_PUBLIC_IP_SKU" \
+	domainNameLabel="$VM1_NAME"
 
 echo "Deploy Source VM2 Public IP"
-az deployment group create --subscription "$subscriptionId" -n "VM2-PIP-""$location" --verbose \
-	-g "$rgNameSource" --template-file "$templatePublicIp" \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-PIP-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
-	location="$location" \
-	publicIpName="$vm2PipName" \
-	publicIpType="$vmPublicIpType" \
-	publicIpSku="$vmPublicIpSku" \
-	domainNameLabel="$vm2Name"
+	location="$LOCATION" \
+	publicIpName="$VM2_PIP_NAME" \
+	publicIpType="$VM_PUBLIC_IP_TYPE" \
+	publicIpSku="$VM_PUBLIC_IP_SKU" \
+	domainNameLabel="$VM2_NAME"
 
 echo "Deploy Source VM1 Network Interface"
-az deployment group create --subscription "$subscriptionId" -n "VM1-NIC-""$location" --verbose \
-	-g "$rgNameSource" --template-file "$templateNetworkInterface" \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-NIC-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_NIC" \
 	--parameters \
-	location="$location" \
-	networkInterfaceName="$vm1NicName" \
-	vnetResourceGroup="$rgNameNet" \
-	vnetName="$vnetName" \
-	subnetName="$subnetName" \
-	enableAcceleratedNetworking="$enableAcceleratedNetworking" \
-	privateIpAllocationMethod="$privateIpAllocationMethod" \
-	publicIpResourceGroup="$rgNameSource" \
-	publicIpName="$vm1PipName" \
-	ipConfigName="$ipConfigName"
+	location="$LOCATION" \
+	networkInterfaceName="$VM1_NIC_NAME" \
+	vnetResourceGroup="$RG_NAME_NET" \
+	vnetName="$VNET_NAME" \
+	subnetName="$SUBNET_NAME" \
+	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
+	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
+	publicIpResourceGroup="$RG_NAME_SOURCE" \
+	publicIpName="$VM1_PIP_NAME" \
+	ipConfigName="$IP_CONFIG_NAME"
 
 echo "Deploy Source VM2 Network Interface"
-az deployment group create --subscription "$subscriptionId" -n "VM2-NIC-""$location" --verbose \
-	-g "$rgNameSource" --template-file "$templateNetworkInterface" \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-NIC-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_NIC" \
 	--parameters \
-	location="$location" \
-	networkInterfaceName="$vm2NicName" \
-	vnetResourceGroup="$rgNameNet" \
-	vnetName="$vnetName" \
-	subnetName="$subnetName" \
-	enableAcceleratedNetworking="$enableAcceleratedNetworking" \
-	privateIpAllocationMethod="$privateIpAllocationMethod" \
-	publicIpResourceGroup="$rgNameSource" \
-	publicIpName="$vm2PipName" \
-	ipConfigName="$ipConfigName"
+	location="$LOCATION" \
+	networkInterfaceName="$VM2_NIC_NAME" \
+	vnetResourceGroup="$RG_NAME_NET" \
+	vnetName="$VNET_NAME" \
+	subnetName="$SUBNET_NAME" \
+	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
+	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
+	publicIpResourceGroup="$RG_NAME_SOURCE" \
+	publicIpName="$VM2_PIP_NAME" \
+	ipConfigName="$IP_CONFIG_NAME"
 
 
 echo "Retrieve Admin Username and SSH Public Key from Key Vault"
 # Note, while we defined these in step00, THAT is to put them INTO Key Vault in step04.
-vmAdminUsername="$(az keyvault secret show --subscription "$subscriptionId" --vault-name "$keyVaultName" --name "$keyVaultSecretNameAdminUsername" -o tsv --query 'value')"
-vmAdminUserSshPublicKey="$(az keyvault secret show --subscription "$subscriptionId" --vault-name "$keyVaultName" --name "$keyVaultSecretNameAdminSshPublicKey" -o tsv --query 'value')"
+vmAdminUsername="$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_ADMIN_USERNAME" -o tsv --query 'value')"
+vmAdminUserSshPublicKey="$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')"
 
 #echo $vmAdminUsername
 #echo $vmAdminUserSshPublicKey
 
 echo "Deploy Source VM1"
-az deployment group create --subscription "$subscriptionId" -n "VM1-""$location" --verbose \
-	-g "$rgNameSource" --template-file "$templateVirtualMachine" \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_VM" \
 	--parameters \
-	location="$location" \
-	virtualMachineName="$vm1Name" \
-	virtualMachineSize="$vmSize" \
+	location="$LOCATION" \
+	virtualMachineName="$VM1_NAME" \
+	virtualMachineSize="$VM_SIZE" \
 	imageResourceId="" \
-	publisher="$vmPublisher" \
-	offer="$vmOffer" \
-	sku="$vm1Sku" \
-	version="$vmVersion" \
-	provisionVmAgent="$provisionVmAgent" \
+	publisher="$OS_PUBLISHER" \
+	offer="$OS_OFFER" \
+	sku="$OS_SKU_1" \
+	version="$VM_VERSION" \
+	provisionVmAgent="$PROVISION_VM_AGENT" \
 	adminUsername="$vmAdminUsername" \
 	adminSshPublicKey="$vmAdminUserSshPublicKey" \
-	virtualMachineTimeZone="$vmTimeZone" \
-	osDiskStorageType="$osDiskStorageType" \
-	osDiskSizeInGB="$osDiskSizeInGB" \
-	dataDiskStorageType="$dataDiskStorageType" \
-	dataDiskCount="$dataDiskCount" \
-	dataDiskSizeInGB="$dataDiskSizeInGB" \
-	vmAutoShutdownTime="$vmAutoShutdownTime" \
-	enableAutoShutdownNotification="$enableAutoShutdownNotification" \
-	autoShutdownNotificationWebhookURL="$autoShutdownNotificationWebhookURL" \
-	autoShutdownNotificationMinutesBefore="$autoShutdownNotificationMinutesBefore" \
-	resourceGroupNameNetworkInterface="$rgNameSource" \
-	networkInterfaceName="$vm1NicName"
+	virtualMachineTimeZone="$VM_TIME_ZONE" \
+	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
+	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \
+	dataDiskStorageType="$DATA_DISK_STORAGE_TYPE" \
+	dataDiskCount="$DATA_DISK_COUNT" \
+	dataDiskSizeInGB="$DATA_DISK_SIZE_IN_GB" \
+	vmAutoShutdownTime="$VM_AUTO_SHUTDOWN_TIME" \
+	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
+	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
+	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
+	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
+	networkInterfaceName="$VM1_NIC_NAME"
 
 echo "Deploy Source VM2"
-az deployment group create --subscription "$subscriptionId" -n "VM2-""$location" --verbose \
-	-g "$rgNameSource" --template-file "$templateVirtualMachine" \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_VM" \
 	--parameters \
-	location="$location" \
-	virtualMachineName="$vm2Name" \
-	virtualMachineSize="$vmSize" \
+	location="$LOCATION" \
+	virtualMachineName="$VM2_NAME" \
+	virtualMachineSize="$VM_SIZE" \
 	imageResourceId="" \
-	publisher="$vmPublisher" \
-	offer="$vmOffer" \
-	sku="$vm2Sku" \
-	version="$vmVersion" \
-	provisionVmAgent="$provisionVmAgent" \
+	publisher="$OS_PUBLISHER" \
+	offer="$OS_OFFER" \
+	sku="$OS_SKU_2" \
+	version="$VM_VERSION" \
+	provisionVmAgent="$PROVISION_VM_AGENT" \
 	adminUsername="$vmAdminUsername" \
 	adminSshPublicKey="$vmAdminUserSshPublicKey" \
-	virtualMachineTimeZone="$vmTimeZone" \
-	osDiskStorageType="$osDiskStorageType" \
-	osDiskSizeInGB="$osDiskSizeInGB" \
-	dataDiskStorageType="$dataDiskStorageType" \
-	dataDiskCount="$dataDiskCount" \
-	dataDiskSizeInGB="$dataDiskSizeInGB" \
-	vmAutoShutdownTime="$vmAutoShutdownTime" \
-	enableAutoShutdownNotification="$enableAutoShutdownNotification" \
-	autoShutdownNotificationWebhookURL="$autoShutdownNotificationWebhookURL" \
-	autoShutdownNotificationMinutesBefore="$autoShutdownNotificationMinutesBefore" \
-	resourceGroupNameNetworkInterface="$rgNameSource" \
-	networkInterfaceName="$vm2NicName"
+	virtualMachineTimeZone="$VM_TIME_ZONE" \
+	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
+	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \
+	dataDiskStorageType="$DATA_DISK_STORAGE_TYPE" \
+	dataDiskCount="$DATA_DISK_COUNT" \
+	dataDiskSizeInGB="$DATA_DISK_SIZE_IN_GB" \
+	vmAutoShutdownTime="$VM_AUTO_SHUTDOWN_TIME" \
+	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
+	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
+	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
+	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
+	networkInterfaceName="$VM2_NIC_NAME"
 
 echo "Source VMs deployed"

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. ./step00.variables.sh
-
 # ##################################################
 # IMPORTANT DO NOT SKIP THIS - READ THIS!!!!
 # MAKE SURE YOU GENERALIZE THE VMs FIRST!!!!!
@@ -16,47 +14,47 @@
 # before OS disk swap, then swap OS disk, then re-attach large data disks.
 # ##################################################
 
-vm1Id="$(az vm show --subscription "$subscriptionId" -g "$rgNameSource" -n "$vm1Name" -o tsv --query "id")"
-vm2Id="$(az vm show --subscription "$subscriptionId" -g "$rgNameSource" -n "$vm2Name" -o tsv --query "id")"
+vm1Id="$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM1_NAME" -o tsv --query "id")"
+vm2Id="$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM2_NAME" -o tsv --query "id")"
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_deallocate
 echo "Deallocate Source VM1"
-az vm deallocate --subscription "$subscriptionId" -g "$rgNameSource" --name "$vm1Name" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM1_NAME" --verbose
 
 echo "Deallocate Source VM2"
-az vm deallocate --subscription "$subscriptionId" -g "$rgNameSource" --name "$vm2Name" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM2_NAME" --verbose
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_generalize
 echo "Generalize Source VM1"
-az vm generalize --subscription "$subscriptionId" -g "$rgNameSource" --name "$vm1Name" --verbose
+az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM1_NAME" --verbose
 
 echo "Generalize Source VM2"
-az vm generalize --subscription "$subscriptionId" -g "$rgNameSource" --name "$vm2Name" --verbose
+az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM2_NAME" --verbose
 
 
 # https://docs.microsoft.com/cli/azure/image?view=azure-cli-latest#az_image_create
 echo "Create Source VM1 Image"
-az image create --subscription "$subscriptionId" -g "$rgNameSig" --verbose \
-	-n "$vm1ImageName" --source "$vm1Id" --os-type "$osType" --storage-sku "$osDiskStorageType"
+az image create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" --verbose \
+	-n "$VM1_IMAGE_NAME" --source "$vm1Id" --os-type "$VM_OS_TYPE" --storage-sku "$OS_DISK_STORAGE_TYPE"
 
 echo "Create Source VM2 Image"
-az image create --subscription "$subscriptionId" -g "$rgNameSig" --verbose \
-	-n "$vm2ImageName" --source "$vm2Id" --os-type "$osType" --storage-sku "$osDiskStorageType"
+az image create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" --verbose \
+	-n "$VM2_IMAGE_NAME" --source "$vm2Id" --os-type "$VM_OS_TYPE" --storage-sku "$OS_DISK_STORAGE_TYPE"
 
 
 # Get VM Image IDs for SIG Image Version Creation
-image1Id="$(az image show --subscription "$subscriptionId" -g "$rgNameSig" -n "$vm1ImageName" -o tsv --query "id")"
-image2Id="$(az image show --subscription "$subscriptionId" -g "$rgNameSig" -n "$vm2ImageName" -o tsv --query "id")"
+image1Id="$(az image show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" -n "$VM1_IMAGE_NAME" -o tsv --query "id")"
+image2Id="$(az image show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" -n "$VM2_IMAGE_NAME" -o tsv --query "id")"
 
 
 # https://docs.microsoft.com/cli/azure/sig/image-version?view=azure-cli-latest#az_sig_image_version_create
 echo "Create Source VM1 Shared Image Gallery Image Version from generalized VM custom image"
-az sig image-version create --subscription "$subscriptionId" -g "$rgNameSig" -l "$location" --verbose \
-	-r "$sigName" --gallery-image-definition "$imageDefinition1" --gallery-image-version "$imageVersion1" \
-	--managed-image "$image1Id" --target-regions "$location"
+az sig image-version create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" -l "$LOCATION" --verbose \
+	-r "$SIG_NAME" --gallery-image-definition "$VM_IMAGE_DEFINITION_1" --gallery-image-version "$VM_IMAGE_VERSION_1" \
+	--managed-image "$image1Id" --target-regions "$LOCATION"
 
 echo "Create Source VM2 Shared Image Gallery Image Version from generalized VM custom image"
-az sig image-version create --subscription "$subscriptionId" -g "$rgNameSig" -l "$location" --verbose \
-	-r "$sigName" --gallery-image-definition "$imageDefinition2" --gallery-image-version "$imageVersion2" \
-	--managed-image "$image2Id" --target-regions "$location"
+az sig image-version create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" -l "$LOCATION" --verbose \
+	-r "$SIG_NAME" --gallery-image-definition "$VM_IMAGE_DEFINITION_2" --gallery-image-version "$VM_IMAGE_VERSION_2" \
+	--managed-image "$image2Id" --target-regions "$LOCATION"

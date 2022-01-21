@@ -8,8 +8,8 @@
 # Do this the FIRST TIME the VM comes up - this prepares the data disk filesystems.
 # This is NOT needed more than once in the lifetime of a data disk.
 # Partition the two data disks for the first time - this is NOT needed each time OS disks are swapped.
-# This assumes you left step0.variables.sh/$dataDiskCount=2 - if you changed that, change this accordingly.
-# TODO make this and other blocks below loop with step0.variables.sh/$dataDiskCount iterations
+# This assumes you left step0.variables.sh/$DATA_DISK_COUNT=2 - if you changed that, change this accordingly.
+# TODO make this and other blocks below loop with step0.variables.sh/$DATA_DISK_COUNT iterations
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
 sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
@@ -20,7 +20,7 @@ sudo partprobe /dev/sdd1
 
 # Do this the FIRST time an OS disk is swapped on. That is, the FIRST time EACH new OS disk is swapped on.
 # Create mount folders - change these if you like, but adjust accordingly below.
-# As above, this assumes you left step0.variables.sh/$dataDiskCount=2. If you changed that, change this accordingly.
+# As above, this assumes you left step0.variables.sh/$DATA_DISK_COUNT=2. If you changed that, change this accordingly.
 sudo mkdir /sdc1
 sudo mkdir /sdd1
 # ##########
