@@ -4,7 +4,7 @@ echo "Deploy Source VMs to use for image capture"
 
 echo "Deploy Source VM1 Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-PIP-""$LOCATION" --verbose \
-	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM1_PIP_NAME" \
@@ -14,7 +14,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-PIP-""$LOCA
 
 echo "Deploy Source VM2 Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-PIP-""$LOCATION" --verbose \
-	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM2_PIP_NAME" \
@@ -24,7 +24,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-PIP-""$LOCA
 
 echo "Deploy Source VM1 Network Interface"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-NIC-""$LOCATION" --verbose \
-	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_NIC" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM1_NIC_NAME" \
@@ -39,7 +39,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-NIC-""$LOCA
 
 echo "Deploy Source VM2 Network Interface"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-NIC-""$LOCATION" --verbose \
-	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_NIC" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM2_NIC_NAME" \
@@ -63,7 +63,7 @@ vmAdminUserSshPublicKey="$(az keyvault secret show --subscription "$SUBSCRIPTION
 
 echo "Deploy Source VM1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-""$LOCATION" --verbose \
-	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_VM" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	virtualMachineName="$VM1_NAME" \
@@ -74,8 +74,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-""$LOCATION
 	sku="$OS_SKU_1" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminUserSshPublicKey" \
+	adminUsername="$ADMIN_USER_NAME" \
+	adminSshPublicKey="$ADMIN_SSH_PUBLIC_KEY" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
 	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \
@@ -91,7 +91,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-""$LOCATION
 
 echo "Deploy Source VM2"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-""$LOCATION" --verbose \
-	-g "$RG_NAME_SOURCE" --template-file "$TEMPLATE_VM" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	virtualMachineName="$VM2_NAME" \
@@ -102,8 +102,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-""$LOCATION
 	sku="$OS_SKU_2" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminUserSshPublicKey" \
+	adminUsername="$ADMIN_USER_NAME" \
+	adminSshPublicKey="$ADMIN_SSH_PUBLIC_KEY" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
 	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \

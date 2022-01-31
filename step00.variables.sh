@@ -11,7 +11,7 @@ sshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8s
 osInfix="ubu"
 
 resourceNamingInfix="pz"
-resourceNamingSuffix="-2"
+resourceNamingSuffix="-3"
 
 # ARM Templates
 # Use local files with az deployment group create --template-file
