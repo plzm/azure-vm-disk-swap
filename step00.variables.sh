@@ -3,15 +3,17 @@
 # ##################################################
 # Variables only for this file - not exported to env vars
 
+subscriptionName="Sandbox"
+
 # The actual SSH key part - for convenience, using this in public keys for both deploy admin user as well as the new admin user
 # that will be created on new VM post-deploy (see step 13)
 sshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
 
 # Change this as desired. Suggest making it indicative of the VM OS publisher configured below.
-osInfix="ubu"
+osInfix="u"
 
 resourceNamingInfix="pz"
-resourceNamingSuffix="-3"
+resourceNamingSuffix="-4"
 
 # ARM Templates
 # Use local files with az deployment group create --template-file
@@ -20,7 +22,6 @@ templateRootLocal="../../template/"
 templateRootUri="https://raw.githubusercontent.com/plzm/azure-deploy/main/template/"
 # Use this to choose local or remote templates
 templateRoot=$templateRootUri # We will use remote template files via --template-uri
-# Now assemble all the individual template paths
 
 # ##################################################
 
@@ -43,25 +44,24 @@ export ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$sshPublicKeyInfix"" ""$ADMIN_USER_NAME"
 # For convenience, re-using the same public key as above for initial deploy user... you will likely want to set a different public SSH key per user.
 export NEW_ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$sshPublicKeyInfix"" ""$NEW_ADMIN_USER_NAME"
 
-# Subscription ID. Can be hard-coded (first line), OR can use az account show (second line) to get the default subscription in current authentication context.
-export SUBSCRIPTION_ID="4ca1851f-9d7a-456e-b346-1709991ecaff"
-# SUBSCRIPTION_ID="$(az account show -o tsv --query 'id')"
+# Subscription ID. bash/az cli started appending line feed so here we get rid of it.
+export SUBSCRIPTION_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
 
 # Get Tenant ID for Subscription. Need this to create User-Assigned Managed Identity and Key Vault.
-export TENANT_ID="$(az account show --subscription ""$SUBSCRIPTION_ID"" -o tsv --query 'tenantId')"
+export TENANT_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId')" | sed "s/\r//")
 
 # Get current user context object ID. Need this to set initial Key Vault Access Policy so secrets etc. can be set/read in these scripts.
-export USER_OBJECT_ID="$(az ad signed-in-user show -o tsv --query 'objectId')"
+export USER_OBJECT_ID=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
 
 # Deployment
 export LOCATION="eastus2"
 
 # Resource Groups
-export RG_NAME_SECURITY="vm-security-""$LOCATION"
+export RG_NAME_SECURITY="vm-sec-""$LOCATION"
 export RG_NAME_SIG="vm-sig-""$LOCATION"
 export RG_NAME_NET="vm-net-""$LOCATION"
-export RG_NAME_SOURCE="vm-source-""$LOCATION"
-export RG_NAME_DEPLOY="vm-deploy-""$LOCATION"
+export RG_NAME_SOURCE="vm-src-""$LOCATION"
+export RG_NAME_DEPLOY="vm-dep-""$LOCATION"
 
 # User-Assigned Managed Identity
 export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
@@ -81,6 +81,7 @@ export VNET_PREFIX="10.4.0.0/16"
 export SUBNET_NAME="subnet1"
 export SUBNET_PREFIX="10.4.1.0/24"
 
+# Now assemble all the individual template paths
 # ARM Templates
 export TEMPLATE_UAMI="$templateRoot""identity.user-assigned-mi.json"
 export TEMPLATE_KEYVAULT="$templateRoot""key-vault.json"
@@ -98,23 +99,33 @@ export HYPER_V_GENERATION="V1"
 export OS_STATE="Generalized"
 
 # ##################################################
-# FOR CONVENIENCE, TWO VM OS BLOCKS PROVIDED.
-# COMMENT ONE OUT.
-# VM1 and VM2 are used for source images.
-# VM3 is used for OS disk swaps. It is initially deployed with the oldest OS, then VM1 and VM2 are progressively newer versions to swap TO.
-# Note that all three OS disks are swappable. So you can start with the VM3 OS disk, swap to VM1, VM2, and back to VM3, or as needed (no specific order is required).
+# Three VM OS blocks are provided. _1 is the initial deployment OS. _2 and _3 are upgrade images.
+# All three OS disks are swappable.
 # ##################################################
-export OS_PUBLISHER="Canonical"
-export OS_OFFER="UbuntuServer"
-export OS_SKU_1="18.04-LTS"
-export OS_SKU_2="20.04-LTS"
-export OS_SKU_3="16.04-LTS"
+export OS_PUBLISHER_DEPLOY_1="Canonical"
+export OS_OFFER_DEPLOY_1="UbuntuServer"
+export OS_SKU_DEPLOY_1="18.04-LTS"
+
+export OS_PUBLISHER_IMG_SRC_1="Canonical"
+export OS_OFFER_IMG_SRC_1="0001-com-ubuntu-server-focal"
+export OS_SKU_IMG_SRC_1="20_04-lts"
+
+export OS_PUBLISHER_IMG_SRC_2="Canonical"
+export OS_OFFER_IMG_SRC_2="0001-com-ubuntu-server-impish"
+export OS_SKU_IMG_SRC_2="21_10"
 # ##################################################
-#export OS_PUBLISHER="RedHat"
-#export OS_OFFER="RHEL"
-#export OS_SKU_1="7.8"
-#export OS_SKU_2="7_9"
-#export OS_SKU_3="7.7"
+# az vm image list-skus -l $LOCATION --publisher RedHat --offer RHEL -o tsv --query '[].name'
+#export OS_PUBLISHER_DEPLOY_1="RedHat"
+#export OS_OFFER_DEPLOY_1="RHEL"
+#export OS_SKU_DEPLOY_1="8_3"
+
+#export OS_PUBLISHER_IMG_SRC_1="RedHat"
+#export OS_OFFER_IMG_SRC_1="RHEL"
+#export OS_SKU_IMG_SRC_1="8_4"
+
+#export OS_PUBLISHER_IMG_SRC_2="RedHat"
+#export OS_OFFER_IMG_SRC_2="RHEL"
+#export OS_SKU_IMG_SRC_2="8_5"
 # ##################################################
 
 export VM_VERSION="latest"
@@ -141,30 +152,30 @@ export VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION="Disabled" # Disabled | Enabled
 export VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL="" # Provide if set enableAutoShutdownNotification="Enabled"
 export VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE=15
 
-# Source VMs
-export VM1_NAME="pz-""$osInfix""-vm1"
-export VM2_NAME="pz-""$osInfix""-vm2"
-export VM1_PIP_NAME="$VM1_NAME""-pip"
-export VM2_PIP_NAME="$VM2_NAME""-pip"
-export VM1_NIC_NAME="$VM1_NAME""-nic"
-export VM2_NIC_NAME="$VM2_NAME""-nic"
+# OS upgrade source VMs
+export VM_NAME_IMG_SRC_1="pz-""$osInfix""-is-1"
+export VM_NAME_IMG_SRC_2="pz-""$osInfix""-is-2"
+export VM_PIP_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-pip"
+export VM_PIP_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-pip"
+export VM_NIC_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-nic"
+export VM_NIC_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-nic"
 
-# Destination VM
-export VM3_NAME="pz-""$osInfix""-vm3"
-export VM3_PIP_NAME="$VM3_NAME""-pip"
-export VM3_NIC_NAME="$VM3_NAME""-nic"
-export VM3_OS_DISK_NAME_1="$VM3_NAME""-os-1"
-export VM3_OS_DISK_NAME_2="$VM3_NAME""-os-2"
-export VM3_OS_DISK_NAME_3="$VM3_NAME""-os-3"
+# Initial deployed VM
+export VM_NAME_DEPLOY_1="pz-""$osInfix""-dep-1"
+export VM_PIP_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-pip"
+export VM_NIC_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-nic"
+export VM_DEPLOY_1_OS_DISK_NAME_1="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_DEPLOY_1""-""$OS_OFFER_DEPLOY_1""-""$OS_SKU_DEPLOY_1"
+export VM_DEPLOY_1_OS_DISK_NAME_2="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SRC_1""-""$OS_OFFER_IMG_SRC_1""-""$OS_SKU_IMG_SRC_1"
+export VM_DEPLOY_1_OS_DISK_NAME_3="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SRC_2""-""$OS_OFFER_IMG_SRC_2""-""$OS_SKU_IMG_SRC_2"
 
 #SIG
 export SIG_NAME="sig"
 export VM_OS_TYPE="Linux" # Linux | Windows
-export VM_IMAGE_DEFINITION_1="custom-""$osInfix""-v1"
-export VM_IMAGE_VERSION_1="1.0.0"
-export VM_IMAGE_DEFINITION_2="custom-""$osInfix""-v2"
-export VM_IMAGE_VERSION_2="1.0.0"
+export VM_IMG_DEFINITION_IMG_SRC_1="custom-""$osInfix""-""$OS_PUBLISHER_IMG_SRC_1""-""$OS_OFFER_IMG_SRC_1""-""$OS_SKU_IMG_SRC_1"
+export VM_IMG_VERSION_IMG_SRC_1="1.0.0"
+export VM_IMG_DEFINITION_IMG_SRC_2="custom-""$osInfix""-""$OS_PUBLISHER_IMG_SRC_2""-""$OS_OFFER_IMG_SRC_2""-""$OS_SKU_IMG_SRC_2"
+export VM_IMG_VERSION_IMG_SRC_2="1.0.0"
 
-export VM1_IMAGE_NAME="$VM1_NAME""-image"
-export VM2_IMAGE_NAME="$VM2_NAME""-image"
+export VM_IMG_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-image"
+export VM_IMG_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-image"
 # ##################################################
