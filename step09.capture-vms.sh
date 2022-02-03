@@ -2,10 +2,10 @@
 
 # ##################################################
 # IMPORTANT DO NOT SKIP THIS - READ THIS!!!!
-# MAKE SURE YOU GENERALIZE THE VMs FIRST!!!!!
-# Step 1 at https://docs.microsoft.com/azure/virtual-machines/linux/capture-image
-# TODO - could add ssh and sudo waagent -deprovision here, depends if execution context has SSH key needed for that
-# OTHERWISE - just SSH into your VMs and do step 1 (doc link above) there before actually running this .sh
+# This script automatically generalizes the VMs. You do NOT need to do this manually. However! It is still a good idea for you to read step 1 here:
+# https://docs.microsoft.com/azure/virtual-machines/linux/capture-image
+# If you are running this script in an environment (e.g. build agent) where you do not and cannot have the SSH private key corresponding to the SSH public key
+# on the VMs you are generalizing, then you MUST do step 1 at the link above manually.
 # ##################################################
 # DID YOU READ THE ABOVE? YOU REALLY SHOULD.
 # ##################################################
@@ -14,8 +14,52 @@
 # before OS disk swap, then swap OS disk, then re-attach large data disks.
 # ##################################################
 
+
+echo "Get source VM1 Resource ID"
 vm1Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_NAME_IMG_SRC_1" -o tsv --query "id")" | sed "s/\r//")
+
+echo "Get source VM2 Resource ID"
 vm2Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_NAME_IMG_SRC_2" -o tsv --query "id")" | sed "s/\r//")
+
+
+echo "Get source VM1 FQDN"
+srcVm1Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+
+echo "Add source VM1 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+if [ -z "$(ssh-keygen -F $srcVm1Fqdn)" ]; then
+  ssh-keyscan -H $srcVm1Fqdn >> ~/.ssh/known_hosts
+fi
+
+echo "Get source VM2 FQDN"
+srcVm2Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+
+echo "Add source VM2 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+if [ -z "$(ssh-keygen -F $srcVm2Fqdn)" ]; then
+  ssh-keyscan -H $srcVm2Fqdn >> ~/.ssh/known_hosts
+fi
+
+
+echo "Start Source VM1"
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
+
+echo "Start Source VM2"
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
+
+
+echo "Connect to VMs and execute deprovision command"
+echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
+sshToVm1="ssh -t $ADMIN_USER_NAME@$srcVm1Fqdn"
+sshToVm2="ssh -t $ADMIN_USER_NAME@$srcVm2Fqdn"
+remotecmd="'sudo waagent -deprovision -force'"
+fullCmdVm1="${sshToVm1} ${remotecmd}"
+fullCmdVm2="${sshToVm2} ${remotecmd}"
+
+echo $fullCmdVm1
+echo $fullCmdVm2
+
+eval $fullCmdVm1
+eval $fullCmdVm2
+
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_deallocate
 echo "Deallocate Source VM1"

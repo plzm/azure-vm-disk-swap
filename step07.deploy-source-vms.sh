@@ -2,8 +2,8 @@
 
 echo "Deploy Source VMs to use for image capture"
 
-echo "Deploy Source VM1 Public IP"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-PIP-""$LOCATION" --verbose \
+echo "Deploy Source VM 1 Public IP"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-PIP""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
@@ -13,7 +13,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-PIP-""$LOCA
 	domainNameLabel="$VM_NAME_IMG_SRC_1"
 
 echo "Deploy Source VM2 Public IP"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-PIP-""$LOCATION" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-PIP-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
@@ -23,7 +23,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-PIP-""$LOCA
 	domainNameLabel="$VM_NAME_IMG_SRC_2"
 
 echo "Deploy Source VM1 Network Interface"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-NIC-""$LOCATION" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-NIC-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
@@ -38,7 +38,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-NIC-""$LOCA
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "Deploy Source VM2 Network Interface"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2-NIC-""$LOCATION" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-NIC-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
@@ -58,11 +58,11 @@ echo "Retrieve Admin Username and SSH Public Key from Key Vault"
 vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_ADMIN_USERNAME" -o tsv --query 'value')" | sed "s/\r//")
 vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
 
-echo $vmAdminUsername
-echo $vmAdminUserSshPublicKey
+#echo $vmAdminUsername | cat -v
+#echo $vmAdminUserSshPublicKey | cat -v
 
-echo "Deploy Source VM with upgrade OS - 2"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-2-""$LOCATION" --verbose \
+echo "Deploy Source VM with upgrade OS 1"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
@@ -89,8 +89,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-2-""$LOCATIO
 	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
 	networkInterfaceName="$VM_NIC_NAME_IMG_SRC_1"
 
-echo "Deploy Source VM with upgrade OS - 3"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-3-""$LOCATION" --verbose \
+echo "Deploy Source VM with upgrade OS 2"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \

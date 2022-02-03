@@ -172,9 +172,9 @@ export VM_DEPLOY_1_OS_DISK_NAME_3="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SR
 export SIG_NAME="sig"
 export VM_OS_TYPE="Linux" # Linux | Windows
 export VM_IMG_DEFINITION_IMG_SRC_1="custom-""$osInfix""-""$OS_PUBLISHER_IMG_SRC_1""-""$OS_OFFER_IMG_SRC_1""-""$OS_SKU_IMG_SRC_1"
-export VM_IMG_VERSION_IMG_SRC_1="1.0.0"
+export VM_IMG_VERSION_IMG_SRC_1="1.0.0" # Can make this dynamic, maybe tied to date? Instead of hard-coding.
 export VM_IMG_DEFINITION_IMG_SRC_2="custom-""$osInfix""-""$OS_PUBLISHER_IMG_SRC_2""-""$OS_OFFER_IMG_SRC_2""-""$OS_SKU_IMG_SRC_2"
-export VM_IMG_VERSION_IMG_SRC_2="1.0.0"
+export VM_IMG_VERSION_IMG_SRC_2="1.0.0" # Can make this dynamic, maybe tied to date? Instead of hard-coding.
 
 export VM_IMG_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-image"
 export VM_IMG_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-image"
