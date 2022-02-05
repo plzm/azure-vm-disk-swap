@@ -4,7 +4,7 @@ echo "Deploy Destination VM to use for OS disk swaps"
 
 echo "Deploy Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-PIP-""$LOCATION" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-file "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM_PIP_NAME_DEPLOY_1" \
@@ -14,7 +14,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-PIP-""$LOCA
 
 echo "Deploy Network Interface"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-NIC-""$LOCATION" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-file "$TEMPLATE_NIC" \
+	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM_NIC_NAME_DEPLOY_1" \
@@ -30,7 +30,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-NIC-""$LOCA
 # If a Managed Identity Name was provided, get its Resource ID
 if [ ! -z $USERNAME_UAMI ]
 then
-	uamiResourceId="$(az identity show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SECURITY"" --name ""$USERNAME_UAMI"" -o tsv --query 'id')"
+	uamiResourceId=$(echo "$(az identity show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SECURITY"" --name ""$USERNAME_UAMI"" -o tsv --query 'id')" | sed "s/\r//")
 fi
 
 echo "Retrieve Admin Username and SSH Public Key from Key Vault"
@@ -40,7 +40,7 @@ vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSC
 
 echo "Deploy VM with initial OS - 1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-""$LOCATION" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-file "$TEMPLATE_VM" \
+	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \

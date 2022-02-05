@@ -57,11 +57,11 @@ export USER_OBJECT_ID=$(echo "$(az ad signed-in-user show -o tsv --query 'object
 export LOCATION="eastus2"
 
 # Resource Groups
-export RG_NAME_SECURITY="vm-sec-""$LOCATION"
-export RG_NAME_SIG="vm-sig-""$LOCATION"
-export RG_NAME_NET="vm-net-""$LOCATION"
-export RG_NAME_SOURCE="vm-src-""$LOCATION"
-export RG_NAME_DEPLOY="vm-dep-""$LOCATION"
+export RG_NAME_SECURITY="$resourceNamingInfix""-security-""$LOCATION"
+export RG_NAME_SIG="$resourceNamingInfix""-sig-""$LOCATION"
+export RG_NAME_NET="$resourceNamingInfix""-net-""$LOCATION"
+export RG_NAME_SOURCE="$resourceNamingInfix""-vm-source-""$LOCATION"
+export RG_NAME_DEPLOY="$resourceNamingInfix""-vm-deploy-""$LOCATION"
 
 # User-Assigned Managed Identity
 export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
@@ -99,7 +99,7 @@ export HYPER_V_GENERATION="V1"
 export OS_STATE="Generalized"
 
 # ##################################################
-# Three VM OS blocks are provided. _1 is the initial deployment OS. _2 and _3 are upgrade images.
+# Three VM OS blocks are provided.
 # All three OS disks are swappable.
 # ##################################################
 export OS_PUBLISHER_DEPLOY_1="Canonical"

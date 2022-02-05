@@ -1,9 +1,12 @@
 #!/bin/bash
 
 echo "Get the resource IDs of the OS disks"
-vm3OsDiskIdVersion0=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_1" -o tsv --query "id")" | sed "s/\r//")
-vm3OsDiskIdVersion1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_2" -o tsv --query "id")" | sed "s/\r//")
-vm3OsDiskIdVersion2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")" | sed "s/\r//")
+vmOsDiskId1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_1" -o tsv --query "id")" | sed "s/\r//")
+vmOsDiskId2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_2" -o tsv --query "id")" | sed "s/\r//")
+vmOsDiskId3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")" | sed "s/\r//")
+
+echo "Set the resource ID of the OS disk to swap TO"
+newVmOsDiskId=$vmOsDiskId1
 
 echo "Deallocate the existing VM so we can swap in a different OS disk"
 az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_DEPLOY_1" --verbose
@@ -21,21 +24,18 @@ vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSC
 
 echo "VM ARM template to update the OS disk"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-""$LOCATION" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-file "$TEMPLATE_VM" \
+	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
 	virtualMachineName="$VM_NAME_DEPLOY_1" \
 	virtualMachineSize="$VM_SIZE" \
-	publisher="$OS_PUBLISHER" \
-	offer="$OS_OFFER" \
-	sku="$OS_SKU_IMG_SRC_2" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
 	adminUsername="$vmAdminUsername" \
 	adminSshPublicKey="$vmAdminUserSshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
-	osDiskId="$vm3OsDiskIdVersion0" \
+	osDiskId="$newVmOsDiskId" \
 	dataDiskStorageType="$DATA_DISK_STORAGE_TYPE" \
 	dataDiskCount="$DATA_DISK_COUNT" \
 	dataDiskSizeInGB="$DATA_DISK_SIZE_IN_GB" \
@@ -45,7 +45,6 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-""$LOCATION
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
 	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
 	networkInterfaceName="$VM_NIC_NAME_DEPLOY_1"
-
 
 echo "Start the VM"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --verbose \

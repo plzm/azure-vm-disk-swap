@@ -1,9 +1,12 @@
 #!/bin/bash
 
 echo "Get the resource IDs of the OS disks"
-vm3OsDiskIdVersion0="$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_1" -o tsv --query "id")"
-vm3OsDiskIdVersion1="$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_2" -o tsv --query "id")"
-vm3OsDiskIdVersion2="$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")"
+vmOsDiskId1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_1" -o tsv --query "id")" | sed "s/\r//")
+vmOsDiskId2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_2" -o tsv --query "id")" | sed "s/\r//")
+vmOsDiskId3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")" | sed "s/\r//")
+
+echo "Set the resource ID of the OS disk to swap TO"
+vmOsDiskIdToSwapTo=$vmOsDiskId3
 
 echo "Deallocate the existing VM so we can swap in a different OS disk"
 az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_DEPLOY_1" --verbose
@@ -20,7 +23,7 @@ az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "
 echo "Update the VM with one of the new OS disk IDs"
 # SPECIFY THE CORRECT OS DISK ID TO SWAP -->TO<-- WITH THE --os-disk PARAMETER
 az vm update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --verbose \
-	-n "$VM_NAME_DEPLOY_1" --os-disk "$vm3OsDiskIdVersion1"
+	-n "$VM_NAME_DEPLOY_1" --os-disk "$vmOsDiskIdToSwapTo"
 
 echo "Start the VM"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --verbose \

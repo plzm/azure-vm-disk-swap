@@ -25,6 +25,9 @@ vm2Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE
 echo "Get source VM1 FQDN"
 srcVm1Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 
+echo "Clean out existing source VM1 entry from known_hosts, if any, to avoid warnings/strict key validation fail."
+ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm1Fqdn"
+
 echo "Add source VM1 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 if [ -z "$(ssh-keygen -F $srcVm1Fqdn)" ]; then
   ssh-keyscan -H $srcVm1Fqdn >> ~/.ssh/known_hosts
@@ -32,6 +35,9 @@ fi
 
 echo "Get source VM2 FQDN"
 srcVm2Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+
+echo "Clean out existing source VM2 entry from known_hosts, if any, to avoid warnings/strict key validation fail."
+ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm2Fqdn"
 
 echo "Add source VM2 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 if [ -z "$(ssh-keygen -F $srcVm2Fqdn)" ]; then
