@@ -13,7 +13,6 @@ sshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8s
 osInfix="u"
 
 resourceNamingInfix="pz"
-resourceNamingSuffix="-4"
 
 # ARM Templates
 # Use local files with az deployment group create --template-file
@@ -68,7 +67,7 @@ export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
 
 # Key Vault
 export KEYVAULT_SKU_NAME="Standard"
-export KEYVAULT_NAME="kv-""$resourceNamingInfix""-""$LOCATION""$resourceNamingSuffix"
+export KEYVAULT_NAME="kv-""$resourceNamingInfix""-""$LOCATION"
 export KEYVAULT_SECRET_NAME_ADMIN_USERNAME="vmAdminUsername"
 export KEYVAULT_SECRET_NAME_ADMIN_SSH_PUBLIC_KEY="vmAdminSshPublicKey"
 export KEYVAULT_SECRET_NAME_NEW_ADMIN_USERNAME="vmNewAdminUsername"
@@ -153,15 +152,15 @@ export VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL="" # Provide if set enableAutoS
 export VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE=15
 
 # OS upgrade source VMs
-export VM_NAME_IMG_SRC_1="pz-""$osInfix""-is-1"
-export VM_NAME_IMG_SRC_2="pz-""$osInfix""-is-2"
+export VM_NAME_IMG_SRC_1="$resourceNamingInfix""-""$osInfix""-src-1"
+export VM_NAME_IMG_SRC_2="$resourceNamingInfix""-""$osInfix""-src-2"
 export VM_PIP_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-pip"
 export VM_PIP_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-pip"
 export VM_NIC_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-nic"
 export VM_NIC_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-nic"
 
 # Initial deployed VM
-export VM_NAME_DEPLOY_1="pz-""$osInfix""-dep-1"
+export VM_NAME_DEPLOY_1="$resourceNamingInfix""-""$osInfix""-dep-1"
 export VM_PIP_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-pip"
 export VM_NIC_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-nic"
 export VM_DEPLOY_1_OS_DISK_NAME_1="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_DEPLOY_1""-""$OS_OFFER_DEPLOY_1""-""$OS_SKU_DEPLOY_1"

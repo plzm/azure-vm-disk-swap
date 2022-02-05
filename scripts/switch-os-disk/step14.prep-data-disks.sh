@@ -8,8 +8,7 @@
 # Do this the FIRST TIME the VM comes up - this prepares the data disk filesystems.
 # This is NOT needed more than once in the lifetime of a data disk.
 # Partition the two data disks for the first time - this is NOT needed each time OS disks are swapped.
-# This assumes you left step0.variables.sh/$DATA_DISK_COUNT=2 - if you changed that, change this accordingly.
-# TODO make this and other blocks below loop with step0.variables.sh/$DATA_DISK_COUNT iterations
+# This assumes your env var $DATA_DISK_COUNT=2 - if you changed that, change this script accordingly.
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
 sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
@@ -33,15 +32,15 @@ sudo mount /dev/sdd1 /sdd1
 
 # Create some test filesystem things so we can reboot or swap OS disks and check that the data disks behave "as expected".
 # This is only needed the first time a data disk is mounted, as these filesystem things will persist across different OS disk swaps.
-sudo mkdir /sdc1/azure_was_here
-sudo mkdir /sdd1/azure_was_here
+sudo mkdir /sdc1/plzm_was_here
+sudo mkdir /sdd1/plzm_was_here
 # ##########
 
 
 # List mounted drives
 df -h | grep -i "sd"
 
-# Do this the FIRST time an OS disk is swapped on. That is, the FIRST time EACH new OS disk is swapped on.
+# Do this EVERY time an OS disk is swapped on. That is, the FIRST time EACH new OS disk is swapped on.
 # Add data disks to /etc/fstab so they are remounted after reboot
 # Get the disk UUIDs
 sudo -i blkid
