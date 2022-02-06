@@ -15,6 +15,13 @@
 # ##################################################
 
 
+echo "Start Source VM1"
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
+
+echo "Start Source VM2"
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
+
+
 echo "Get source VM1 Resource ID"
 vm1Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_NAME_IMG_SRC_1" -o tsv --query "id")" | sed "s/\r//")
 
@@ -43,13 +50,6 @@ echo "Add source VM2 to SSH known hosts so that SSH login is not interrupted wit
 if [ -z "$(ssh-keygen -F $srcVm2Fqdn)" ]; then
   ssh-keyscan -H $srcVm2Fqdn >> ~/.ssh/known_hosts
 fi
-
-
-echo "Start Source VM1"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
-
-echo "Start Source VM2"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
 
 echo "Connect to VMs and execute deprovision command"

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# NOTE - to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
+# . ./01-set-env-vars.sh
+
 # ##################################################
 # Variables only for this file - not exported to env vars
 
@@ -28,29 +31,15 @@ templateRoot=$templateRootUri # We will use remote template files via --template
 # Variables to export to env vars
 
 # Provide at least these values
-export NSG_RULE_INBOUND_100_SRC="75.68.47.183" # Leave empty to not add an inbound NSG rule for dev/test - see the net.nsg template
 # Initial admin username
 export ADMIN_USER_NAME="pelazem"
-# New admin user to be added to VM in step13
-export NEW_ADMIN_USER_NAME="newAdmin"
 
 # In the form single-line, 'ssh-rsa key== username'
 # Public SSH key for initial admin user
 export ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$sshPublicKeyInfix"" ""$ADMIN_USER_NAME"
 
-# In the form single-line, 'ssh-rsa key== username'
-# Public SSH key for new admin user for step 13
-# For convenience, re-using the same public key as above for initial deploy user... you will likely want to set a different public SSH key per user.
-export NEW_ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$sshPublicKeyInfix"" ""$NEW_ADMIN_USER_NAME"
-
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 export SUBSCRIPTION_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
-
-# Get Tenant ID for Subscription. Need this to create User-Assigned Managed Identity and Key Vault.
-export TENANT_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId')" | sed "s/\r//")
-
-# Get current user context object ID. Need this to set initial Key Vault Access Policy so secrets etc. can be set/read in these scripts.
-export USER_OBJECT_ID=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
 
 # Deployment
 export LOCATION="eastus2"
@@ -66,32 +55,20 @@ export RG_NAME_DEPLOY="$resourceNamingInfix""-vm-deploy-""$LOCATION"
 export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
 
 # Key Vault
-export KEYVAULT_SKU_NAME="Standard"
 export KEYVAULT_NAME="kv-""$resourceNamingInfix""-""$LOCATION"
 export KEYVAULT_SECRET_NAME_ADMIN_USERNAME="vmAdminUsername"
 export KEYVAULT_SECRET_NAME_ADMIN_SSH_PUBLIC_KEY="vmAdminSshPublicKey"
-export KEYVAULT_SECRET_NAME_NEW_ADMIN_USERNAME="vmNewAdminUsername"
-export KEYVAULT_SECRET_NAME_NEW_ADMIN_SSH_PUBLIC_KEY="vmNewAdminSshPublicKey"
 
 # Network
-export NSG_NAME="vm-test-nsg-""$LOCATION"
 export VNET_NAME="vm-test-vnet-""$LOCATION"
-export VNET_PREFIX="10.4.0.0/16"
 export SUBNET_NAME="subnet1"
-export SUBNET_PREFIX="10.4.1.0/24"
 
 # Now assemble all the individual template paths
 # ARM Templates
-export TEMPLATE_UAMI="$templateRoot""identity.user-assigned-mi.json"
-export TEMPLATE_KEYVAULT="$templateRoot""key-vault.json"
 export TEMPLATE_KEYVAULT_SECRET="$templateRoot""key-vault.secret.json"
-export TEMPLATE_NSG="$templateRoot""net.nsg.json"
-export TEMPLATE_VNET="$templateRoot""net.vnet.json"
-export TEMPLATE_SUBNET="$templateRoot""net.vnet.subnet.json"
 export TEMPLATE_PUBLIC_IP="$templateRoot""net.public-ip.json"
 export TEMPLATE_NIC="$templateRoot""net.network-interface.json"
 export TEMPLATE_VM="$templateRoot""vm.linux.json"
-export TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT="$templateRoot""vm.extension.custom-script.json"
 
 # VM
 export HYPER_V_GENERATION="V1"
@@ -158,14 +135,6 @@ export VM_PIP_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-pip"
 export VM_PIP_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-pip"
 export VM_NIC_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-nic"
 export VM_NIC_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-nic"
-
-# Initial deployed VM
-export VM_NAME_DEPLOY_1="$resourceNamingInfix""-""$osInfix""-dep-1"
-export VM_PIP_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-pip"
-export VM_NIC_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-nic"
-export VM_DEPLOY_1_OS_DISK_NAME_1="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_DEPLOY_1""-""$OS_OFFER_DEPLOY_1""-""$OS_SKU_DEPLOY_1"
-export VM_DEPLOY_1_OS_DISK_NAME_2="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SRC_1""-""$OS_OFFER_IMG_SRC_1""-""$OS_SKU_IMG_SRC_1"
-export VM_DEPLOY_1_OS_DISK_NAME_3="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SRC_2""-""$OS_OFFER_IMG_SRC_2""-""$OS_SKU_IMG_SRC_2"
 
 #SIG
 export SIG_NAME="sig"
