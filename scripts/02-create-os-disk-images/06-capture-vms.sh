@@ -21,6 +21,9 @@ az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_N
 echo "Start Source VM2"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
+echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
+sleep 300
+
 
 echo "Get source VM1 Resource ID"
 vm1Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_NAME_IMG_SRC_1" -o tsv --query "id")" | sed "s/\r//")
@@ -61,9 +64,9 @@ fullCmdVm1="${sshToVm1} ${remotecmd}"
 fullCmdVm2="${sshToVm2} ${remotecmd}"
 
 echo $fullCmdVm1
-echo $fullCmdVm2
-
 eval $fullCmdVm1
+
+echo $fullCmdVm2
 eval $fullCmdVm2
 
 
