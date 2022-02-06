@@ -28,7 +28,6 @@ templateRoot=$templateRootUri # We will use remote template files via --template
 # Variables to export to env vars
 
 # Provide at least these values
-export NSG_RULE_INBOUND_100_SRC="75.68.47.183" # Leave empty to not add an inbound NSG rule for dev/test - see the net.nsg template
 # Initial admin username
 export ADMIN_USER_NAME="pelazem"
 # New admin user to be added to VM in step13
@@ -46,50 +45,26 @@ export NEW_ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$sshPublicKeyInfix"" ""$NEW_ADMIN_USE
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 export SUBSCRIPTION_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
 
-# Get Tenant ID for Subscription. Need this to create User-Assigned Managed Identity and Key Vault.
-export TENANT_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId')" | sed "s/\r//")
-
-# Get current user context object ID. Need this to set initial Key Vault Access Policy so secrets etc. can be set/read in these scripts.
-export USER_OBJECT_ID=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
-
 # Deployment
 export LOCATION="eastus2"
 
 # Resource Groups
 export RG_NAME_SECURITY="$resourceNamingInfix""-security-""$LOCATION"
 export RG_NAME_SIG="$resourceNamingInfix""-sig-""$LOCATION"
-export RG_NAME_NET="$resourceNamingInfix""-net-""$LOCATION"
-export RG_NAME_SOURCE="$resourceNamingInfix""-vm-source-""$LOCATION"
 export RG_NAME_DEPLOY="$resourceNamingInfix""-vm-deploy-""$LOCATION"
 
 # User-Assigned Managed Identity
 export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
 
 # Key Vault
-export KEYVAULT_SKU_NAME="Standard"
 export KEYVAULT_NAME="kv-""$resourceNamingInfix""-""$LOCATION"
 export KEYVAULT_SECRET_NAME_ADMIN_USERNAME="vmAdminUsername"
 export KEYVAULT_SECRET_NAME_ADMIN_SSH_PUBLIC_KEY="vmAdminSshPublicKey"
 export KEYVAULT_SECRET_NAME_NEW_ADMIN_USERNAME="vmNewAdminUsername"
 export KEYVAULT_SECRET_NAME_NEW_ADMIN_SSH_PUBLIC_KEY="vmNewAdminSshPublicKey"
 
-# Network
-export NSG_NAME="vm-test-nsg-""$LOCATION"
-export VNET_NAME="vm-test-vnet-""$LOCATION"
-export VNET_PREFIX="10.4.0.0/16"
-export SUBNET_NAME="subnet1"
-export SUBNET_PREFIX="10.4.1.0/24"
-
 # Now assemble all the individual template paths
 # ARM Templates
-export TEMPLATE_UAMI="$templateRoot""identity.user-assigned-mi.json"
-export TEMPLATE_KEYVAULT="$templateRoot""key-vault.json"
-export TEMPLATE_KEYVAULT_SECRET="$templateRoot""key-vault.secret.json"
-export TEMPLATE_NSG="$templateRoot""net.nsg.json"
-export TEMPLATE_VNET="$templateRoot""net.vnet.json"
-export TEMPLATE_SUBNET="$templateRoot""net.vnet.subnet.json"
-export TEMPLATE_PUBLIC_IP="$templateRoot""net.public-ip.json"
-export TEMPLATE_NIC="$templateRoot""net.network-interface.json"
 export TEMPLATE_VM="$templateRoot""vm.linux.json"
 export TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT="$templateRoot""vm.extension.custom-script.json"
 
@@ -141,7 +116,6 @@ export IP_CONFIG_NAME="ipConfig1"
 
 export VM_TIME_ZONE="Eastern Standard Time"
 
-export OS_DISK_STORAGE_TYPE="Premium_LRS" # Accepted values: Premium_LRS, StandardSSD_LRS, Standard_LRS, UltraSSD_LRS
 export OS_DISK_SIZE_IN_GB=64
 export DATA_DISK_STORAGE_TYPE="Premium_LRS" # Accepted values: Premium_LRS, StandardSSD_LRS, Standard_LRS, UltraSSD_LRS
 export DATA_DISK_COUNT=0
@@ -151,13 +125,6 @@ export VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION="Disabled" # Disabled | Enabled
 export VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL="" # Provide if set enableAutoShutdownNotification="Enabled"
 export VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE=15
 
-# OS upgrade source VMs
-export VM_NAME_IMG_SRC_1="$resourceNamingInfix""-""$osInfix""-src-1"
-export VM_NAME_IMG_SRC_2="$resourceNamingInfix""-""$osInfix""-src-2"
-export VM_PIP_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-pip"
-export VM_PIP_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-pip"
-export VM_NIC_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-nic"
-export VM_NIC_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-nic"
 
 # Initial deployed VM
 export VM_NAME_DEPLOY_1="$resourceNamingInfix""-""$osInfix""-dep-1"
