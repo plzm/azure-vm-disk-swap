@@ -49,7 +49,9 @@ export SUBSCRIPTION_ID=$(echo "$(az account show -s $subscriptionName -o tsv --q
 export LOCATION="eastus2"
 
 # Resource Groups
-export RG_NAME_DEPLOY="$resourceNamingInfix""-vm-deploy-""$LOCATION"
+export RG_NAME_SECURITY="$resourceNamingInfix""-security-""$LOCATION"
+export RG_NAME_SECURITY="$resourceNamingInfix""-security-""$LOCATION"
+export RG_NAME_NET="$resourceNamingInfix""-net-""$LOCATION"
 
 # User-Assigned Managed Identity
 export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
