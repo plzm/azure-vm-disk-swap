@@ -32,12 +32,6 @@ templateRoot=$templateRootUri # We will use remote template files via --template
 
 # Provide at least these values
 export NSG_RULE_INBOUND_100_SRC="75.68.47.183" # Leave empty to not add an inbound NSG rule for dev/test - see the net.nsg template
-# Initial admin username
-export ADMIN_USER_NAME="pelazem"
-
-# In the form single-line, 'ssh-rsa key== username'
-# Public SSH key for initial admin user
-export ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$sshPublicKeyInfix"" ""$ADMIN_USER_NAME"
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 export SUBSCRIPTION_ID=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
