@@ -57,8 +57,8 @@ fi
 
 echo "Connect to VMs and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
-sshToVm1="ssh -t $ADMIN_USER_NAME@$srcVm1Fqdn"
-sshToVm2="ssh -t $ADMIN_USER_NAME@$srcVm2Fqdn"
+sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn"
+sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn"
 remotecmd="'sudo waagent -deprovision -force'"
 fullCmdVm1="${sshToVm1} ${remotecmd}"
 fullCmdVm2="${sshToVm2} ${remotecmd}"

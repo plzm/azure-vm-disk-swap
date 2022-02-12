@@ -2,7 +2,7 @@
 
 echo "Deploy Source VMs to use for image capture"
 
-echo "Deploy Source VM 1 Public IP"
+echo "Deploy Source VM1 Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-PIP""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
@@ -55,13 +55,13 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-NI
 
 echo "Retrieve Admin Username and SSH Public Key from Key Vault"
 # Note, while we defined these in step00, THAT is to put them INTO Key Vault in step04.
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_ADMIN_USERNAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
+vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
+vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
 
 #echo $vmAdminUsername | cat -v
 #echo $vmAdminUserSshPublicKey | cat -v
 
-echo "Deploy Source VM with upgrade OS 1"
+echo "Deploy Source VM 1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
@@ -89,7 +89,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""
 	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
 	networkInterfaceName="$VM_NIC_NAME_IMG_SRC_1"
 
-echo "Deploy Source VM with upgrade OS 2"
+echo "Deploy Source VM 2"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
@@ -116,5 +116,15 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
 	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
 	networkInterfaceName="$VM_NIC_NAME_IMG_SRC_2"
+
+echo "Add real admin user public SSH key to VM1"
+az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
+	-n "$VM_NAME_IMG_SRC_1" --username "$vmNewAdminUsername" --ssh-key-value "$vmNewAdminUserSshPublicKey"
+
+echo "Add real admin user public SSH key to VM2"
+az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
+	-n "$VM_NAME_IMG_SRC_2" --username "$vmNewAdminUsername" --ssh-key-value "$vmNewAdminUserSshPublicKey"
+
+
 
 echo "Source VMs deployed"
