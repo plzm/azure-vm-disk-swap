@@ -27,13 +27,15 @@ templateRoot=$templateRootUri # We will use remote template files via --template
 # SSH Key Pair for Deployment
 
 # Deployment username - used only to deploy/configure VM
-export DEPLOYMENT_SSH_USER_NAME="deployuser"
+export DEPLOYMENT_SSH_USER_NAME="deploy"
+# DEPLOYMENT_SSH_PUBLIC_KEY
+# DEPLOYMENT_SSH_PRIVATE_KEY
 
 # VM Admin username - what a VM user would use eventually to work with a VM
-export VM_ADMIN_SSH_USER_NAME="vmadmin"
+export VM_ADMIN_SSH_USER_NAME="pelazem"
+# VM_ADMIN_SSH_PUBLIC_KEY
 
-
-# Key Vault Secret NAMES of the secrets whose actual VALUES you would write to or retrieve from Key Vault
+# Key Vault Secret NAMES of the secrets whose actual VALUES you write to or retrieve from Key Vault
 export KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME="vm-deploy-ssh-user-name"
 export KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY="vm-deploy-ssh-public-key"
 export KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PRIVATE_KEY="vm-deploy-ssh-private-key"
