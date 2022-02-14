@@ -41,45 +41,36 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "KV-VM-Admin-Pub
 # If the deployment SSH key will ONLY be used in a single context - e.g. a single pipeline execution - and will not be needed again later, the private key does not
 # need to be written to Key Vault. Determine whether the private key should be persisted to Key Vault based on your circumstances and constraints.
 
-sshKeyName="ssh-vm-deploy"
-sshKeyType="rsa"
-sshKeyBits=2048
-sshKeyPassphrase="" # Use blank for convenience here as SSH key will be short-lived
-sshPublicKeyUsername="$DEPLOYMENT_SSH_USER_NAME"
-
 # Clean up existing key files here, if any
-delCmd="rm ./""$sshKeyName""*"
+delCmd="rm ./""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
+#echo $delCmd
 eval $delCmd
 
 # Generate new public and private key pair and write the files here
-ssh-keygen -q -f "./""$sshKeyName" -t "$sshKeyType" -b $sshKeyBits -N "$sshKeyPassphrase" -C "$sshPublicKeyUsername"
+ssh-keygen -q -m "PEM" -f "./""$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
 
 # Read keys from file into variables
-DEPLOYMENT_SSH_PRIVATE_KEY=$(<$sshKeyName)
-#echo $DEPLOYMENT_SSH_PRIVATE_KEY
-DEPLOYMENT_SSH_PUBLIC_KEY=$(<"$sshKeyName"".pub")
+DEPLOYMENT_SSH_PRIVATE_KEY=$(<$DEPLOYMENT_SSH_USER_KEY_NAME)
+#echo $DEPLOYMENT_SSH_PRIVATE_KEY # Obviously be very careful uncommenting this one... here for debug.
+DEPLOYMENT_SSH_PUBLIC_KEY=$(<"$DEPLOYMENT_SSH_USER_KEY_NAME"".pub")
 #echo $DEPLOYMENT_SSH_PUBLIC_KEY
 
 # Move new SSH pub/priv key files to ~/.ssh
 mkdir ~/.ssh
-mv "./""$sshKeyName" ~/.ssh
-mv "./""$sshKeyName"".pub" ~/.ssh
+mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME" ~/.ssh
+mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub" ~/.ssh
 
 # Set SSH key file permissions
-privCmd="chmod 600 ~/.ssh/""$sshKeyName"
+privCmd="chmod 600 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+#echo $privCmd
 eval $privCmd
-pubCmd="chmod 644 ~/.ssh/""$sshKeyName"".pub"
+pubCmd="chmod 644 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub"
+#echo $pubCmd
 eval $pubCmd
 
 # Add SSH key to SSH agent
 #eval $(ssh-agent)
-ssh-add "~/.ssh/""$sshKeyName"
-
-# Cleanup
-#sshDelCmd="ssh-add -d ~/.ssh/""$sshKeyName"
-#eval $sshDelCmd
-#fileDelCmd="rm ~/.ssh/""$sshKeyName""*"
-#eval $fileDelCmd
+ssh-add "~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 
 #echo "Write Deployment Username to Key Vault"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "KV-Deploy-Username" --verbose \

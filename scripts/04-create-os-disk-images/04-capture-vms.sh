@@ -57,16 +57,16 @@ fi
 
 echo "Connect to VMs and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
-sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn"
-sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn"
-remotecmd="'sudo waagent -deprovision -force'"
+sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
+sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
+remotecmd="'sudo mkdir /kilroy_was_here; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
 fullCmdVm1="${sshToVm1} ${remotecmd}"
 fullCmdVm2="${sshToVm2} ${remotecmd}"
 
-echo $fullCmdVm1
+#echo $fullCmdVm1
 eval $fullCmdVm1
 
-echo $fullCmdVm2
+#echo $fullCmdVm2
 eval $fullCmdVm2
 
 

@@ -56,14 +56,14 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-NI
 echo "Retrieve Deployment Username and SSH Public Key from Key Vault"
 vmDeployUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
 vmDeploySshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
-echo $vmDeployUsername
-echo $vmDeploySshPublicKey
+#echo $vmDeployUsername | cat -v
+#echo $vmDeploySshPublicKey | cat -v
 
 echo "Retrieve VM Admin Username and SSH Public Key from Key Vault"
 vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
 vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
-echo $vmAdminUsername
-echo $vmAdminSshPublicKey
+#echo $vmAdminUsername | cat -v
+#echo $vmAdminSshPublicKey | cat -v
 
 echo "Deploy Source VM 1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""$LOCATION" --verbose \
@@ -123,10 +123,15 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""
 
 echo "Add admin user public SSH key to VM1"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_1" --username "$vmAdminUsername" --ssh-key-value "$vmDeploySshPublicKey"
+	-n "$VM_NAME_IMG_SRC_1" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
 
 echo "Add admin user public SSH key to VM2"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_2" --username "$vmAdminUsername" --ssh-key-value "$vmDeploySshPublicKey"
+	-n "$VM_NAME_IMG_SRC_2" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
 
 echo "Source VMs deployed"
+
+echo "See this file for comments on how to SSH to the deployed source VMs"
+# Some SSH clients will default to a local private key file name of id_rsa. You can override this with the ssh -i argument. Thus:
+# ssh user@fqdn -i ~/.ssh/private_key_file
+# Example: ssh myuser@myvm.eastus2.cloudapp.azure.com -i ~/.ssh/myuserprivatekeyfile
