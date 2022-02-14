@@ -53,13 +53,17 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-NI
 	ipConfigName="$IP_CONFIG_NAME"
 
 
-echo "Retrieve Admin Username and SSH Public Key from Key Vault"
-# Note, while we defined these in step00, THAT is to put them INTO Key Vault in step04.
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
+echo "Retrieve Deployment Username and SSH Public Key from Key Vault"
+vmDeployUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
+vmDeploySshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
+echo $vmDeployUsername
+echo $vmDeploySshPublicKey
 
-#echo $vmAdminUsername | cat -v
-#echo $vmAdminUserSshPublicKey | cat -v
+echo "Retrieve VM Admin Username and SSH Public Key from Key Vault"
+vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
+vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
+echo $vmAdminUsername
+echo $vmAdminSshPublicKey
 
 echo "Deploy Source VM 1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""$LOCATION" --verbose \
@@ -74,8 +78,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""
 	sku="$OS_SKU_IMG_SRC_1" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminUserSshPublicKey" \
+	adminUsername="$vmDeployUsername" \
+	adminSshPublicKey="$vmDeploySshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
 	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \
@@ -102,8 +106,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""
 	sku="$OS_SKU_IMG_SRC_2" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminUserSshPublicKey" \
+	adminUsername="$vmDeployUsername" \
+	adminSshPublicKey="$vmDeploySshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
 	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \
@@ -117,14 +121,12 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""
 	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
 	networkInterfaceName="$VM_NIC_NAME_IMG_SRC_2"
 
-echo "Add real admin user public SSH key to VM1"
+echo "Add admin user public SSH key to VM1"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_1" --username "$vmNewAdminUsername" --ssh-key-value "$vmNewAdminUserSshPublicKey"
+	-n "$VM_NAME_IMG_SRC_1" --username "$vmAdminUsername" --ssh-key-value "$vmDeploySshPublicKey"
 
-echo "Add real admin user public SSH key to VM2"
+echo "Add admin user public SSH key to VM2"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_2" --username "$vmNewAdminUsername" --ssh-key-value "$vmNewAdminUserSshPublicKey"
-
-
+	-n "$VM_NAME_IMG_SRC_2" --username "$vmAdminUsername" --ssh-key-value "$vmDeploySshPublicKey"
 
 echo "Source VMs deployed"

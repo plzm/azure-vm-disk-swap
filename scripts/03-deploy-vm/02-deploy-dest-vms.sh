@@ -33,12 +33,11 @@ then
 	uamiResourceId=$(echo "$(az identity show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SECURITY"" --name ""$USERNAME_UAMI"" -o tsv --query 'id')" | sed "s/\r//")
 fi
 
-echo "Retrieve Admin Username and SSH Public Key from Key Vault"
-# Note, while we defined these in step00, THAT was just to put them INTO Key Vault in step04.
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
+echo "Retrieve VM Admin Username and SSH Public Key from Key Vault - this is NOT the deploy user, this is the actual VM admin, as this VM is being deployed with a functional OS and not to just generalize to an image"
+vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
+vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
 
-echo "Deploy VM with initial OS - 1"
+echo "Deploy VM with initial OS"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-""$LOCATION" --verbose \
 	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
 	--parameters \
@@ -52,7 +51,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-""$LOCATION
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
 	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminUserSshPublicKey" \
+	adminSshPublicKey="$vmAdminSshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskName="$VM_DEPLOY_1_OS_DISK_NAME_1" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \

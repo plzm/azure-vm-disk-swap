@@ -42,8 +42,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "KV-VM-Admin-Pub
 # need to be written to Key Vault. Determine whether the private key should be persisted to Key Vault based on your circumstances and constraints.
 
 sshKeyName="ssh-vm-deploy"
-sshKeyType="ecdsa"
-sshKeyBits=521
+sshKeyType="rsa"
+sshKeyBits=2048
 sshKeyPassphrase="" # Use blank for convenience here as SSH key will be short-lived
 sshPublicKeyUsername="$DEPLOYMENT_SSH_USER_NAME"
 
