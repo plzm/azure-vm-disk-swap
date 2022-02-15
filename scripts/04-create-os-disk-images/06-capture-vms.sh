@@ -11,45 +11,61 @@
 # See ../05-switch-os-disks/05-prep-data-disks.sh for helper script.
 # ##################################################
 
-# Uncomment the following az vm start commands and the sleep command if you are starting from deallocated source VMs
-#echo "Start Source VM1"
-#az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
+doTheSsh() {
+  cmd=$1
 
-#echo "Start Source VM2"
-#az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
+  code=1
+  while [ $code -gt 0 ]
+  do
+    eval $cmd
+    code=$?
 
-echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
-sleep 600
+    if [[ $code -gt 0 ]]
+    then
+      echo $code
+      echo "Wait 10 seconds, then retry"
+      sleep 10
+    fi
+  done
+}
 
 
-echo "Get source VM1 Resource ID"
+echo "Start Source VMs"
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
+
+
+echo "Get source VM Resource IDs"
 vm1Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_NAME_IMG_SRC_1" -o tsv --query "id")" | sed "s/\r//")
-
-echo "Get source VM2 Resource ID"
 vm2Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_NAME_IMG_SRC_2" -o tsv --query "id")" | sed "s/\r//")
 
 
-echo "Get source VM1 FQDN"
+echo "Get source VM FQDNs"
 srcVm1Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-
-echo "Clean out existing source VM1 entry from known_hosts, if any, to avoid warnings/strict key validation fail."
-ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm1Fqdn"
-
-echo "Add source VM1 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
-if [ -z "$(ssh-keygen -F $srcVm1Fqdn)" ]; then
-  ssh-keyscan -H $srcVm1Fqdn >> ~/.ssh/known_hosts
-fi
-
-
-echo "Get source VM2 FQDN"
 srcVm2Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 
-echo "Clean out existing source VM2 entry from known_hosts, if any, to avoid warnings/strict key validation fail."
+
+echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
+ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm1Fqdn"
 ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm2Fqdn"
 
-echo "Add source VM2 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
-if [ -z "$(ssh-keygen -F $srcVm2Fqdn)" ]; then
-  ssh-keyscan -H $srcVm2Fqdn >> ~/.ssh/known_hosts
+
+if [ -z "$(ssh-keygen -F $srcVm1Fqdn)" ]
+then
+  echo "Add source VM1 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+
+  sshKeyScanCmd="ssh-keyscan -H ""$srcVm1Fqdn"" >> ~/.ssh/known_hosts"
+
+  doTheSsh "$sshKeyScanCmd"
+fi
+
+if [ -z "$(ssh-keygen -F $srcVm2Fqdn)" ]
+then
+  echo "Add source VM2 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+
+  sshKeyScanCmd="ssh-keyscan -H ""$srcVm2Fqdn"" >> ~/.ssh/known_hosts"
+
+  doTheSsh "$sshKeyScanCmd"
 fi
 
 
@@ -61,26 +77,19 @@ remoteCmdVm="'sudo mkdir /plzm_was_here; sudo deluser --remove-home ""$DEPLOYMEN
 fullCmdVm1="${sshToVm1} ${remoteCmdVm}"
 fullCmdVm2="${sshToVm2} ${remoteCmdVm}"
 
-echo $fullCmdVm1
-eval $fullCmdVm1
-
-echo $fullCmdVm2
-eval $fullCmdVm2
+doTheSsh "$fullCmdVm1"
+doTheSsh "$fullCmdVm2"
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_deallocate
-echo "Deallocate Source VM1"
+echo "Deallocate Source VMs"
 az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
-
-echo "Deallocate Source VM2"
 az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_generalize
-echo "Generalize Source VM1"
+echo "Generalize Source VMs"
 az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
-
-echo "Generalize Source VM2"
 az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
 
