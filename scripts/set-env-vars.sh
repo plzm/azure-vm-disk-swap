@@ -81,8 +81,8 @@ export KEYVAULT_SKU_NAME="Standard"
 export KEYVAULT_NAME="kv-""$resourceNamingInfix""-""$LOCATION"
 
 # Network
-export NSG_NAME="vm-test-nsg-""$LOCATION"
-export VNET_NAME="vm-test-vnet-""$LOCATION"
+export NSG_NAME="vm-nsg-""$LOCATION"
+export VNET_NAME="vm-vnet-""$LOCATION"
 export VNET_PREFIX="10.4.0.0/16"
 export SUBNET_NAME="subnet1"
 export SUBNET_PREFIX="10.4.1.0/24"
@@ -146,7 +146,7 @@ export PROVISION_VM_AGENT="true"
 export VM_SIZE="Standard_D4s_v3"
 
 export VM_PUBLIC_IP_TYPE="Static" # Static or Dynamic - Standard SKU requires Static
-export VM_PUBLIC_IP_SKU="Basic" # Basic or Standard
+export VM_PUBLIC_IP_SKU="Standard" # Basic or Standard
 
 export PRIVATE_IP_ALLOCATION_METHOD="Dynamic"
 export IP_CONFIG_NAME="ipConfig1"
