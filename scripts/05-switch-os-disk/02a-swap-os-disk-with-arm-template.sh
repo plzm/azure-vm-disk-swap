@@ -6,7 +6,7 @@ vmOsDiskId2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAM
 vmOsDiskId3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")" | sed "s/\r//")
 
 echo "Set the resource ID of the OS disk to swap TO"
-newVmOsDiskId=$vmOsDiskId2
+newVmOsDiskId=$vmOsDiskId1
 
 echo "Deallocate the existing VM so we can swap in a different OS disk"
 az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_DEPLOY_1" --verbose
@@ -18,12 +18,11 @@ then
 fi
 
 echo "Retrieve Admin Username and SSH Public Key from Key Vault"
-# Note, while we defined these in step00, THAT was just to put them INTO Key Vault in step04.
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
+vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
+vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
 
 echo "VM ARM template to update the OS disk"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM3-""$LOCATION" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_NAME_DEPLOY_1""-OS-DISK" --verbose \
 	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \

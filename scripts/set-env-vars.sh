@@ -145,7 +145,7 @@ export VM_ENABLE_ACCELERATED_NETWORKING="true" # This is not supported for all V
 export PROVISION_VM_AGENT="true"
 export VM_SIZE="Standard_D4s_v3"
 
-export VM_PUBLIC_IP_TYPE="Dynamic" # Static or Dynamic - Standard SKU requires Static
+export VM_PUBLIC_IP_TYPE="Static" # Static or Dynamic - Standard SKU requires Static
 export VM_PUBLIC_IP_SKU="Basic" # Basic or Standard
 
 export PRIVATE_IP_ALLOCATION_METHOD="Dynamic"

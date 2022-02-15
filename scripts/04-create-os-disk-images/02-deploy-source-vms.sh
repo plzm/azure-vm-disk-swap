@@ -121,11 +121,11 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""
 	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
 	networkInterfaceName="$VM_NIC_NAME_IMG_SRC_2"
 
-echo "Add admin user public SSH key to VM1"
+echo "Add admin user and public SSH key to VM1"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
 	-n "$VM_NAME_IMG_SRC_1" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
 
-echo "Add admin user public SSH key to VM2"
+echo "Add admin user and public SSH key to VM2"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
 	-n "$VM_NAME_IMG_SRC_2" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
 

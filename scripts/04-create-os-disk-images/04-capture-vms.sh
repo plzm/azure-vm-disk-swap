@@ -4,14 +4,11 @@
 # IMPORTANT DO NOT SKIP THIS - READ THIS!!!!
 # This script automatically generalizes the VMs. You do NOT need to do this manually. However! It is still a good idea for you to read step 1 here:
 # https://docs.microsoft.com/azure/virtual-machines/linux/capture-image
-# If you are running this script in an environment (e.g. build agent) where you do not and cannot have the SSH private key corresponding to the SSH public key
-# on the VMs you are generalizing, then you MUST do step 1 at the link above manually.
-# ##################################################
-# DID YOU READ THE ABOVE? YOU REALLY SHOULD.
 # ##################################################
 # NOTE The following will fail if you generalized a VM with data disks > 1023 GB. If you have data disks > 1023 GB,
 # detach the data disks before generalizing and proceeding. You will need to modify later steps to detach data disks
 # before OS disk swap, then swap OS disk, then re-attach large data disks.
+# See ../05-switch-os-disks/05-prep-data-disks.sh for helper script.
 # ##################################################
 
 
@@ -22,7 +19,7 @@ echo "Start Source VM2"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
 echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
-sleep 300
+sleep 600
 
 
 echo "Get source VM1 Resource ID"
@@ -43,6 +40,7 @@ if [ -z "$(ssh-keygen -F $srcVm1Fqdn)" ]; then
   ssh-keyscan -H $srcVm1Fqdn >> ~/.ssh/known_hosts
 fi
 
+
 echo "Get source VM2 FQDN"
 srcVm2Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 
@@ -59,15 +57,25 @@ echo "Connect to VMs and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
-remotecmd="'sudo mkdir /kilroy_was_here; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+remotecmd="'sudo mkdir /plzm_was_here; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
 fullCmdVm1="${sshToVm1} ${remotecmd}"
 fullCmdVm2="${sshToVm2} ${remotecmd}"
 
-#echo $fullCmdVm1
+echo $fullCmdVm1
 eval $fullCmdVm1
 
-#echo $fullCmdVm2
+echo $fullCmdVm2
 eval $fullCmdVm2
+
+
+# https://docs.microsoft.com/cli/azure/vm/user?view=azure-cli-latest#az-vm-user-delete
+echo "Delete Deployment User from Source VM1 before generalizing"
+az vm user delete --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
+	-n "$VM_NAME_IMG_SRC_1" --username "$DEPLOYMENT_SSH_USER_NAME"
+
+echo "Delete Deployment User from Source VM2 before generalizing"
+az vm user delete --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
+	-n "$VM_NAME_IMG_SRC_2" --username "$DEPLOYMENT_SSH_USER_NAME"
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_deallocate
