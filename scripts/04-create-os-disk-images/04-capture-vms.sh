@@ -12,14 +12,14 @@
 # ##################################################
 
 
-echo "Start Source VM1"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
+#echo "Start Source VM1"
+#az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
 
-echo "Start Source VM2"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
+#echo "Start Source VM2"
+#az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
-echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
-sleep 600
+#echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
+#sleep 600
 
 
 echo "Get source VM1 Resource ID"
@@ -57,9 +57,10 @@ echo "Connect to VMs and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
-remotecmd="'sudo mkdir /plzm_was_here; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
-fullCmdVm1="${sshToVm1} ${remotecmd}"
-fullCmdVm2="${sshToVm2} ${remotecmd}"
+remoteCmdVm1="'sudo mkdir /i_am_2004; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+remoteCmdVm2="'sudo mkdir /i_am_2110; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+fullCmdVm1="${sshToVm1} ${remoteCmdVm1}"
+fullCmdVm2="${sshToVm2} ${remoteCmdVm2}"
 
 echo $fullCmdVm1
 eval $fullCmdVm1

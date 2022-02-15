@@ -8,4 +8,4 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "KV-""$LOCATION"
 	tenantId="$TENANT_ID" \
 	keyVaultName="$KEYVAULT_NAME" \
 	skuName="$KEYVAULT_SKU_NAME" \
-	enableSoftDelete="false"
+	enableSoftDelete="$KEYVAULT_SOFT_DELETE"

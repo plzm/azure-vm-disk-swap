@@ -79,6 +79,7 @@ export USERNAME_UAMI="$resourceNamingInfix""-vm-uami-""$LOCATION"
 # Key Vault
 export KEYVAULT_SKU_NAME="Standard"
 export KEYVAULT_NAME="kv-""$resourceNamingInfix""-""$LOCATION"
+export KEYVAULT_SOFT_DELETE="false"
 
 # Network
 export NSG_NAME="vm-nsg-""$LOCATION"
