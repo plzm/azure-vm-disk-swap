@@ -25,4 +25,19 @@ remoteCmdVm="'touch i_was_here_0.txt'" # Of course you can modify this remote cm
 fullCmdVm="${sshToVm} ${remoteCmdVm}"
 
 echo $fullCmdVm
-eval $fullCmdVm
+
+code=1
+while [ $code -gt 0 ]
+do
+  eval $fullCmdVm
+  code=$?
+
+  if [[ $code -gt 0 ]]
+  then
+    echo $code
+    echo "Wait 10 seconds, then retry"
+    sleep 10
+  fi
+done
+
+echo "SSH done"

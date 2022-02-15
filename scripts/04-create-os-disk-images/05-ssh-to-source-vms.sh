@@ -30,8 +30,31 @@ remoteCmdVm2="'touch i_was_here_2.txt'" # Of course you can modify this remote c
 fullCmdVm1="${sshToVm1} ${remoteCmdVm1}"
 fullCmdVm2="${sshToVm2} ${remoteCmdVm2}"
 
-echo $fullCmdVm1
-eval $fullCmdVm1
+doTheSsh "VM1" "$fullCmdVm1"
+doTheSsh "VM2" "$fullCmdVm2"
 
-echo $fullCmdVm2
-eval $fullCmdVm2
+doTheSsh() {
+  vmName=$1
+  cmd=$2
+
+  echo $vmName
+  echo $cmd
+
+  code=1
+  while [ $code -gt 0 ]
+  do
+    eval $1
+    code=$?
+
+    if [[ $code -gt 0 ]]
+    then
+      echo $code
+      echo "Wait 10 seconds, then retry"
+      sleep 10
+    fi
+  done
+
+  echo "SSH to ""$vmName"" done"
+}
+
+
