@@ -121,17 +121,4 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-2-""
 	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
 	networkInterfaceName="$VM_NIC_NAME_IMG_SRC_2"
 
-echo "Add admin user and public SSH key to VM1"
-az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_1" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
-
-echo "Add admin user and public SSH key to VM2"
-az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_2" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
-
 echo "Source VMs deployed"
-
-echo "See this file for comments on how to SSH to the deployed source VMs"
-# Some SSH clients will default to a local private key file name of id_rsa. You can override this with the ssh -i argument. Thus:
-# ssh user@fqdn -i ~/.ssh/private_key_file
-# Example: ssh myuser@myvm.eastus2.cloudapp.azure.com -i ~/.ssh/myuserprivatekeyfile

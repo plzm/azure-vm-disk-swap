@@ -11,15 +11,15 @@
 # See ../05-switch-os-disks/05-prep-data-disks.sh for helper script.
 # ##################################################
 
-
+# Uncomment the following az vm start commands and the sleep command if you are starting from deallocated source VMs
 #echo "Start Source VM1"
 #az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_1" --verbose
 
 #echo "Start Source VM2"
 #az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_NAME_IMG_SRC_2" --verbose
 
-#echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
-#sleep 600
+echo "Sleep to allow time for VMs to finish starting as we will scan VM SSH keys below, which requires VM to be reachable"
+sleep 600
 
 
 echo "Get source VM1 Resource ID"
@@ -53,30 +53,19 @@ if [ -z "$(ssh-keygen -F $srcVm2Fqdn)" ]; then
 fi
 
 
-echo "Connect to VMs and execute deprovision command"
+echo "Connect to VMs, leave graffiti, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
-remoteCmdVm1="'sudo mkdir /i_am_2004; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
-remoteCmdVm2="'sudo mkdir /i_am_2110; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
-fullCmdVm1="${sshToVm1} ${remoteCmdVm1}"
-fullCmdVm2="${sshToVm2} ${remoteCmdVm2}"
+remoteCmdVm="'sudo mkdir /plzm_was_here; sudo deluser --remove-home ""$DEPLOYMENT_SSH_USER_NAME""; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+fullCmdVm1="${sshToVm1} ${remoteCmdVm}"
+fullCmdVm2="${sshToVm2} ${remoteCmdVm}"
 
 echo $fullCmdVm1
 eval $fullCmdVm1
 
 echo $fullCmdVm2
 eval $fullCmdVm2
-
-
-# https://docs.microsoft.com/cli/azure/vm/user?view=azure-cli-latest#az-vm-user-delete
-echo "Delete Deployment User from Source VM1 before generalizing"
-az vm user delete --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_1" --username "$DEPLOYMENT_SSH_USER_NAME"
-
-echo "Delete Deployment User from Source VM2 before generalizing"
-az vm user delete --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_2" --username "$DEPLOYMENT_SSH_USER_NAME"
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_deallocate

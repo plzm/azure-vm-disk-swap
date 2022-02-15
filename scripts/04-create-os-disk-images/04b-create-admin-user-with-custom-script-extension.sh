@@ -30,11 +30,20 @@ sudo echo \"""$vmAdminSshUserName""	ALL=(ALL)	NOPASSWD: ALL\" > /etc/sudoers.d/0
 
 # TODO - Ubuntu version of above script - will need to change the usermod line to make new user an admin
 
-echo "Create a new admin user"
+echo "Add admin user and public SSH key to VM1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript-""$LOCATION" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
-	virtualMachineName="$VM_NAME_DEPLOY_1" \
+	virtualMachineName="$VM_NAME_IMG_SRC_1" \
+	script="$script" \
+	managedIdentity="$uamiPrincipalId"
+
+echo "Add admin user and public SSH key to VM2"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript-""$LOCATION" --verbose \
+	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
+	--parameters \
+	location="$LOCATION" \
+	virtualMachineName="$VM_NAME_IMG_SRC_1" \
 	script="$script" \
 	managedIdentity="$uamiPrincipalId"

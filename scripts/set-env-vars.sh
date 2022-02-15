@@ -37,6 +37,7 @@ export DEPLOYMENT_SSH_KEY_PASSPHRASE="" # Use blank for convenience here as depl
 
 # VM Admin username - what a VM user would use eventually to work with a VM
 export VM_ADMIN_SSH_USER_NAME="pelazem"
+export VM_ADMIN_SSH_USER_KEY_NAME="id_rsa"
 # VM_ADMIN_SSH_PUBLIC_KEY # Placeholder - not set here
 
 # Key Vault Secret NAMES of the secrets whose actual VALUES you write to or retrieve from Key Vault
