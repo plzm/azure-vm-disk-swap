@@ -14,13 +14,13 @@
 doTheSsh() {
   cmd=$1
 
-  code=1
-  while [ $code -gt 0 ]
+  code=2
+  while [ $code -eq 2 ]
   do
     eval $cmd
     code=$?
 
-    if [[ $code -gt 0 ]]
+    if [[ $code -eq 2 ]]
     then
       echo $code
       echo "Wait 10 seconds, then retry"
