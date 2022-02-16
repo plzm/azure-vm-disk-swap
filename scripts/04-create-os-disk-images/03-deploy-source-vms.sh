@@ -59,12 +59,6 @@ vmDeploySshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIP
 #echo $vmDeployUsername | cat -v
 #echo $vmDeploySshPublicKey | cat -v
 
-echo "Retrieve VM Admin Username and SSH Public Key from Key Vault"
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
-#echo $vmAdminUsername | cat -v
-#echo $vmAdminSshPublicKey | cat -v
-
 echo "Deploy Source VM 1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "IMG-SRC-VM-1-""$LOCATION" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \

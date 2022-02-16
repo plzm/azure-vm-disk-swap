@@ -51,8 +51,8 @@ fi
 sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 
-remoteCmdVm1="'touch i_was_here_1.txt'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
-remoteCmdVm2="'touch i_was_here_2.txt'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+remoteCmdVm1="'touch i_was_here_1.txt; sudo mkdir /plzm_was_here;'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+remoteCmdVm2="'touch i_was_here_2.txt; sudo mkdir /plzm_was_here;'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
 
 fullCmdVm1="${sshToVm1} ${remoteCmdVm1}"
 fullCmdVm2="${sshToVm2} ${remoteCmdVm2}"

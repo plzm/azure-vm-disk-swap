@@ -14,13 +14,13 @@
 doTheSsh() {
   cmd=$1
 
-  code=2
-  while [ $code -eq 2 ]
+  code=1
+  while [ $code -gt 0 ]
   do
     eval $cmd
     code=$?
 
-    if [[ $code -eq 2 ]]
+    if [[ $code -gt 0 ]]
     then
       echo $code
       echo "Wait 10 seconds, then retry"
@@ -73,11 +73,14 @@ echo "Connect to VMs, leave graffiti, delete deployment user, and execute deprov
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm1Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$srcVm2Fqdn -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
-remoteCmdVm="'sudo mkdir /plzm_was_here; sudo deluser --remove-home ""$DEPLOYMENT_SSH_USER_NAME""; sudo waagent -deprovision -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+remoteCmdVm="'touch i_was_here.txt; sudo mkdir /plzm_was_here; sudo waagent -deprovision+user -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning # sudo deluser --force --remove-home ""$DEPLOYMENT_SSH_USER_NAME""; 
 fullCmdVm1="${sshToVm1} ${remoteCmdVm}"
 fullCmdVm2="${sshToVm2} ${remoteCmdVm}"
 
+echo "Prepare VM1"
 doTheSsh "$fullCmdVm1"
+echo ""
+echo "Prepare VM2"
 doTheSsh "$fullCmdVm2"
 
 

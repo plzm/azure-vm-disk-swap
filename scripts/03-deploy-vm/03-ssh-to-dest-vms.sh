@@ -42,7 +42,7 @@ fi
 
 sshToVm="ssh -t $vmAdminUsername@$destVmFqdn -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
 
-remoteCmdVm="'touch i_was_here_0.txt'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
+remoteCmdVm="'touch i_was_here_0.txt; sudo mkdir /plzm_was_here_0;'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
 
 fullCmdVm="${sshToVm} ${remoteCmdVm}"
 
