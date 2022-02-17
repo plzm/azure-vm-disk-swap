@@ -10,6 +10,6 @@
 
 #./05-ssh-to-source-vms.sh
 
-./06-capture-vms.sh
+#./06-capture-vms.sh
 
-./07-cleanup.sh
+#./07-cleanup.sh
