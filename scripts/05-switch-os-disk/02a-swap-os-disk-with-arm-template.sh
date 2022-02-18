@@ -3,7 +3,7 @@
 echo "Get the resource IDs of the OS disks"
 vmOsDiskId1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_1" -o tsv --query "id")" | sed "s/\r//")
 vmOsDiskId2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_2" -o tsv --query "id")" | sed "s/\r//")
-#vmOsDiskId3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")" | sed "s/\r//")
+vmOsDiskId3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_DEPLOY_1_OS_DISK_NAME_3" -o tsv --query "id")" | sed "s/\r//")
 
 echo "Set the resource ID of the OS disk to swap TO"
 newVmOsDiskId=$vmOsDiskId2

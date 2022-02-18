@@ -8,8 +8,8 @@
 
 ./04a-create-admin-user-with-azure-cli.sh
 
-#./05-ssh-to-source-vms.sh
+./05-prepare-vms-for-capture.sh
 
-#./06-capture-vms.sh
+./06-capture-vms.sh
 
-#./07-cleanup.sh
+./07-cleanup.sh

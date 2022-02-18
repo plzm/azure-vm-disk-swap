@@ -27,9 +27,11 @@ vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPT
 # Example: ssh myuser@myvm.eastus2.cloudapp.azure.com -i ~/.ssh/myuserprivatekeyfile
 
 destVmFqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PIP_NAME_DEPLOY_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+destVmPublicIpAddress=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PIP_NAME_DEPLOY_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-# Clean out existing FQDNs from known hosts
+# Clean out existing FQDNs and public IPs from known hosts
 ssh-keygen -f ~/.ssh/known_hosts -R "$destVmFqdn"
+ssh-keygen -f ~/.ssh/known_hosts -R "$destVmPublicIpAddress"
 
 if [ -z "$(ssh-keygen -F $destVmFqdn)" ]
 then

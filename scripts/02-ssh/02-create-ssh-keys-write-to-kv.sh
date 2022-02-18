@@ -41,10 +41,14 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "KV-VM-Admin-Pub
 # If the deployment SSH key will ONLY be used in a single context - e.g. a single pipeline execution - and will not be needed again later, the private key does not
 # need to be written to Key Vault. Determine whether the private key should be persisted to Key Vault based on your circumstances and constraints.
 
-# Clean up existing key files here, if any
+# Clean up existing key files, if any
 delCmd="rm ./""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
-#echo $delCmd
+echo $delCmd
 eval $delCmd
+delCmd="rm ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
+echo $delCmd
+eval $delCmd
+
 
 # Generate new public and private key pair and write the files here
 ssh-keygen -q -m "PEM" -f "./""$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
