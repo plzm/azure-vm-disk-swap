@@ -6,6 +6,6 @@
 
 ./03-deploy-key-vault.sh
 
-#./04-deploy-network.sh
+./04-deploy-network.sh
 
 ./05-deploy-sig.sh
