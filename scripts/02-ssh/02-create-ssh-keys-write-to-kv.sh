@@ -3,14 +3,6 @@
 # Set Key Vault Secret expiration date to 1 year from today - adjust as needed
 expirationDate="$(date +%s -d "$(date) + 1 year")"
 
-# VM Admin user SSH public key - we assume we are provided ONLY a public key, not the private key, and that it is generated and managed outside this context.
-# We use this to enable a deployed VM to be logged into and used by the user account whose public SSH key this is.
-# This SSH key is not used in this context to log into the VM. It's added to the VM for eventual use by this user account.
-# It's hard-coded here but of course if this is stored in the Key Vault used elsewhere here, you can just retrieve it from there at this point.
-vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
-VM_ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$VM_ADMIN_SSH_USER_NAME"
-#echo $VM_ADMIN_SSH_PUBLIC_KEY
-
 #echo "Write VM Admin Username to Key Vault"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "KV-VM-Admin-Username" --verbose \
 	-g "$RG_NAME_SECURITY" --template-uri "$TEMPLATE_KEYVAULT_SECRET" \

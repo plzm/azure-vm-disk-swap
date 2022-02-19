@@ -5,8 +5,8 @@ az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_SOURCE" --yes --v
 
 #echo "Delete Image Definition for src VM - 1"
 #az sig image-definition delete --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" --verbose \
-#	-r "$SIG_NAME" --gallery-image-definition "$VM_IMG_DEFINITION_IMG_SRC_1"
+#	-r "$SIG_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V2"
 
 #echo "Delete Image Definition for src VM - 2"
 #az sig image-definition delete --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" --verbose \
-#	-r "$SIG_NAME" --gallery-image-definition "$VM_IMG_DEFINITION_IMG_SRC_2"
+#	-r "$SIG_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V3"

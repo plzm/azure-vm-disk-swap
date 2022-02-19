@@ -6,8 +6,8 @@ vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPT
 
 echo "Add admin user and public SSH key to VM1"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_1" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
+	-n "$VM_SRC_NAME_V2" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
 
 echo "Add admin user and public SSH key to VM2"
 az vm user update --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --verbose \
-	-n "$VM_NAME_IMG_SRC_2" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"
+	-n "$VM_SRC_NAME_V3" --username "$vmAdminUsername" --ssh-key-value "$vmAdminSshPublicKey"

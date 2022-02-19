@@ -26,23 +26,23 @@ vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPT
 # ssh user@fqdn -i ~/.ssh/private_key_file
 # Example: ssh myuser@myvm.eastus2.cloudapp.azure.com -i ~/.ssh/myuserprivatekeyfile
 
-destVmFqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PIP_NAME_DEPLOY_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-destVmPublicIpAddress=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PIP_NAME_DEPLOY_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnPeriod1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_NAME_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpPeriod1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 # Clean out existing FQDNs and public IPs from known hosts
-ssh-keygen -f ~/.ssh/known_hosts -R "$destVmFqdn"
-ssh-keygen -f ~/.ssh/known_hosts -R "$destVmPublicIpAddress"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnPeriod1"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpPeriod1"
 
-if [ -z "$(ssh-keygen -F $destVmFqdn)" ]
+if [ -z "$(ssh-keygen -F $vmFqdnPeriod1)" ]
 then
   echo "Add dest VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -H ""$destVmFqdn"" >> ~/.ssh/known_hosts"
+  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnPeriod1"" >> ~/.ssh/known_hosts"
 
   doTheSsh "$sshKeyScanCmd"
 fi
 
-sshToVm="ssh -t $vmAdminUsername@$destVmFqdn -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
+sshToVm="ssh -t $vmAdminUsername@$vmFqdnPeriod1 -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
 
 remoteCmdVm="'touch i_was_here_0.txt; sudo mkdir /plzm_was_here_0;'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning
 

@@ -21,6 +21,13 @@ templateRootUri="https://raw.githubusercontent.com/plzm/azure-deploy/main/templa
 # Use this to choose local or remote templates
 templateRoot=$templateRootUri # We will use remote template files via --template-uri
 
+# Suffixes for three VM versions - we'll deploy with 1 and prepare images for 2 and 3. Then all three will be swappable.
+# This simulates starting with a deployed VM and wanting to swap between its initial OS disk and additional disks created from images.
+# Here we just use suffixes for months - current, then next month, then next month after that. You can swap in your own versioning scheme.
+suffixVersion1=$(date +"%Y%m")
+suffixVersion2=$(date -d "+1 month" +"%Y%m")
+suffixVersion3=$(date -d "+2 months" +"%Y%m")
+
 # ##################################################
 
 # ##################################################
@@ -38,7 +45,13 @@ export DEPLOYMENT_SSH_KEY_PASSPHRASE="" # Use blank for convenience here as depl
 # VM Admin username - what a VM user would use eventually to work with a VM
 export VM_ADMIN_SSH_USER_NAME="pelazem"
 export VM_ADMIN_SSH_USER_KEY_NAME="id_rsa"
-# VM_ADMIN_SSH_PUBLIC_KEY # Placeholder - not set here
+# VM Admin user SSH public key - we assume we are provided ONLY a public key, not the private key, and that it is generated and managed outside this context.
+# We use this to enable a deployed VM to be logged into and used by the user account whose public SSH key this is.
+# This SSH key is not used in this context to log into the VM. It's added to the VM for eventual use by this user account.
+# It's hard-coded here but of course if this is stored in the Key Vault used elsewhere here, you can just retrieve it from there at this point.
+vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
+export VM_ADMIN_SSH_PUBLIC_KEY="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$VM_ADMIN_SSH_USER_NAME"
+
 
 # Key Vault Secret NAMES of the secrets whose actual VALUES you write to or retrieve from Key Vault
 export KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME="vm-deploy-ssh-user-name"
@@ -119,31 +132,34 @@ export OS_STATE="Generalized"
 # ##################################################
 # Three VM OS blocks are provided.
 # All three OS disks are swappable.
-# ##################################################
-export OS_PUBLISHER_DEPLOY_1="Canonical"
-export OS_OFFER_DEPLOY_1="UbuntuServer"
-export OS_SKU_DEPLOY_1="18.04-LTS"
-
-export OS_PUBLISHER_IMG_SRC_1="Canonical"
-export OS_OFFER_IMG_SRC_1="0001-com-ubuntu-server-focal"
-export OS_SKU_IMG_SRC_1="20_04-lts"
-
-export OS_PUBLISHER_IMG_SRC_2="Canonical"
-export OS_OFFER_IMG_SRC_2="0001-com-ubuntu-server-impish"
-export OS_SKU_IMG_SRC_2="21_10"
+# We use three OSes for the three versions here, but of course you can just use the same OS across your versions.
+# I swap OSes here to also show how to vary OS offer and SKU. Totally optional, feel free to stick with your one happy OS across many image versions.
 # ##################################################
 # az vm image list-skus -l $LOCATION --publisher RedHat --offer RHEL -o tsv --query '[].name'
-#export OS_PUBLISHER_DEPLOY_1="RedHat"
-#export OS_OFFER_DEPLOY_1="RHEL"
-#export OS_SKU_DEPLOY_1="8_3"
+# ##################################################
+export OS_PUBLISHER_1="Canonical"
+export OS_OFFER_1="UbuntuServer"
+export OS_SKU_1="18.04-LTS"
 
-#export OS_PUBLISHER_IMG_SRC_1="RedHat"
-#export OS_OFFER_IMG_SRC_1="RHEL"
-#export OS_SKU_IMG_SRC_1="8_4"
+export OS_PUBLISHER_2="Canonical"
+export OS_OFFER_2="0001-com-ubuntu-server-focal"
+export OS_SKU_2="20_04-lts"
 
-#export OS_PUBLISHER_IMG_SRC_2="RedHat"
-#export OS_OFFER_IMG_SRC_2="RHEL"
-#export OS_SKU_IMG_SRC_2="8_5"
+export OS_PUBLISHER_3="Canonical"
+export OS_OFFER_3="0001-com-ubuntu-server-impish"
+export OS_SKU_3="21_10"
+# ##################################################
+#export OS_PUBLISHER_1="RedHat"
+#export OS_OFFER_1="RHEL"
+#export OS_SKU_1="8_3"
+
+#export OS_PUBLISHER_2="RedHat"
+#export OS_OFFER_2="RHEL"
+#export OS_SKU_2="8_4"
+
+#export OS_PUBLISHER_3="RedHat"
+#export OS_OFFER_3="RHEL"
+#export OS_SKU_3="8_5"
 # ##################################################
 
 export VM_VERSION="latest"
@@ -170,30 +186,29 @@ export VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION="Disabled" # Disabled | Enabled
 export VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL="" # Provide if set enableAutoShutdownNotification="Enabled"
 export VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE=15
 
-# OS upgrade source VMs
-export VM_NAME_IMG_SRC_1="$resourceNamingInfix""-""$osInfix""-src-1"
-export VM_NAME_IMG_SRC_2="$resourceNamingInfix""-""$osInfix""-src-2"
-export VM_PIP_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-pip"
-export VM_PIP_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-pip"
-export VM_NIC_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-nic"
-export VM_NIC_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-nic"
+# Image source VMs - versions 2 and 3
+export VM_SRC_NAME_V2="$resourceNamingInfix""-""$osInfix""-""$suffixVersion2"
+export VM_SRC_NAME_V3="$resourceNamingInfix""-""$osInfix""-""$suffixVersion3"
 
-# Initial deployed VM
-export VM_NAME_DEPLOY_1="$resourceNamingInfix""-""$osInfix""-dep-1"
-export VM_PIP_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-pip"
-export VM_NIC_NAME_DEPLOY_1="$VM_NAME_DEPLOY_1""-nic"
-export VM_DEPLOY_1_OS_DISK_NAME_1="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_DEPLOY_1""-""$OS_OFFER_DEPLOY_1""-""$OS_SKU_DEPLOY_1"
-export VM_DEPLOY_1_OS_DISK_NAME_2="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SRC_1""-""$OS_OFFER_IMG_SRC_1""-""$OS_SKU_IMG_SRC_1"
-export VM_DEPLOY_1_OS_DISK_NAME_3="$VM_NAME_DEPLOY_1""-os-""$OS_PUBLISHER_IMG_SRC_2""-""$OS_OFFER_IMG_SRC_2""-""$OS_SKU_IMG_SRC_2"
+# Deployed VMs
+export VM_NAME_1="$resourceNamingInfix""-""$osInfix""-1"
+export VM_1_OS_DISK_NAME_V1="$VM_NAME_1""-""$suffixVersion1"
+export VM_1_OS_DISK_NAME_V2="$VM_NAME_1""-""$suffixVersion2"
+export VM_1_OS_DISK_NAME_V3="$VM_NAME_1""-""$suffixVersion3"
+
+export VM_NAME_2="$resourceNamingInfix""-""$osInfix""-2"
+export VM_2_OS_DISK_NAME_V1="$VM_NAME_2""-""$suffixVersion1"
+export VM_2_OS_DISK_NAME_V2="$VM_NAME_2""-""$suffixVersion2"
+export VM_2_OS_DISK_NAME_V3="$VM_NAME_2""-""$suffixVersion3"
 
 #SIG
 export SIG_NAME="sig"
 export VM_OS_TYPE="Linux" # Linux | Windows
-export VM_IMG_DEFINITION_IMG_SRC_1="custom-""$osInfix""-""$OS_PUBLISHER_IMG_SRC_1""-""$OS_OFFER_IMG_SRC_1""-""$OS_SKU_IMG_SRC_1"
-export VM_IMG_VERSION_IMG_SRC_1="1.0.0" # Can make this dynamic, maybe tied to date? Instead of hard-coding.
-export VM_IMG_DEFINITION_IMG_SRC_2="custom-""$osInfix""-""$OS_PUBLISHER_IMG_SRC_2""-""$OS_OFFER_IMG_SRC_2""-""$OS_SKU_IMG_SRC_2"
-export VM_IMG_VERSION_IMG_SRC_2="1.0.0" # Can make this dynamic, maybe tied to date? Instead of hard-coding.
+export VM_IMG_DEF_NAME_V2="custom-""$osInfix""-""$OS_PUBLISHER_2""-""$OS_OFFER_2""-""$OS_SKU_2""-""$suffixVersion2"
+export VM_IMG_DEF_VERSION_V2="1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
+export VM_IMG_DEF_NAME_V3="custom-""$osInfix""-""$OS_PUBLISHER_3""-""$OS_OFFER_3""-""$OS_SKU_3""-""$suffixVersion3"
+export VM_IMG_DEF_VERSION_V3="1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
 
-export VM_IMG_NAME_IMG_SRC_1="$VM_NAME_IMG_SRC_1""-image"
-export VM_IMG_NAME_IMG_SRC_2="$VM_NAME_IMG_SRC_2""-image"
+export VM_IMG_NAME_V2="$VM_SRC_NAME_V2""-image"
+export VM_IMG_NAME_V3="$VM_SRC_NAME_V3""-image"
 # ##################################################

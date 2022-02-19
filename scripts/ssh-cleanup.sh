@@ -1,22 +1,22 @@
 #!/bin/bash
 
-srcVm1Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-srcVm1PublicIpAddress=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnPeriod1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_NAME_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpPeriod1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-srcVm2Fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-srcVm2PublicIpAddress=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_PIP_NAME_IMG_SRC_2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnPeriod2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpPeriod2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-destVmFqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PIP_NAME_DEPLOY_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-destVmPublicIpAddress=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PIP_NAME_DEPLOY_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnPeriod3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpPeriod3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm1Fqdn"
-ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm1PublicIpAddress"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnPeriod1"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpPeriod1"
 
-ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm2Fqdn"
-ssh-keygen -f ~/.ssh/known_hosts -R "$srcVm2PublicIpAddress"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnPeriod2"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpPeriod2"
 
-ssh-keygen -f ~/.ssh/known_hosts -R "$destVmFqdn"
-ssh-keygen -f ~/.ssh/known_hosts -R "$destVmPublicIpAddress"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnPeriod3"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpPeriod3"
 
 
 # Cleanup local deployment user SSH keys

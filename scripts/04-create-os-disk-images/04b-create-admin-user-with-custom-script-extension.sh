@@ -35,7 +35,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomSc
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
-	virtualMachineName="$VM_NAME_IMG_SRC_1" \
+	virtualMachineName="$VM_SRC_NAME_V2" \
 	script="$script" \
 	managedIdentity="$uamiPrincipalId"
 
@@ -44,6 +44,6 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomSc
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
-	virtualMachineName="$VM_NAME_IMG_SRC_1" \
+	virtualMachineName="$VM_SRC_NAME_V2" \
 	script="$script" \
 	managedIdentity="$uamiPrincipalId"
