@@ -34,42 +34,36 @@ echo "Start Source VMs"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
 
-
-echo "Get source VM Resource IDs"
-vm1Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_SRC_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
-vm2Id=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_SRC_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
-
-
 echo "Get source VM FQDNs and public IP addresses"
-vmFqdnPeriod2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIpPeriod2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-vmFqdnPeriod3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIpPeriod3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 
 # ##################################################
 echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnPeriod2"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpPeriod2"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnPeriod3"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vvmIpPeriod3"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnV2"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpV2"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnV3"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vvmIpV3"
 
 
-if [ -z "$(ssh-keygen -F $vmFqdnPeriod2)" ]
+if [ -z "$(ssh-keygen -F $vmFqdnV2)" ]
 then
-  echo "Add source VM1 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+  echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnPeriod2"" >> ~/.ssh/known_hosts"
+  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnV2"" >> ~/.ssh/known_hosts"
 
   doTheSsh "$sshKeyScanCmd"
 fi
 
-if [ -z "$(ssh-keygen -F $vmFqdnPeriod3)" ]
+if [ -z "$(ssh-keygen -F $vmFqdnV3)" ]
 then
-  echo "Add source VM2 to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+  echo "Add v3 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnPeriod3"" >> ~/.ssh/known_hosts"
+  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
 
   doTheSsh "$sshKeyScanCmd"
 fi
@@ -79,15 +73,15 @@ fi
 # ##################################################
 echo "Connect to VMs, leave graffiti, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
-sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnPeriod2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
-sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnPeriod3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME" # Uses the deploy user private key set in ../02-ssh/02-create-ssh-keys-write-to-kv.ssh
 remoteCmdVm="'touch i_was_here.txt; sudo mkdir /plzm_was_here; sudo chown -R root:root /plzm_was_here; sudo waagent -deprovision+user -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning # sudo deluser --force --remove-home ""$DEPLOYMENT_SSH_USER_NAME""; 
-fullCmdVm1="${sshToVm1} ${remoteCmdVm}"
-fullCmdVm2="${sshToVm2} ${remoteCmdVm}"
 
-echo "Prepare VM1"
-doTheSsh "$fullCmdVm1"
-echo ""
-echo "Prepare VM2"
-doTheSsh "$fullCmdVm2"
+echo "V2 VM"
+sshToVmV2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+fullCmdVmV2="${sshToVmV2} ${remoteCmdVm}"
+doTheSsh "$fullCmdVmV2"
+
+echo "V3 VM"
+sshToVmV3="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+fullCmdVmV3="${sshToVmV3} ${remoteCmdVm}"
+doTheSsh "$fullCmdVmV3"
 # ##################################################

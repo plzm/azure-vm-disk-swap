@@ -30,8 +30,8 @@ sudo echo \"""$vmAdminSshUserName""	ALL=(ALL)	NOPASSWD: ALL\" > /etc/sudoers.d/0
 
 # TODO - Ubuntu version of above script - will need to change the usermod line to make new user an admin
 
-echo "Add admin user and public SSH key to VM1"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript-""$LOCATION" --verbose \
+echo "Add admin user and public SSH key to v2 VM"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
@@ -39,11 +39,11 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomSc
 	script="$script" \
 	managedIdentity="$uamiPrincipalId"
 
-echo "Add admin user and public SSH key to VM2"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript-""$LOCATION" --verbose \
+echo "Add admin user and public SSH key to v3 VM"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
-	virtualMachineName="$VM_SRC_NAME_V2" \
+	virtualMachineName="$VM_SRC_NAME_V3" \
 	script="$script" \
 	managedIdentity="$uamiPrincipalId"

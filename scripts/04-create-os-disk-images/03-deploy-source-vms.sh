@@ -9,9 +9,9 @@ vmDeploySshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIP
 
 echo "Deploy Source VMs to use for image capture"
 
-echo "Source VM for period 2"
+echo "Source VM v2"
 echo "Public IP"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-P2" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V2" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
@@ -21,7 +21,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-P2" --ve
 	domainNameLabel="$VM_SRC_NAME_V2"
 
 echo "Network Interface"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-P2" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V2" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
@@ -36,7 +36,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-P2" --ve
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "VM"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-P2" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V2" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
@@ -64,9 +64,9 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-P2" --verbos
 	networkInterfaceName="$VM_SRC_NAME_V2"
 
 
-echo "Source VM for period 3"
+echo "Source VM v3"
 echo "Public IP"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-P3" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V3" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
@@ -76,7 +76,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-P3" --ve
 	domainNameLabel="$VM_SRC_NAME_V3"
 
 echo "Network Interface"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-P3" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V3" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
@@ -91,7 +91,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-P3" --ve
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "VM"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-P3" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V3" --verbose \
 	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
