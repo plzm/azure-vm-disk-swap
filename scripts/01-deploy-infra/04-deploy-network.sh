@@ -15,8 +15,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VNet-""$LOCATIO
 	location="$LOCATION" \
 	vnetName="$VNET_NAME" \
 	vnetPrefix="$VNET_PREFIX" \
-	enableDdosProtection="false" \
-	enableVmProtection="false"
+	enableDdosProtection="$VNET_ENABLE_DDOS_PROTECTION" \
+	enableVmProtection="$VNET_ENABLE_VM_PROTECTION"
 
 echo "Create Subnet"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VNet-Subnet-""$LOCATION" --verbose \
@@ -27,7 +27,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VNet-Subnet-""$
 	subnetPrefix="$SUBNET_PREFIX" \
 	nsgResourceGroup="$RG_NAME_NET" \
 	nsgName="$NSG_NAME" \
-	serviceEndpoints="" \
-	privateEndpointNetworkPolicies="Enabled" \
-	privateLinkServiceNetworkPolicies="Enabled"
+	serviceEndpoints="$SUBNET_SERVICE_ENDPOINTS" \
+	privateEndpointNetworkPolicies="$SUBNET_PRIVATE_ENDPOINT_NETWORK_POLICIES" \
+	privateLinkServiceNetworkPolicies="$SUBNET_PRIVATE_LINK_NETWORK_POLICIES"
 

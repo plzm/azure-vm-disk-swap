@@ -86,8 +86,13 @@ export KEYVAULT_SOFT_DELETE="false"
 export NSG_NAME="vm-nsg-""$LOCATION"
 export VNET_NAME="vm-vnet-""$LOCATION"
 export VNET_PREFIX="10.4.0.0/16"
+export VNET_ENABLE_DDOS_PROTECTION="Disabled" # Enabled or Disabled
+export VNET_ENABLE_VM_PROTECTION="Disabled" # Enabled or Disabled
 export SUBNET_NAME="subnet1"
 export SUBNET_PREFIX="10.4.1.0/24"
+export SUBNET_SERVICE_ENDPOINTS=""
+export SUBNET_PRIVATE_ENDPOINT_NETWORK_POLICIES="Enabled" # Enabled or Disabled
+export SUBNET_PRIVATE_LINK_NETWORK_POLICIES="Enabled" # Enabled or Disabled
 
 #SIG
 export SIG_NAME="sig"
