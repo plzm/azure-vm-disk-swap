@@ -121,3 +121,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2" --verbose 
 	networkInterfaceName="$VM_NAME_2"
 
 echo "Destination VMs deployed"
+
+
+echo "Deallocate Destination VMs"
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_1" --verbose --no-wait
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_2" --verbose --no-wait
