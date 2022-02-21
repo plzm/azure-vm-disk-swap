@@ -1,0 +1,31 @@
+name: Deploy-Infra
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Azure login
+        if: success()
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Debug
+        if: success()
+        run: |
+          echo ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
+
+      - name: Azure logout
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear
+

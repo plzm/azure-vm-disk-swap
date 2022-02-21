@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Cleanup SSH entries
-./ssh-cleanup.sh
+./cleanup-ssh.sh
 
 # WARNING - this will delete ALL resources in all of these Resource Groups
 az group delete --subscription "$SUBSCRIPTION_ID" -n "$RG_NAME_DEPLOY" --yes --verbose
