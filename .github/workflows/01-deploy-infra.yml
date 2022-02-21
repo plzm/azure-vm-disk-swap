@@ -25,8 +25,7 @@ jobs:
         if: success()
         run: |
           sudo apt install jq -y
-          subId=$(echo "${{ secrets.AZURE_CREDENTIALS }}" | jq -r '.subscriptionId')
-          echo $subId
+          echo "${{ secrets.AZURE_CREDENTIALS }}"
 
       - name: Azure logout
         uses: azure/CLI@v1
