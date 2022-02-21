@@ -71,17 +71,18 @@ fi
 
 
 # ##################################################
-echo "Connect to VMs, leave graffiti, delete deployment user, and execute deprovision command"
+echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
-remoteCmdVm="'touch i_was_here.txt; sudo mkdir /plzm_was_here; sudo chown -R root:root /plzm_was_here; sudo waagent -deprovision+user -force'" # Of course you can modify this remote cmd script to add config or install or other steps as needed before deprovisioning # sudo deluser --force --remove-home ""$DEPLOYMENT_SSH_USER_NAME""; 
+
+remoteCmd=" < remote-cmd.sh"
 
 echo "V2 VM"
 sshToVmV2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-fullCmdVmV2="${sshToVmV2} ${remoteCmdVm}"
+fullCmdVmV2="${sshToVmV2} ${remoteCmd}"
 doTheSsh "$fullCmdVmV2"
 
 echo "V3 VM"
 sshToVmV3="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-fullCmdVmV3="${sshToVmV3} ${remoteCmdVm}"
+fullCmdVmV3="${sshToVmV3} ${remoteCmd}"
 doTheSsh "$fullCmdVmV3"
 # ##################################################
