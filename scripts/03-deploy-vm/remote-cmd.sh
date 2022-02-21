@@ -3,4 +3,6 @@
 
 touch plzm.txt
 
-sudo mkdir /plzm_was_here
+sudo mkdir /patrick_was_here
+
+# Other configuration etc. etc.
