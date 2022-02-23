@@ -10,18 +10,11 @@ jobs:
   set-env-vars:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Azure login
+        if: success()
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set Azure CLI extensions to auto-install
-        if: success()
-        run: |
-          az config set extension.use_dynamic_install=yes_without_prompt
 
       - name: Set Environment Variables
         if: success()
