@@ -1,4 +1,4 @@
-name: Deploy-Infra
+name: 01-Deploy-Infrastructure
 
 on: 
   workflow_dispatch:
@@ -16,16 +16,21 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Install Azure CLI extensions
+      - name: Set Azure CLI extensions to auto-install
         if: success()
         run: |
           az config set extension.use_dynamic_install=yes_without_prompt
 
-      - name: Debug
+      - name: Set Env Vars
         if: success()
         run: |
-          sudo apt install jq -y
-          echo "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          EV1="foo"
+          echo "EV1=$EV1" >> $GITHUB_ENV
+
+      - name: Run Script
+        if: success()
+        run: |
+          ./scripts/test.sh
 
       - name: Azure logout
         uses: azure/CLI@v1
