@@ -6,6 +6,9 @@ jobs:
   set-env-vars:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Azure login
         uses: azure/login@v1
         with:
