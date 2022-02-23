@@ -30,6 +30,7 @@ jobs:
       - name: Run Script
         if: success()
         run: |
+          chmod +x ./scripts/test.sh
           ./scripts/test.sh
 
       - name: Azure logout
