@@ -6,6 +6,6 @@ runs:
     - run: |
         subscriptionName="Sandbox"
 
-        EV1=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
+        EV1=$(echo "$(az account show -s $subscriptionName -o tsv --query 'user.name')" | sed "s/\r//")
         echo "EV1=$EV1" >> $GITHUB_ENV
       shell: bash
