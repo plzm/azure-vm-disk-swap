@@ -1,5 +1,5 @@
 #!/bin/bash
 
 echo "Testing"
-echo ""
-echo $EV1
+echo "EV17"
+echo $EV17
