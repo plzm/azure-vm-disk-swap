@@ -1,0 +1,9 @@
+name: "Set Environment Variables"
+description: "Configures environment variables"
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        EV1="foo3"
+        echo "EV1=$EV1" >> $GITHUB_ENV
+      shell: bash
