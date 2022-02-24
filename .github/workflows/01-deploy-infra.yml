@@ -23,7 +23,9 @@ jobs:
 
       - name: Set Environment Variables
         if: success()
-        uses: ./.github/actions/set-env-vars
+        run: |
+          chmod +x ./scripts/set-env-vars.gh.sh
+          ./scripts/set-env-vars.gh.sh
 
       - name: Run Script
         if: success()
