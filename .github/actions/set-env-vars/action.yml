@@ -7,5 +7,5 @@ runs:
         subscriptionName="Sandbox"
 
         EV1=$(echo "$(az group show --subscription $subscriptionName -n 'azq' -o tsv --query 'location')" | sed "s/\r//")
-        echo "EV1=$EV1 # test comment" >> $GITHUB_ENV
+        echo "EV1=""$EV1"" # test comment" >> $GITHUB_ENV
       shell: bash
