@@ -4,11 +4,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-set-env-vars:
-    uses: ./.github/workflows/set-env-vars.yml
-    secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-
   deploy:
     runs-on: ubuntu-latest
     needs: call-set-env-vars
