@@ -28,7 +28,7 @@ setEnvVar() {
   varName=$1
   varValue=$2
 
-	if [ ! -z $CI ]
+	if [ ! -z $GITHUB_ENV ]
 	then
 		# We are in GitHub CI environment
 		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
