@@ -6,7 +6,7 @@ getEnvVar() {
 
   varName=$1
 
-	if [ ! -z $CI ]
+	if [ ! -z $GITHUB_ENV ]
 	then
 		# We are in GitHub CI environment
 
@@ -260,7 +260,7 @@ setEnvVar "VM_IMG_NAME_V2" "$(getEnvVar "VM_SRC_NAME_V2")""-image"
 setEnvVar "VM_IMG_NAME_V3" "$(getEnvVar "VM_SRC_NAME_V3")""-image"
 # ##################################################
 
-if [ ! -z $CI ]
+if [ ! -z $GITHUB_ENV ]
 then
 	echo "VM_IMG_DEF_NAME_V2 = ""$VM_IMG_DEF_NAME_V2"
 	echo "VM_IMG_NAME_V2 = ""$VM_IMG_NAME_V2"
