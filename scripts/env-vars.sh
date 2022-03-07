@@ -1,5 +1,26 @@
 #!/bin/bash
 
+getEnvVar() {
+  #Usage:
+  #getEnvVar "variableName"
+
+  varName=$1
+
+	if [ ! -z $CI ]
+	then
+		# We are in GitHub CI environment
+
+		envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
+	else
+		# We are in a non-GitHub environment
+
+		envVarName=$(echo -e "\x24""$varName")
+	fi
+
+	retVal=$(echo "echo ""$envVarName")
+	eval $retVal
+}
+
 setEnvVar() {
   #Usage:
   #setEnvVar "variableName" "variableValue"
@@ -13,7 +34,6 @@ setEnvVar() {
 		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
 	else
 		# We are in a non-GitHub environment
-		#cmd="export ""$varName""=""$varValue"
 		cmd="export ""$varName""=\"""$varValue""\""
 	fi
 
@@ -23,10 +43,10 @@ setEnvVar() {
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
 # . ./set-env-vars.sh
-
 # ##################################################
 # Variables only for this file - not exported to env vars
 
+azureLocation="eastus2"
 subscriptionName="Sandbox"
 
 myLocalIpAddress="75.68.47.183" # Make this blank if you don't want an NSG rule created that allows inbound traffic from this IP address
@@ -57,6 +77,8 @@ vmAdminSshUserName="pelazem"
 vmAdminSshKeyName="id_rsa"
 vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
 vmAdminSshPublicKey="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName"
+
+deploySshUserName="deploy"
 # ##################################################
 
 # ##################################################
@@ -64,7 +86,7 @@ vmAdminSshPublicKey="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName
 
 # Deployment username - used only to deploy/configure VM
 setEnvVar "DEPLOYMENT_SSH_USER_NAME" "deploy"
-setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "id_""$DEPLOYMENT_SSH_USER_NAME"
+setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "id_""$deploySshUserName"
 setEnvVar "DEPLOYMENT_SSH_KEY_TYPE" "rsa"
 setEnvVar "DEPLOYMENT_SSH_KEY_BITS" 4096
 setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as deployment SSH key will be short-lived
@@ -103,23 +125,23 @@ setEnvVar "USER_OBJECT_ID" $(echo "$(az ad signed-in-user show -o tsv --query 'o
 setEnvVar "LOCATION" "eastus2"
 
 # Resource Groups
-setEnvVar "RG_NAME_SECURITY" "$resourceNamingInfix""-security-""$LOCATION"
-setEnvVar "RG_NAME_SIG" "$resourceNamingInfix""-sig-""$LOCATION"
-setEnvVar "RG_NAME_NET" "$resourceNamingInfix""-net-""$LOCATION"
-setEnvVar "RG_NAME_SOURCE" "$resourceNamingInfix""-vm-source-""$LOCATION"
-setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$LOCATION"
+setEnvVar "RG_NAME_SECURITY" "$resourceNamingInfix""-security-""$azureLocation"
+setEnvVar "RG_NAME_SIG" "$resourceNamingInfix""-sig-""$azureLocation"
+setEnvVar "RG_NAME_NET" "$resourceNamingInfix""-net-""$azureLocation"
+setEnvVar "RG_NAME_SOURCE" "$resourceNamingInfix""-vm-source-""$azureLocation"
+setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$azureLocation"
 
 # User-Assigned Managed Identity
-setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$LOCATION"
+setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"
 
 # Key Vault
 setEnvVar "KEYVAULT_SKU_NAME" "Standard"
-setEnvVar "KEYVAULT_NAME" "kv-""$resourceNamingInfix""-""$LOCATION"
+setEnvVar "KEYVAULT_NAME" "kv-""$resourceNamingInfix""-""$azureLocation"
 setEnvVar "KEYVAULT_SOFT_DELETE" "false"
 
 # Network
-setEnvVar "NSG_NAME" "vm-nsg-""$LOCATION"
-setEnvVar "VNET_NAME" "vm-vnet-""$LOCATION"
+setEnvVar "NSG_NAME" "vm-nsg-""$azureLocation"
+setEnvVar "VNET_NAME" "vm-vnet-""$azureLocation"
 setEnvVar "VNET_PREFIX" "10.4.0.0/16"
 setEnvVar "VNET_ENABLE_DDOS_PROTECTION" "Disabled" # Enabled or Disabled
 setEnvVar "VNET_ENABLE_VM_PROTECTION" "Disabled" # Enabled or Disabled
@@ -211,27 +233,35 @@ setEnvVar "VM_SRC_NAME_V3" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion
 
 # Deployed VMs
 setEnvVar "VM_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_NAME_1""-""$suffixVersion1"
-setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_NAME_1""-""$suffixVersion2"
-setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_NAME_1""-""$suffixVersion3"
+#setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_NAME_1""-""$suffixVersion1"
+#setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_NAME_1""-""$suffixVersion2"
+#setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_NAME_1""-""$suffixVersion3"
+setEnvVar "VM_1_OS_DISK_NAME_V1" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion1"
+setEnvVar "VM_1_OS_DISK_NAME_V2" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion2"
+setEnvVar "VM_1_OS_DISK_NAME_V3" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion3"
 
 setEnvVar "VM_NAME_2" "$resourceNamingInfix""-""$osInfix""-2"
-setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_NAME_2""-""$suffixVersion1"
-setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_NAME_2""-""$suffixVersion2"
-setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_NAME_2""-""$suffixVersion3"
+#setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_NAME_2""-""$suffixVersion1"
+#setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_NAME_2""-""$suffixVersion2"
+#setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_NAME_2""-""$suffixVersion3"
+setEnvVar "VM_2_OS_DISK_NAME_V1" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion1"
+setEnvVar "VM_2_OS_DISK_NAME_V2" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion2"
+setEnvVar "VM_2_OS_DISK_NAME_V3" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion3"
 
 # Azure Compute Gallery (used to be called Shared Image Gallery but let's-rename-things-gremlins visited)
 setEnvVar "SIG_NAME" "sig"
 setEnvVar "VM_OS_TYPE" "Linux" # Linux | Windows
-setEnvVar "VM_IMG_DEF_NAME_V2" "custom-""$osInfix""-""$OS_PUBLISHER_2""-""$OS_OFFER_2""-""$OS_SKU_2""-""$suffixVersion2"
+setEnvVar "VM_IMG_DEF_NAME_V2" "custom-""$osInfix""-""$(getEnvVar "OS_PUBLISHER_2")""-""$(getEnvVar "OS_OFFER_2")""-""$(getEnvVar "OS_SKU_2")""-""$suffixVersion2"
 setEnvVar "VM_IMG_DEF_VERSION_V2" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
-setEnvVar "VM_IMG_DEF_NAME_V3" "custom-""$osInfix""-""$OS_PUBLISHER_3""-""$OS_OFFER_3""-""$OS_SKU_3""-""$suffixVersion3"
+setEnvVar "VM_IMG_DEF_NAME_V3" "custom-""$osInfix""-""$(getEnvVar "OS_PUBLISHER_3")""-""$(getEnvVar "OS_OFFER_3")""-""$(getEnvVar "OS_SKU_3")""-""$suffixVersion3"
 setEnvVar "VM_IMG_DEF_VERSION_V3" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
 
-setEnvVar "VM_IMG_NAME_V2" "$VM_SRC_NAME_V2""-image"
-setEnvVar "VM_IMG_NAME_V3" "$VM_SRC_NAME_V3""-image"
+setEnvVar "VM_IMG_NAME_V2" "$(getEnvVar "VM_SRC_NAME_V2")""-image"
+setEnvVar "VM_IMG_NAME_V3" "$(getEnvVar "VM_SRC_NAME_V3")""-image"
 # ##################################################
 
-
-echo "NSG_NAME = ""$NSG_NAME"
-echo "VM_IMG_DEF_NAME_V2 = ""$VM_IMG_DEF_NAME_V2"
+if [ ! -z $CI ]
+then
+	echo "VM_IMG_DEF_NAME_V2 = ""$VM_IMG_DEF_NAME_V2"
+	echo "VM_IMG_NAME_V2 = ""$VM_IMG_NAME_V2"
+fi
