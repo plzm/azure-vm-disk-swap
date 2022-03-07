@@ -24,8 +24,9 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/env-vars.sh
-          ./scripts/env-vars.sh
+          echo $GITHUB_ENV
+          #chmod +x ./scripts/env-vars.sh
+          #./scripts/env-vars.sh
 
       - name: Azure logout
         uses: azure/CLI@v1
