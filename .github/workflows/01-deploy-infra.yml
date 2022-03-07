@@ -24,14 +24,8 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/set-env-vars.gh.sh
-          ./scripts/set-env-vars.gh.sh
-
-      - name: Run Script
-        if: success()
-        run: |
-          chmod +x ./scripts/test.sh
-          ./scripts/test.sh
+          chmod +x ./scripts/env-vars.sh
+          ./scripts/env-vars.sh
 
       - name: Azure logout
         uses: azure/CLI@v1
