@@ -6,7 +6,7 @@ getEnvVar() {
 
   varName=$1
 
-	if [ ! -z $CI ]
+	if [ ! -z $GITHUB_ACTIONS ]
 	then
 		# We are in GitHub CI environment
 
