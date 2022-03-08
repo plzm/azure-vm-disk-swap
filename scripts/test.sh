@@ -6,16 +6,16 @@ getEnvVar() {
 
   varName=$1
 
-	if [ ! -z $GITHUB_ACTIONS ]
-	then
+	#if [ ! -z $GITHUB_ACTIONS ]
+	#then
 		# We are in GitHub CI environment
 
 		envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
-	else
-		# We are in a non-GitHub environment
+	#else
+	#	# We are in a non-GitHub environment
 
-		envVarName=$(echo -e "\x24""$varName")
-	fi
+	#	envVarName=$(echo -e "\x24""$varName")
+	#fi
 
 	retVal=$(echo "echo ""$envVarName")
 	eval $retVal

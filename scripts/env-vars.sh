@@ -262,8 +262,9 @@ setEnvVar "VM_IMG_NAME_V3" "$(getEnvVar "VM_SRC_NAME_V3")""-image"
 
 if [ ! -z $GITHUB_ACTIONS ]
 then
+	echo "We are in GitHub"
+else
+	echo $SIG_NAME
 	echo "VM_IMG_DEF_NAME_V2 = ""$VM_IMG_DEF_NAME_V2"
 	echo "VM_IMG_NAME_V2 = ""$VM_IMG_NAME_V2"
-else
-	echo "We are in GitHub"
 fi
