@@ -259,13 +259,3 @@ setEnvVar "VM_IMG_DEF_VERSION_V3" "1.0.0" # Could make this dynamic if, for exam
 setEnvVar "VM_IMG_NAME_V2" "$(getEnvVar "VM_SRC_NAME_V2")""-image"
 setEnvVar "VM_IMG_NAME_V3" "$(getEnvVar "VM_SRC_NAME_V3")""-image"
 # ##################################################
-
-echo $SIG_NAME
-
-if [ ! -z $GITHUB_ACTIONS ]
-then
-	echo "We are in GitHub"
-else
-	echo "VM_IMG_DEF_NAME_V2 = ""$VM_IMG_DEF_NAME_V2"
-	echo "VM_IMG_NAME_V2 = ""$VM_IMG_NAME_V2"
-fi

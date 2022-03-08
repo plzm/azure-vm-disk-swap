@@ -27,6 +27,11 @@ jobs:
           chmod +x ./scripts/env-vars.sh
           ./scripts/env-vars.sh
 
+      - name: Get Environment Variables
+        if: success()
+        run: |
+          echo $SIG_NAME
+
       - name: Azure logout
         uses: azure/CLI@v1
         with:
