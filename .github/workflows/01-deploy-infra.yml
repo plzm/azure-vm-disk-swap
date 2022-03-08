@@ -24,7 +24,12 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          printenv
+          if [ ! -z $GITHUB_ACTIONS ]
+          then
+            echo "GitHub"
+          else
+            echo "Elsewhere"
+          fi
 
       - name: Azure logout
         uses: azure/CLI@v1
