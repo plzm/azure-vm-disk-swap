@@ -19,4 +19,5 @@ jobs:
       - name: Get Environment Variables
         if: success()
         run: |
-          echo $SIG_NAME
+          echo $FOO
+          echo ${{ env.FOO }}
