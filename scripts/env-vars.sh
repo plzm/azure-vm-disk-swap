@@ -114,7 +114,15 @@ tenantId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId
 setEnvVar "TENANT_ID" "$tenantId"
 
 # Get current user context object ID. Need this to set initial Key Vault Access Policy so secrets etc. can be set/read in these scripts.
-userObjectId=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
+# NOTE: per https://github.com/Azure/azure-cli/issues/10439, this only works for user identities. It crashes when running logged in as a Service Principal, as on a GHA runner. So we have to do it a different way for users vs. SPs. Face-palm.
+# We will crudely assume that if running in GHA, we are in a SP context.
+if [ ! -z $GITHUB_ACTIONS ]
+then
+	# spName=$(echo "$(az account show -o tsv --query 'user.name')" | sed "s/\r//")
+	# --> set/get SECRETS.SP_OBJECT_ID
+else
+	userObjectId=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
+fi
 setEnvVar "USER_OBJECT_ID" "$userObjectId"
 
 # Deployment
