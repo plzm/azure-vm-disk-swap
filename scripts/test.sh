@@ -47,3 +47,4 @@ setEnvVar "$varName" "bar"
 result=$(getEnvVar "$varName")
 
 echo $result
+echo "Hello"
