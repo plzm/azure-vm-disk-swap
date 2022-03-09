@@ -44,4 +44,6 @@ varName="FOO"
 
 setEnvVar "$varName" "bar"
 
-eval $(getEnvVar "$varName")
+result=$(getEnvVar "$varName")
+
+echo $result
