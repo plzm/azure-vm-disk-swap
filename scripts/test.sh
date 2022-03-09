@@ -8,21 +8,38 @@ getEnvVar() {
 
 	#if [ ! -z $GITHUB_ACTIONS ]
 	#then
-		# We are in GitHub CI environment
+	#	# We are in GitHub CI environment
 
-		envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
+	#	envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
 	#else
-	#	# We are in a non-GitHub environment
+		# We are in a non-GitHub environment
 
-	#	envVarName=$(echo -e "\x24""$varName")
+		envVarName=$(echo -e "\x24""$varName")
 	#fi
 
 	retVal=$(echo "echo ""$envVarName")
 	eval $retVal
 }
 
-export foo="bar"
+setEnvVar() {
+  #Usage:
+  #setEnvVar "variableName" "variableValue"
 
-result=$(getEnvVar "foo")
+  varName=$1
+  varValue=$2
 
-echo $result
+	if [ ! -z $GITHUB_ACTIONS ]
+	then
+		# We are in GitHub CI environment
+		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
+	else
+		# We are in a non-GitHub environment
+		cmd="export ""$varName""=\"""$varValue""\""
+	fi
+
+	eval $cmd
+}
+
+setEnvVar "FOO" "bar"
+
+getEnvVar "FOO"
