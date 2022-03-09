@@ -1,43 +1,34 @@
 #!/bin/bash
 
 getEnvVar() {
-  #Usage:
-  #getEnvVar "variableName"
+	# Retrieve an env var's value at runtime with dynamic variable name
+  # Usage:
+  # getEnvVar "variableName"
 
   varName=$1
 
-	#if [ ! -z $GITHUB_ACTIONS ]
-	#then
-	#	# We are in GitHub CI environment
-
-		#envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
-	#else
-		# We are in a non-GitHub environment
-
-		envVarName=$(echo -e "\x24""$varName")
-	#fi
-
-	retVal=$(echo "echo ""$envVarName")
-	eval $retVal
+	envVarName=$(echo -e "\x24""$varName")
+	output=$(echo "echo ""$envVarName")
+	eval $output
 }
 
 setEnvVar() {
-  #Usage:
-  #setEnvVar "variableName" "variableValue"
+	# Set an env var's value at runtime with dynamic variable name
+	# If in GitHub Actions runner, will export env var both to Actions 
+  # Usage:
+  # setEnvVar "variableName" "variableValue"
 
   varName=$1
   varValue=$2
 
 	if [ ! -z $GITHUB_ACTIONS ]
 	then
-		# We are in GitHub CI environment - export to GitHub Actions workflow for later interpolation in addition to below export for local/immediate use
+		# We are in GitHub CI environment - export to GitHub Actions workflow for later interpolation where GHA does interpolation off-runner
 		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
 		eval $cmd
-	#else
-		# We are in a non-GitHub environment
-		#cmd="export ""$varName""=\"""$varValue""\""
 	fi
 
+	# Export for local/immediate use, whether on GHA runner or shell/wherever
 	cmd="export ""$varName""=\"""$varValue""\""
 	eval $cmd
 }
@@ -47,5 +38,3 @@ varName="FOO"
 setEnvVar "$varName" "bar"
 
 getEnvVar "$varName"
-
-echo "Hello"

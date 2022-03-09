@@ -10,14 +10,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Azure login
+        if: success()
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set Azure CLI extensions to auto-install
+        if: success()
+        run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/test.sh
-          ./scripts/test.sh
+          chmod +x ./scripts/env-vars.sh
+          ./scripts/env-vars.sh
 
       - name: Get Environment Variables
         if: success()
         run: |
           echo $FOO
           echo ${{ env.FOO }}
+
+      - name: Azure logout
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear

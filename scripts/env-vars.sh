@@ -1,42 +1,35 @@
 #!/bin/bash
 
 getEnvVar() {
-  #Usage:
-  #getEnvVar "variableName"
+	# Retrieve an env var's value at runtime with dynamic variable name
+  # Usage:
+  # getEnvVar "variableName"
 
   varName=$1
 
-	#if [ ! -z $GITHUB_ACTIONS ]
-	#then
-	#	# We are in GitHub CI environment
-
-	#	envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
-	#else
-		# We are in a non-GitHub environment
-
-		envVarName=$(echo -e "\x24""$varName")
-	#fi
-
-	retVal=$(echo "echo ""$envVarName")
-	eval $retVal
+	envVarName=$(echo -e "\x24""$varName")
+	output=$(echo "echo ""$envVarName")
+	eval $output
 }
 
 setEnvVar() {
-  #Usage:
-  #setEnvVar "variableName" "variableValue"
+	# Set an env var's value at runtime with dynamic variable name
+	# If in GitHub Actions runner, will export env var both to Actions 
+  # Usage:
+  # setEnvVar "variableName" "variableValue"
 
   varName=$1
   varValue=$2
 
 	if [ ! -z $GITHUB_ACTIONS ]
 	then
-		# We are in GitHub CI environment
+		# We are in GitHub CI environment - export to GitHub Actions workflow for later interpolation where GHA does interpolation off-runner
 		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
-	else
-		# We are in a non-GitHub environment
-		cmd="export ""$varName""=\"""$varValue""\""
+		eval $cmd
 	fi
 
+	# Export for local/immediate use, whether on GHA runner or shell/wherever
+	cmd="export ""$varName""=\"""$varValue""\""
 	eval $cmd
 }
 
@@ -233,17 +226,11 @@ setEnvVar "VM_SRC_NAME_V3" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion
 
 # Deployed VMs
 setEnvVar "VM_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-#setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_NAME_1""-""$suffixVersion1"
-#setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_NAME_1""-""$suffixVersion2"
-#setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_NAME_1""-""$suffixVersion3"
 setEnvVar "VM_1_OS_DISK_NAME_V1" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion1"
 setEnvVar "VM_1_OS_DISK_NAME_V2" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion2"
 setEnvVar "VM_1_OS_DISK_NAME_V3" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion3"
 
 setEnvVar "VM_NAME_2" "$resourceNamingInfix""-""$osInfix""-2"
-#setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_NAME_2""-""$suffixVersion1"
-#setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_NAME_2""-""$suffixVersion2"
-#setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_NAME_2""-""$suffixVersion3"
 setEnvVar "VM_2_OS_DISK_NAME_V1" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion1"
 setEnvVar "VM_2_OS_DISK_NAME_V2" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion2"
 setEnvVar "VM_2_OS_DISK_NAME_V3" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion3"
