@@ -42,4 +42,4 @@ setEnvVar() {
 
 setEnvVar "FOO" "bar"
 
-echo getEnvVar "FOO"
+echo $(getEnvVar "FOO")
