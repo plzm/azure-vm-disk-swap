@@ -10,11 +10,11 @@ getEnvVar() {
 	#then
 	#	# We are in GitHub CI environment
 
-	#	envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
+		envVarName=$(echo -e "\x24{{ env.""$varName"" }}")
 	#else
 		# We are in a non-GitHub environment
 
-		envVarName=$(echo -e "\x24""$varName")
+		#envVarName=$(echo -e "\x24""$varName")
 	#fi
 
 	retVal=$(echo "echo ""$envVarName")
