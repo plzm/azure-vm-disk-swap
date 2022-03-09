@@ -21,6 +21,11 @@ jobs:
         run: |
           az config set extension.use_dynamic_install=yes_without_prompt
 
+      - name: Test Graph Call
+        if: success()
+        run: |
+          az ad signed-in-user show
+
       - name: Set Environment Variables
         if: success()
         run: |
@@ -30,7 +35,6 @@ jobs:
       - name: Get Environment Variables
         if: success()
         run: |
-          echo $VM_IMG_NAME_V2
           echo ${{ env.VM_IMG_NAME_V2 }}
 
       - name: Azure logout

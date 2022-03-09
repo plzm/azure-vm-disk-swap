@@ -82,7 +82,7 @@ setEnvVar "DEPLOYMENT_SSH_USER_NAME" "deploy"
 setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "id_""$deploySshUserName"
 setEnvVar "DEPLOYMENT_SSH_KEY_TYPE" "rsa"
 setEnvVar "DEPLOYMENT_SSH_KEY_BITS" 4096
-setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "foo" # Use blank for convenience here as deployment SSH key will be short-lived
+setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as deployment SSH key will be short-lived
 # DEPLOYMENT_SSH_PUBLIC_KEY # Placeholder - not set here
 # DEPLOYMENT_SSH_PRIVATE_KEY # Placeholder - not set here
 
@@ -106,13 +106,16 @@ setEnvVar "KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" "vm-admin-ssh-public-ke
 setEnvVar "NSG_RULE_INBOUND_100_SRC" "$myLocalIpAddress"
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
-setEnvVar "SUBSCRIPTION_ID" $(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
+subscriptionId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
+setEnvVar "SUBSCRIPTION_ID" "$subscriptionId"
 
 # Get Tenant ID for Subscription. Need this to create User-Assigned Managed Identity and Key Vault.
-setEnvVar "TENANT_ID" $(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId')" | sed "s/\r//")
+tenantId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId')" | sed "s/\r//")
+setEnvVar "TENANT_ID" "$tenantId"
 
 # Get current user context object ID. Need this to set initial Key Vault Access Policy so secrets etc. can be set/read in these scripts.
-setEnvVar "USER_OBJECT_ID" $(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
+userObjectId=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
+setEnvVar "USER_OBJECT_ID" "$userObjectId"
 
 # Deployment
 setEnvVar "LOCATION" "eastus2"
