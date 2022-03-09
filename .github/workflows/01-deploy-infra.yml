@@ -30,8 +30,8 @@ jobs:
       - name: Get Environment Variables
         if: success()
         run: |
-          echo $FOO
-          echo ${{ env.FOO }}
+          echo $VM_IMG_NAME_V2
+          echo ${{ env.VM_IMG_NAME_V2 }}
 
       - name: Azure logout
         uses: azure/CLI@v1

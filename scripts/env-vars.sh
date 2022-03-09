@@ -82,7 +82,7 @@ setEnvVar "DEPLOYMENT_SSH_USER_NAME" "deploy"
 setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "id_""$deploySshUserName"
 setEnvVar "DEPLOYMENT_SSH_KEY_TYPE" "rsa"
 setEnvVar "DEPLOYMENT_SSH_KEY_BITS" 4096
-setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as deployment SSH key will be short-lived
+setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "foo" # Use blank for convenience here as deployment SSH key will be short-lived
 # DEPLOYMENT_SSH_PUBLIC_KEY # Placeholder - not set here
 # DEPLOYMENT_SSH_PRIVATE_KEY # Placeholder - not set here
 
