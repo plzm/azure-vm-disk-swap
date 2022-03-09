@@ -40,6 +40,8 @@ setEnvVar() {
 	eval $cmd
 }
 
-setEnvVar "FOO" "bar"
+varName="FOO"
 
-echo $(getEnvVar "FOO")
+setEnvVar "$varName" "bar"
+
+echo $(getEnvVar "$varName")
