@@ -120,6 +120,7 @@ if [ ! -z $GITHUB_ACTIONS ]
 then
 	# spName=$(echo "$(az account show -o tsv --query 'user.name')" | sed "s/\r//")
 	# --> set/get SECRETS.SP_OBJECT_ID
+	userObjectId="$SP_OBJECT_ID"
 else
 	userObjectId=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
 fi
