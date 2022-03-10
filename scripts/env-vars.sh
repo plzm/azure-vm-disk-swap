@@ -2,20 +2,8 @@
 
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
-# . ./set-env-vars.sh
+# . ./env-vars.sh
 # ##################################################
-
-getEnvVar() {
-	# Retrieve an env var's value at runtime with dynamic variable name
-  # Usage:
-  # getEnvVar "variableName"
-
-  varName=$1
-
-	envVarName=$(echo -e "\x24""$varName")
-	output=$(echo "echo ""$envVarName")
-	eval $output
-}
 
 setEnvVar() {
 	# Set an env var's value at runtime with dynamic variable name
