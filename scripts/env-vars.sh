@@ -2,20 +2,8 @@
 
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
-# . ./set-env-vars.sh
+# . ./env-vars.sh
 # ##################################################
-
-getEnvVar() {
-	# Retrieve an env var's value at runtime with dynamic variable name
-  # Usage:
-  # getEnvVar "variableName"
-
-  varName=$1
-
-	envVarName=$(echo -e "\x24""$varName")
-	output=$(echo "echo ""$envVarName")
-	eval $output
-}
 
 setEnvVar() {
 	# Set an env var's value at runtime with dynamic variable name
@@ -241,23 +229,23 @@ setEnvVar "VM_SRC_NAME_V3" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion
 
 # Deployed VMs
 setEnvVar "VM_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-setEnvVar "VM_1_OS_DISK_NAME_V1" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion1"
-setEnvVar "VM_1_OS_DISK_NAME_V2" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion2"
-setEnvVar "VM_1_OS_DISK_NAME_V3" "$(getEnvVar "VM_NAME_1")""-""$suffixVersion3"
+setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_NAME_1""-""$suffixVersion1"
+setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_NAME_1""-""$suffixVersion2"
+setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_NAME_1""-""$suffixVersion3"
 
 setEnvVar "VM_NAME_2" "$resourceNamingInfix""-""$osInfix""-2"
-setEnvVar "VM_2_OS_DISK_NAME_V1" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion1"
-setEnvVar "VM_2_OS_DISK_NAME_V2" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion2"
-setEnvVar "VM_2_OS_DISK_NAME_V3" "$(getEnvVar "VM_NAME_2")""-""$suffixVersion3"
+setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_NAME_2""-""$suffixVersion1"
+setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_NAME_2""-""$suffixVersion2"
+setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_NAME_2""-""$suffixVersion3"
 
 # Azure Compute Gallery (used to be called Shared Image Gallery but let's-rename-things-gremlins visited)
 setEnvVar "SIG_NAME" "sig"
 setEnvVar "VM_OS_TYPE" "Linux" # Linux | Windows
-setEnvVar "VM_IMG_DEF_NAME_V2" "custom-""$osInfix""-""$(getEnvVar "OS_PUBLISHER_2")""-""$(getEnvVar "OS_OFFER_2")""-""$(getEnvVar "OS_SKU_2")""-""$suffixVersion2"
+setEnvVar "VM_IMG_DEF_NAME_V2" "custom-""$osInfix""-""$OS_PUBLISHER_2""-""$OS_OFFER_2""-""$OS_SKU_2""-""$suffixVersion2"
 setEnvVar "VM_IMG_DEF_VERSION_V2" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
-setEnvVar "VM_IMG_DEF_NAME_V3" "custom-""$osInfix""-""$(getEnvVar "OS_PUBLISHER_3")""-""$(getEnvVar "OS_OFFER_3")""-""$(getEnvVar "OS_SKU_3")""-""$suffixVersion3"
+setEnvVar "VM_IMG_DEF_NAME_V3" "custom-""$osInfix""-""$OS_PUBLISHER_3""-""$OS_OFFER_3""-""$OS_SKU_3""-""$suffixVersion3"
 setEnvVar "VM_IMG_DEF_VERSION_V3" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
 
-setEnvVar "VM_IMG_NAME_V2" "$(getEnvVar "VM_SRC_NAME_V2")""-image"
-setEnvVar "VM_IMG_NAME_V3" "$(getEnvVar "VM_SRC_NAME_V3")""-image"
+setEnvVar "VM_IMG_NAME_V2" "$VM_SRC_NAME_V2""-image"
+setEnvVar "VM_IMG_NAME_V3" "$VM_SRC_NAME_V3""-image"
 # ##################################################
