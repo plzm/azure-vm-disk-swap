@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# ##################################################
+# NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
+# . ./set-env-vars.sh
+# ##################################################
+
 getEnvVar() {
 	# Retrieve an env var's value at runtime with dynamic variable name
   # Usage:
@@ -34,10 +39,8 @@ setEnvVar() {
 }
 
 # ##################################################
-# NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
-# . ./set-env-vars.sh
-# ##################################################
-# Variables only for this file - not exported to env vars
+# Variables only for this file - not exported to env vars but used to construct some of them
+# Consider moving these to repo secrets or a config/secret store somewhere...
 
 azureLocation="eastus2"
 subscriptionName="Sandbox"
