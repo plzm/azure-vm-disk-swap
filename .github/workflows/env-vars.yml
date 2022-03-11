@@ -1,4 +1,4 @@
-name: 01-Deploy-Infrastructure
+name: Env-Vars
 
 on: 
   workflow_dispatch:
