@@ -7,7 +7,7 @@
 
 setEnvVar() {
 	# Set an env var's value at runtime with dynamic variable name
-	# If in GitHub Actions runner, will export env var both to Actions 
+	# If in GitHub Actions runner, will export env var both to Actions and local shell
   # Usage:
   # setEnvVar "variableName" "variableValue"
 
@@ -16,7 +16,7 @@ setEnvVar() {
 
 	if [ ! -z $GITHUB_ACTIONS ]
 	then
-		# We are in GitHub CI environment - export to GitHub Actions workflow for later interpolation where GHA does interpolation off-runner
+		# We are in GitHub CI environment - export to GitHub Actions workflow context for availability in later tasks in this workflow
 		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
 		eval $cmd
 	fi
