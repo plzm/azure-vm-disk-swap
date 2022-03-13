@@ -26,13 +26,14 @@ jobs:
         env:
           SP_OBJECT_ID: ${{ secrets.SP_OBJECT_ID }}
         run: |
-          chmod +x ./scripts/env-vars.sh
-          ./scripts/env-vars.sh
+          chmod +x ./scripts/set-env-vars.sh
+          ./scripts/set-env-vars.sh
 
-      - name: Get Environment Variables
+      - name: Create Resource Groups
         if: success()
         run: |
-          echo ${{ env.VM_IMG_NAME_V2 }}
+          chmod +x ./scripts/01-deploy-infra/01-deploy-rgs.sh
+          ./scripts/01-deploy-infra/01-deploy-rgs.sh
 
       - name: Azure logout
         uses: azure/CLI@v1
