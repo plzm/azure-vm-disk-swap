@@ -35,6 +35,14 @@ jobs:
           chmod +x ./scripts/01-deploy-infra/01-deploy-rgs.sh
           ./scripts/01-deploy-infra/01-deploy-rgs.sh
 
+      - name: Deploy User-Assigned MI
+        if: success()
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ env.RG_NAME_SECURITY }}
+          template: ${{ env.TEMPLATE_UAMI }}
+          parameters: location=${{ env.LOCATION }} tenantId=${{ env.TENANT_ID }} identityName=${{ env.USERNAME_UAMI }}
+
       - name: Azure logout
         uses: azure/CLI@v1
         with:
