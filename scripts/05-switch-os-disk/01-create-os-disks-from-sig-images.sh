@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Get Shared Image Gallery (SIG) Version References
-sigImageRefV2=$(echo "$(az sig image-version show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" --gallery-name "$SIG_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V2" --gallery-image-version "$VM_IMG_DEF_VERSION_V2" -o tsv --query "id")" | sed "s/\r//")
-sigImageRefV3=$(echo "$(az sig image-version show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" --gallery-name "$SIG_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V3" --gallery-image-version "$VM_IMG_DEF_VERSION_V3" -o tsv --query "id")" | sed "s/\r//")
+sigImageRefV2=$(echo "$(az sig image-version show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" --gallery-name "$GALLERY_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V2" --gallery-image-version "$VM_IMG_DEF_VERSION_V2" -o tsv --query "id")" | sed "s/\r//")
+sigImageRefV3=$(echo "$(az sig image-version show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" --gallery-name "$GALLERY_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V3" --gallery-image-version "$VM_IMG_DEF_VERSION_V3" -o tsv --query "id")" | sed "s/\r//")
 
 # Create managed OS disks from SIG image versions
 # https://docs.microsoft.com/cli/azure/disk?view=azure-cli-latest#az_disk_create
