@@ -24,16 +24,28 @@ jobs:
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
-      - name: Delete Resource Groups
-        if: success()
-        run: |
-          az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
-          az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SOURCE }}" --yes --verbose
-          az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_GALLERY }}" --yes --verbose
-          az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SECURITY }}" --yes --verbose
-          az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_NET }}" --yes --verbose
+      - name: Delete Resource Group "${{ env.RG_NAME_DEPLOY }}"
+        if: sucess()
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
+
+      - name: Delete Resource Group "${{ env.RG_NAME_SOURCE }}"
+        if: always()
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SOURCE }}" --yes --verbose
+
+      - name: Delete Resource Group "${{ env.RG_NAME_GALLERY }}"
+        if: always()
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_GALLERY }}" --yes --verbose
+
+      - name: Delete Resource Group "${{ env.RG_NAME_SECURITY }}"
+        if: always()
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SECURITY }}" --yes --verbose
+
+      - name: Delete Resource Group "${{ env.RG_NAME_NET }}"
+        if: always()
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_NET }}" --yes --verbose
 
       - name: Azure logout
+        if: always()
         uses: azure/CLI@v1
         with:
           inlineScript: |
