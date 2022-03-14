@@ -8,4 +8,4 @@
 
 ./04-deploy-network.sh
 
-./05-deploy-sig.sh
+./05-deploy-compute-gallery.sh

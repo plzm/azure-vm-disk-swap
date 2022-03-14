@@ -51,7 +51,7 @@ jobs:
           resourceGroupName: ${{ env.RG_NAME_SECURITY }}
           deploymentName: ${{ env.KEYVAULT_NAME }}
           template: ${{ env.TEMPLATE_KEYVAULT }}
-          parameters: location=${{ env.LOCATION }} tenantId=${{ env.TENANT_ID }} keyVaultName=${{ env.KEYVAULT_NAME }} skuName=${{ env.KEYVAULT_SKU_NAME }} enableSoftDelete=${{ KEYVAULT_SOFT_DELETE }}
+          parameters: location=${{ env.LOCATION }} tenantId=${{ env.TENANT_ID }} keyVaultName=${{ env.KEYVAULT_NAME }} skuName=${{ env.KEYVAULT_SKU_NAME }} enableSoftDelete=${{ env.KEYVAULT_SOFT_DELETE }}
 
       - name: Deploy NSG
         if: success()
