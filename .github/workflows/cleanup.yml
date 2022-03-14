@@ -25,7 +25,7 @@ jobs:
           ./scripts/set-env-vars.sh
 
       - name: Delete Resource Group "${{ env.RG_NAME_DEPLOY }}"
-        if: sucess()
+        if: success()
         run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_SOURCE }}"
