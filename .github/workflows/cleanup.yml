@@ -26,22 +26,23 @@ jobs:
 
       - name: Delete Resource Group "${{ env.RG_NAME_DEPLOY }}"
         if: success()
+        continue-on-error: true
         run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_SOURCE }}"
-        if: always()
+        continue-on-error: true
         run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SOURCE }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_GALLERY }}"
-        if: always()
+        continue-on-error: true
         run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_GALLERY }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_SECURITY }}"
-        if: always()
+        continue-on-error: true
         run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SECURITY }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_NET }}"
-        if: always()
+        continue-on-error: true
         run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_NET }}" --yes --verbose
 
       - name: Azure logout
