@@ -17,4 +17,5 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "CG-""$LOCATION"
 	-g "$RG_NAME_GALLERY" --template-uri "$TEMPLATE_COMPUTE_GALLERY" \
 	--parameters \
 	location="$LOCATION" \
-	gallery-name="$GALLERY_NAME"
+	gallery-name="$GALLERY_NAME" \
+	softDeleteEnabled=false
