@@ -85,11 +85,11 @@ jobs:
         if: success()
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: ${{ env.RG_NAME_SIG }}
-          deploymentName: ${{ env.SIG_NAME }}
+          resourceGroupName: ${{ env.RG_NAME_GALLERY }}
+          deploymentName: ${{ env.GALLERY_NAME }}
           template: ${{ env.TEMPLATE_COMPUTE_GALLERY }}
           parameters: |
-            location=${{ env.LOCATION }} gallery-name=${{ env.SIG_NAME }} 
+            location=${{ env.LOCATION }} gallery-name=${{ env.GALLERY_NAME }} 
 
       - name: Azure logout
         uses: azure/CLI@v1

@@ -10,11 +10,11 @@
 
 echo "Create Azure Compute Gallery"
 # https://docs.microsoft.com/cli/azure/sig?view=azure-cli-latest#az_sig_create
-#az sig create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SIG" -l "$LOCATION" --verbose \
-#	--gallery-name "$SIG_NAME" # --soft-delete false
+#az sig create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" -l "$LOCATION" --verbose \
+#	--gallery-name "$GALLERY_NAME" # --soft-delete false
 
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "CG-""$LOCATION" --verbose \
-	-g "$RG_NAME_SIG" --template-uri "$TEMPLATE_COMPUTE_GALLERY" \
+	-g "$RG_NAME_GALLERY" --template-uri "$TEMPLATE_COMPUTE_GALLERY" \
 	--parameters \
 	location="$LOCATION" \
-	gallery-name="$SIG_NAME"
+	gallery-name="$GALLERY_NAME"

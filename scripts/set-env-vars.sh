@@ -122,7 +122,7 @@ setEnvVar "LOCATION" "eastus2"
 
 # Resource Groups
 setEnvVar "RG_NAME_SECURITY" "$resourceNamingInfix""-security-""$azureLocation"
-setEnvVar "RG_NAME_SIG" "$resourceNamingInfix""-sig-""$azureLocation"
+setEnvVar "RG_NAME_GALLERY" "$resourceNamingInfix""-sig-""$azureLocation"
 setEnvVar "RG_NAME_NET" "$resourceNamingInfix""-net-""$azureLocation"
 setEnvVar "RG_NAME_SOURCE" "$resourceNamingInfix""-vm-source-""$azureLocation"
 setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$azureLocation"
@@ -132,7 +132,7 @@ setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"
 
 # Key Vault
 setEnvVar "KEYVAULT_SKU_NAME" "Standard"
-setEnvVar "KEYVAULT_NAME" "kv-""$resourceNamingInfix""-""$azureLocation"
+setEnvVar "KEYVAULT_NAME" "$resourceNamingInfix""-kv-""$azureLocation"
 setEnvVar "KEYVAULT_SOFT_DELETE" "false"
 
 # Network
@@ -240,7 +240,7 @@ setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_NAME_2""-""$suffixVersion2"
 setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_NAME_2""-""$suffixVersion3"
 
 # Azure Compute Gallery (used to be called Shared Image Gallery but let's-rename-things-gremlins visited)
-setEnvVar "SIG_NAME" "sig"
+setEnvVar "GALLERY_NAME" "$resourceNamingInfix""-gallery-""$azureLocation"
 setEnvVar "VM_OS_TYPE" "Linux" # Linux | Windows
 setEnvVar "VM_IMG_DEF_NAME_V2" "custom-""$osInfix""-""$OS_PUBLISHER_2""-""$OS_OFFER_2""-""$OS_SKU_2""-""$suffixVersion2"
 setEnvVar "VM_IMG_DEF_VERSION_V2" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
