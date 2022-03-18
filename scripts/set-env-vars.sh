@@ -70,7 +70,7 @@ deploySshKeyName="id_""$deploySshUserName"
 # SSH Key Pair for Deployment
 
 # Deployment username - used only to deploy/configure VM
-setEnvVar "DEPLOYMENT_SSH_USER_NAME" "deploy"
+setEnvVar "DEPLOYMENT_SSH_USER_NAME" "$deploySshUserName"
 setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "$deploySshKeyName"
 setEnvVar "DEPLOYMENT_SSH_KEY_TYPE" "rsa"
 setEnvVar "DEPLOYMENT_SSH_KEY_BITS" 4096
@@ -82,13 +82,6 @@ setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as
 setEnvVar "VM_ADMIN_SSH_USER_NAME" "$vmAdminSshUserName"
 setEnvVar "VM_ADMIN_SSH_USER_KEY_NAME" "$vmAdminSshKeyName"
 setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
-
-# Key Vault Secret NAMES of the secrets whose actual VALUES you write to or retrieve from Key Vault
-setEnvVar "KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" "vm-deploy-ssh-user-name"
-setEnvVar "KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" "vm-deploy-ssh-public-key"
-setEnvVar "KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PRIVATE_KEY" "vm-deploy-ssh-private-key"
-setEnvVar "KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" "vm-admin-ssh-user-name"
-setEnvVar "KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" "vm-admin-ssh-public-key"
 
 # ##################################################
 
@@ -131,11 +124,6 @@ setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$azureLocation"
 # User-Assigned Managed Identity
 setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"
 
-# Key Vault
-setEnvVar "KEYVAULT_SKU_NAME" "Standard"
-setEnvVar "KEYVAULT_NAME" "$resourceNamingInfix""-kv-""$azureLocation"
-setEnvVar "KEYVAULT_SOFT_DELETE" "false"
-
 # Network
 setEnvVar "NSG_NAME" "vm-nsg-""$azureLocation"
 setEnvVar "VNET_NAME" "vm-vnet-""$azureLocation"
@@ -151,8 +139,6 @@ setEnvVar "SUBNET_PRIVATE_LINK_NETWORK_POLICIES" "Enabled" # Enabled or Disabled
 # Now assemble all the individual template paths
 # ARM Templates
 setEnvVar "TEMPLATE_UAMI" "$templateRoot""identity.user-assigned-mi.json"
-setEnvVar "TEMPLATE_KEYVAULT" "$templateRoot""key-vault.json"
-setEnvVar "TEMPLATE_KEYVAULT_SECRET" "$templateRoot""key-vault.secret.json"
 setEnvVar "TEMPLATE_NSG" "$templateRoot""net.nsg.json"
 setEnvVar "TEMPLATE_VNET" "$templateRoot""net.vnet.json"
 setEnvVar "TEMPLATE_SUBNET" "$templateRoot""net.vnet.subnet.json"

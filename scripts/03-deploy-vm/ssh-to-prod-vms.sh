@@ -22,10 +22,6 @@ echo "Start Destination VMs"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_1" --verbose
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_2" --verbose
 
-
-echo "Retrieve VM Admin Username from Key Vault"
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-
 # Some SSH clients will default to a local private key file name of id_rsa. You can override this with the ssh -i argument. Thus:
 # ssh user@fqdn -i ~/.ssh/private_key_file
 # Example: ssh myuser@myvm.eastus2.cloudapp.azure.com -i ~/.ssh/myuserprivatekeyfile
@@ -63,11 +59,11 @@ fi
 # We will run the script in remote-cmd.sh on each deployed VM next
 remoteCmd=" < remote-cmd.sh"
 
-sshToVm1="ssh -t $vmAdminUsername@$vmFqdn1 -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
+sshToVm1="ssh -t $VM_ADMIN_SSH_USER_NAME@$vmFqdn1 -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
 fullCmdVm1="${sshToVm1} ${remoteCmd}"
 doTheSsh "$fullCmdVm1"
 
-sshToVm2="ssh -t $vmAdminUsername@$vmFqdn2 -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
+sshToVm2="ssh -t $VM_ADMIN_SSH_USER_NAME@$vmFqdn2 -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
 fullCmdVm2="${sshToVm2} ${remoteCmd}"
 doTheSsh "$fullCmdVm2"
 

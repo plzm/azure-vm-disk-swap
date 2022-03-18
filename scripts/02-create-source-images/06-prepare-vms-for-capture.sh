@@ -8,7 +8,6 @@
 # NOTE The following will fail if you generalized a VM with data disks > 1023 GB. If you have data disks > 1023 GB,
 # detach the data disks before generalizing and proceeding. You will need to modify later steps to detach data disks
 # before OS disk swap, then swap OS disk, then re-attach large data disks.
-# See ../05-switch-os-disks/05-prep-data-disks.sh for helper script.
 # ##################################################
 
 doTheSsh() {
@@ -47,7 +46,7 @@ echo "Clean out existing source VM entries from known_hosts, if any, to avoid wa
 ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnV2"
 ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpV2"
 ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnV3"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vvmIpV3"
+ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpV3"
 
 
 if [ -z "$(ssh-keygen -F $vmFqdnV2)" ]

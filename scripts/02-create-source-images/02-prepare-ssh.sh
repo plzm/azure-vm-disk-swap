@@ -9,11 +9,39 @@
 
 # Clean up existing key files, if any
 delCmd="rm ./""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
-echo $delCmd
+#echo $delCmd
 eval $delCmd
 delCmd="rm ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
-echo $delCmd
+#echo $delCmd
 eval $delCmd
 
-# Generate new public and private key pair and write the files here
+# Generate new deployment user public and private key pair and write the files here
 ssh-keygen -q -m "PEM" -f "./""$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
+
+# Also write a file for the admin public key
+echo $VM_ADMIN_SSH_PUBLIC_KEY > "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
+
+# Move SSH key files to ~/.ssh
+mkdir ~/.ssh
+mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME" ~/.ssh
+mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub" ~/.ssh
+mv "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub" ~/.ssh
+
+# Set SSH key file permissions
+# Private key - restrictive
+privCmd="chmod 600 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+#echo $privCmd
+eval $privCmd
+
+# Public keys - less restrictive
+pubCmd="chmod 644 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub"
+#echo $pubCmd
+eval $pubCmd
+
+pubCmd="chmod 644 ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
+#echo $pubCmd
+eval $pubCmd
+
+# Add deployment private SSH key to SSH agent
+#eval $(ssh-agent)
+ssh-add "~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"

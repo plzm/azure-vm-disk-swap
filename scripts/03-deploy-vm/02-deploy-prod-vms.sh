@@ -6,10 +6,6 @@ then
 	uamiResourceId=$(echo "$(az identity show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SECURITY"" --name ""$USERNAME_UAMI"" -o tsv --query 'id')" | sed "s/\r//")
 fi
 
-echo "Retrieve VM Admin Username and SSH Public Key from Key Vault - this is NOT the deploy user, this is the actual VM admin, for production VM deployment with a functional OS and not to just generalize to an image"
-vmAdminUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
-
 echo "Deploy VM 1"
 echo "Deploy Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1-PIP" --verbose \
@@ -49,8 +45,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM1" --verbose 
 	sku="$OS_SKU_1" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminSshPublicKey" \
+	adminUsername="$VM_ADMIN_SSH_USER_NAME" \
+	adminSshPublicKey="$VM_ADMIN_SSH_PUBLIC_KEY" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskName="$VM_1_OS_DISK_NAME_V1" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
@@ -104,8 +100,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM2" --verbose 
 	sku="$OS_SKU_1" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmAdminUsername" \
-	adminSshPublicKey="$vmAdminSshPublicKey" \
+	adminUsername="$VM_ADMIN_SSH_USER_NAME" \
+	adminSshPublicKey="$VM_ADMIN_SSH_PUBLIC_KEY" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskName="$VM_2_OS_DISK_NAME_V1" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
