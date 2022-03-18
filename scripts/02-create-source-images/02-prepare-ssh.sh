@@ -24,8 +24,8 @@ echo $VM_ADMIN_SSH_PUBLIC_KEY > "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
 # Move SSH key files to ~/.ssh
 mkdir ~/.ssh
 mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME" ~/.ssh
-mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub" ~/.ssh
-mv "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub" ~/.ssh
+cp "./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub" ~/.ssh
+cp "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub" ~/.ssh
 
 # Set SSH key file permissions
 # Private key - restrictive
@@ -43,5 +43,6 @@ pubCmd="chmod 644 ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
 eval $pubCmd
 
 # Add deployment private SSH key to SSH agent
-#eval $(ssh-agent)
-ssh-add "~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+eval $(ssh-agent)
+sshAddCmd="ssh-add ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+eval $sshAddCmd
