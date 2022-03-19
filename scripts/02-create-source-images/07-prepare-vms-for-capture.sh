@@ -51,11 +51,6 @@ vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -
 #echo $vmFqdnV3
 #echo $vmIpV3
 
-if [[ ! -d "~/.ssh" ]]
-then
-  echo "Create ~/.ssh directory"
-  mkdir -p ~/.ssh
-fi
 
 if [[ ! -z $GITHUB_ACTIONS ]]
 then
@@ -68,7 +63,6 @@ then
 
   echo -e "$configFile" > ~/.ssh/config
 
-  echo "Meow"
   cat ~/.ssh/config
 fi
 
@@ -83,9 +77,7 @@ fi
 
 # ##################################################
 
-echo "ls"
 ls -la ~/.ssh
-echo "ls"
 
 echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"

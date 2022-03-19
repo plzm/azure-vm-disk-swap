@@ -7,9 +7,15 @@
 
 # If this is a hosted build agent, this SSH public/private key pair's lifetime is only as long as the build agent's.
 
-# Clean up existing key files, if any
+if [[ ! -d "~/.ssh" ]]
+then
+  echo "Create ~/.ssh directory"
+  mkdir -p ~/.ssh
+fi
+
 if [[ -f ~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME" ]]
 then
+	echo "Clean up existing key file(s)"
 	delCmd="rm ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
 	#echo $delCmd
 	eval $delCmd
@@ -25,3 +31,5 @@ echo $VM_ADMIN_SSH_PUBLIC_KEY > ~/.ssh/"$VM_ADMIN_SSH_USER_KEY_NAME".pub
 eval $(ssh-agent)
 sshAddCmd="ssh-add ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 eval $sshAddCmd
+
+ls -la ~/.ssh

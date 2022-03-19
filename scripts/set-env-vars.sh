@@ -89,6 +89,10 @@ setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
 # Variables to export to env vars
 
 setEnvVar "NSG_RULE_SRC_ADDRESS_DEV" "$myLocalIpAddress"
+setEnvVar "NSG_RULE_PRIORITY_DEV" 100
+setEnvVar "NSG_RULE_PRIORITY_GH_VNET" 101
+setEnvVar "NSG_RULE_PRIORITY_GH_VMV2" 102
+setEnvVar "NSG_RULE_PRIORITY_GH_VMV3" 103
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 subscriptionId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")

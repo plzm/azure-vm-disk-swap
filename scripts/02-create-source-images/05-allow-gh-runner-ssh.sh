@@ -6,12 +6,12 @@ vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -
 vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 echo "Create NSG rule for GitHub runner inbound access to VNet"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-110" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VNet" --verbose \
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
 	nsgRuleName="GitHub-Runner-SSH-Inbound-VNet" \
-	priority=110 \
+	priority=$NSG_RULE_PRIORITY_GH_VNET \
 	direction="Inbound" \
 	access="Allow" \
 	protocol="*" \
@@ -21,12 +21,12 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-110" -
 	destinationPortRange="22"
 
 echo "Create NSG rule for GitHub runner inbound access to VM v2"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-111" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VMv2" --verbose \
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
 	nsgRuleName="GitHub-Runner-SSH-Inbound-VM-v2" \
-	priority=111 \
+	priority=$NSG_RULE_PRIORITY_GH_VMV2 \
 	direction="Inbound" \
 	access="Allow" \
 	protocol="*" \
@@ -36,12 +36,12 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-111" -
 	destinationPortRange="22"
 
 echo "Create NSG rule for GitHub runner inbound access to VM v3"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-112" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VMv3" --verbose \
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
 	nsgRuleName="GitHub-Runner-SSH-Inbound-VM-v3" \
-	priority=112 \
+	priority=$NSG_RULE_PRIORITY_GH_VMV3 \
 	direction="Inbound" \
 	access="Allow" \
 	protocol="*" \
