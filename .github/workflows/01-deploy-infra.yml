@@ -52,6 +52,7 @@ jobs:
           ./scripts/01-deploy-infra/04-deploy-compute-gallery.sh
 
       - name: Azure logout
+        if: always()
         uses: azure/CLI@v1
         with:
           inlineScript: |

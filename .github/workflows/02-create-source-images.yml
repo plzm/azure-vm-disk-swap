@@ -100,6 +100,7 @@ jobs:
           ./scripts/02-create-source-images/12-nsg-remove-gh-runner-ssh.sh
 
       - name: Azure logout
+        if: always()
         uses: azure/CLI@v1
         with:
           inlineScript: |
