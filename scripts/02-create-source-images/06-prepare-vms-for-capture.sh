@@ -76,7 +76,7 @@ if [[ -z "$(ssh-keygen -v -F $vmFqdnV2)" ]]
 then
   echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV2"" >> ~/.ssh/known_hosts"
+  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV2"
 
   doTheSsh "$sshKeyScanCmd"
 fi
