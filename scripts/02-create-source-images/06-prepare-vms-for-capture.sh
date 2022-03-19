@@ -46,49 +46,62 @@ vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -
 vmFqdnV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-echo $vmFqdnV2
-echo $vmIpV2
-echo $vmFqdnV3
-echo $vmIpV3
-
-ls -la ~/.ssh
+#echo $vmFqdnV2
+#echo $vmIpV2
+#echo $vmFqdnV3
+#echo $vmIpV3
 
 if [[ ! -d "~/.ssh" ]]
 then
-  mkdir ~/.ssh
+  echo "Create ~/.ssh directory"
+  mkdir -p ~/.ssh
+fi
+
+if [[ ! -z $GITHUB_ACTIONS ]]
+then
+  echo "We are in GitHub CI environment - create SSH config file to avoid SSH login being interrupted with key prompt"
+
+  configFile="Host ""$vmFqdnV2"" ""$vmFqdnV3""\n
+  User ""$DEPLOYMENT_SSH_USER_NAME""\n
+  IdentityFile ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""\n
+  StrictHostKeyChecking no\n"
+
+  echo -e $configFile > "~/.ssh/config"
 fi
 
 if [[ ! -f "~/.ssh/known_hosts" ]]
 then
+  echo "Create new known_hosts file"
   touch ~/.ssh/known_hosts
   chmod 644 ~/.ssh/known_hosts
+else
+  echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV2"
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV2"
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV3"
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV3"
 fi
 
 # ##################################################
-echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
-ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV2"
-ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV2"
-ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV3"
-ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV3"
 
 
-if [[ -z "$(ssh-keygen -v -F $vmFqdnV2)" ]]
-then
-  echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+#if [[ -z "$(ssh-keygen -v -F $vmFqdnV2)" ]]
+#then
+#  echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV2"
+#  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV2"
 
-  doTheSsh "$sshKeyScanCmd"
-fi
+#  doTheSsh "$sshKeyScanCmd"
+#fi
 
-if [[ -z "$(ssh-keygen -v -F $vmFqdnV3)" ]]
-then
-  echo "Add v3 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+#if [[ -z "$(ssh-keygen -v -F $vmFqdnV3)" ]]
+#then
+#  echo "Add v3 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
+#  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
 
-  doTheSsh "$sshKeyScanCmd"
-fi
+#  doTheSsh "$sshKeyScanCmd"
+#fi
 # ##################################################
 
 
