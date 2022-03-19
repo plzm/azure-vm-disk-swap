@@ -48,6 +48,11 @@ echo $vmIpV3
 
 ls -la ~/.ssh
 
+if [ ! -d "~/.ssh" ]
+then
+  mkdir ~/.ssh
+fi
+
 if [ ! -f "~/.ssh/known_hosts" ]
 then
   touch ~/.ssh/known_hosts
