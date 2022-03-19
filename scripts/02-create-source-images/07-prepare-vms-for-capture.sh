@@ -83,28 +83,6 @@ fi
 
 # ##################################################
 
-
-#if [[ -z "$(ssh-keygen -v -F $vmFqdnV2)" ]]
-#then
-#  echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
-
-#  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV2"
-
-#  doTheSsh "$sshKeyScanCmd"
-#fi
-
-#if [[ -z "$(ssh-keygen -v -F $vmFqdnV3)" ]]
-#then
-#  echo "Add v3 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
-
-#  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
-
-#  doTheSsh "$sshKeyScanCmd"
-#fi
-# ##################################################
-
-
-# ##################################################
 echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 
@@ -119,4 +97,5 @@ echo "V3 VM"
 sshToVmV3="ssh -v -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVmV3="${sshToVmV3} ${remoteCmd}"
 doTheSsh "$fullCmdVmV3"
+
 # ##################################################

@@ -22,7 +22,7 @@ ssh-keygen -q -m "PEM" -f "./""$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SS
 echo $VM_ADMIN_SSH_PUBLIC_KEY > "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
 
 # Move SSH key files to ~/.ssh
-mkdir ~/.ssh
+mkdir -p ~/.ssh
 mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME" ~/.ssh
 cp "./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub" ~/.ssh
 cp "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub" ~/.ssh

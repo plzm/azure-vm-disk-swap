@@ -88,7 +88,7 @@ setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
 # ##################################################
 # Variables to export to env vars
 
-setEnvVar "NSG_RULE_INBOUND_100_SRC" "$myLocalIpAddress"
+setEnvVar "NSG_RULE_SRC_ADDRESS_DEV" "$myLocalIpAddress"
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 subscriptionId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
@@ -127,6 +127,7 @@ setEnvVar "SUBNET_PRIVATE_LINK_NETWORK_POLICIES" "Enabled" # Enabled or Disabled
 # ARM Templates
 setEnvVar "TEMPLATE_UAMI" "$templateRoot""identity.user-assigned-mi.json"
 setEnvVar "TEMPLATE_NSG" "$templateRoot""net.nsg.json"
+setEnvVar "TEMPLATE_NSG_RULE" "$templateRoot""net.nsg.rule.json"
 setEnvVar "TEMPLATE_VNET" "$templateRoot""net.vnet.json"
 setEnvVar "TEMPLATE_SUBNET" "$templateRoot""net.vnet.subnet.json"
 setEnvVar "TEMPLATE_COMPUTE_GALLERY" "$templateRoot""compute.gallery.json"

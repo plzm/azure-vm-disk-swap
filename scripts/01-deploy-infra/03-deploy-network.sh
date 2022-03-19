@@ -5,8 +5,22 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-""$LOCATION
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG" \
 	--parameters \
 	location="$LOCATION" \
+	nsgName="$NSG_NAME"
+
+echo "Create NSG rule for Dev inbound access"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-100" --verbose \
+	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
+	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleInbound100Src="$NSG_RULE_INBOUND_100_SRC"
+	nsgRuleName="Dev-Inbound" \
+	priority=100 \
+	direction="Inbound" \
+	access="Allow" \
+	protocol="*" \
+	sourceAddressPrefix="$NSG_RULE_SRC_ADDRESS_DEV" \
+	sourcePortRange="*" \
+	destinationAddressPrefix="*" \
+	destinationPortRange="*"
 
 echo "Create VNet"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VNet-""$LOCATION" --verbose \

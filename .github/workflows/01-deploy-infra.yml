@@ -35,50 +35,21 @@ jobs:
 
       - name: Deploy User-Assigned MI
         if: success()
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.RG_NAME_SECURITY }}
-          deploymentName: ${{ env.USERNAME_UAMI }}
-          template: ${{ env.TEMPLATE_UAMI }}
-          parameters: location=${{ env.LOCATION }} tenantId=${{ env.TENANT_ID }} identityName=${{ env.USERNAME_UAMI }}
+        run: |
+          chmod +x ./scripts/01-deploy-infra/02-deploy-uami.sh
+          ./scripts/01-deploy-infra/02-deploy-uami.sh
 
-      - name: Deploy NSG
+      - name: Deploy Network
         if: success()
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.RG_NAME_NET }}
-          deploymentName: ${{ env.NSG_NAME }}
-          template: ${{ env.TEMPLATE_NSG }}
-          parameters: location=${{ env.LOCATION }} nsgName=${{ env.NSG_NAME }} nsgRuleInbound100Src=${{ env.NSG_RULE_INBOUND_100_SRC }}
-
-      - name: Deploy VNet
-        if: success()
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.RG_NAME_NET }}
-          deploymentName: ${{ env.VNET_NAME }}
-          template: ${{ env.TEMPLATE_VNET }}
-          parameters: |
-            location=${{ env.LOCATION }} vnetName=${{ env.VNET_NAME }} vnetPrefix=${{ env.VNET_PREFIX }} enableDdosProtection=${{ env.VNET_ENABLE_DDOS_PROTECTION }} enableVmProtection=${{ env.VNET_ENABLE_VM_PROTECTION }}
-
-      - name: Deploy Subnet
-        if: success()
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.RG_NAME_NET }}
-          deploymentName: ${{ env.SUBNET_NAME }}
-          template: ${{ env.TEMPLATE_SUBNET }}
-          parameters: vnetName=${{ env.VNET_NAME }} subnetName=${{ env.SUBNET_NAME }} subnetPrefix=${{ env.SUBNET_PREFIX }} nsgResourceGroup=${{ env.RG_NAME_NET }} nsgName=${{ env.NSG_NAME }} serviceEndpoints=${{ env.SUBNET_SERVICE_ENDPOINTS }} privateEndpointNetworkPolicies=${{ env.SUBNET_PRIVATE_ENDPOINT_NETWORK_POLICIES }} privateLinkServiceNetworkPolicies=${{ env.SUBNET_PRIVATE_LINK_NETWORK_POLICIES }}
+        run: |
+          chmod +x ./scripts/01-deploy-infra/03-deploy-network.sh
+          ./scripts/01-deploy-infra/03-deploy-network.sh
 
       - name: Deploy Azure Compute Gallery
         if: success()
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.RG_NAME_GALLERY }}
-          deploymentName: ${{ env.GALLERY_NAME }}
-          template: ${{ env.TEMPLATE_COMPUTE_GALLERY }}
-          parameters: |
-            location=${{ env.LOCATION }} gallery-name=${{ env.GALLERY_NAME }} 
+        run: |
+          chmod +x ./scripts/01-deploy-infra/04-deploy-compute-gallery.sh
+          ./scripts/01-deploy-infra/04-deploy-compute-gallery.sh
 
       - name: Azure logout
         uses: azure/CLI@v1
