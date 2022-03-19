@@ -10,7 +10,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleName="GitHub-Runner-SSH-Inbound-VNet" \
+	nsgRuleName="$NSG_RULE_NAME_GH_VNET" \
 	priority=$NSG_RULE_PRIORITY_GH_VNET \
 	direction="Inbound" \
 	access="Allow" \
@@ -25,7 +25,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleName="GitHub-Runner-SSH-Inbound-VM-v2" \
+	nsgRuleName="$NSG_RULE_NAME_GH_VMV2" \
 	priority=$NSG_RULE_PRIORITY_GH_VMV2 \
 	direction="Inbound" \
 	access="Allow" \
@@ -40,7 +40,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleName="GitHub-Runner-SSH-Inbound-VM-v3" \
+	nsgRuleName="$NSG_RULE_NAME_GH_VMV3" \
 	priority=$NSG_RULE_PRIORITY_GH_VMV3 \
 	direction="Inbound" \
 	access="Allow" \

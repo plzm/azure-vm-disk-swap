@@ -12,7 +12,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-100" -
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleName="Dev-Inbound" \
+	nsgRuleName="$NSG_RULE_NAME_DEV" \
 	priority=$NSG_RULE_PRIORITY_DEV \
 	direction="Inbound" \
 	access="Allow" \
