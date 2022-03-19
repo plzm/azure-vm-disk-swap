@@ -12,11 +12,16 @@
 
 doTheSsh() {
   cmd=$1
+  echo $cmd
 
+  loop=0
+  max=10
   code=9999
 
-  while [ $code -gt 0 ]
+  while [ $code -gt 0 && $loop -le $max ]
   do
+    loop=$((loop + 1))
+
     eval $cmd
     code=$?
 
@@ -71,7 +76,7 @@ if [ -z "$(ssh-keygen -F $vmFqdnV2)" ]
 then
   echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnV2"" >> ~/.ssh/known_hosts"
+  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV2"" >> ~/.ssh/known_hosts"
 
   doTheSsh "$sshKeyScanCmd"
 fi
@@ -80,7 +85,7 @@ if [ -z "$(ssh-keygen -F $vmFqdnV3)" ]
 then
   echo "Add v3 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
 
-  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
+  sshKeyScanCmd="ssh-keyscan -v -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
 
   doTheSsh "$sshKeyScanCmd"
 fi
