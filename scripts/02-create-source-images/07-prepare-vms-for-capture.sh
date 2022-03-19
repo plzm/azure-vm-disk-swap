@@ -93,14 +93,12 @@ echo "NOTE - the environment where this is executed MUST have the SSH private ke
 remoteCmd=" < ./scripts/02-create-source-images/remote-cmd.sh"
 
 echo "V2 VM"
-#sshToVmV2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-sshToVmV2="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2"
+sshToVmV2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVmV2="${sshToVmV2} ${remoteCmd}"
 doTheSsh "$fullCmdVmV2"
 
 echo "V3 VM"
-#sshToVmV3="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-sshToVmV3="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3"
+sshToVmV3="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVmV3="${sshToVmV3} ${remoteCmd}"
 doTheSsh "$fullCmdVmV3"
 

@@ -15,27 +15,11 @@ then
 	eval $delCmd
 fi
 
-
 # Generate new deployment user public and private key pair and write the files here
 ssh-keygen -v -q -m "PEM" -f ~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
 
 # Also write a file for the admin public key
 echo $VM_ADMIN_SSH_PUBLIC_KEY > ~/.ssh/"$VM_ADMIN_SSH_USER_KEY_NAME".pub
-
-## Set SSH key file permissions
-## Private key - restrictive
-#privCmd="chmod 600 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-##echo $privCmd
-#eval $privCmd
-
-## Public keys - less restrictive
-#pubCmd="chmod 644 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub"
-##echo $pubCmd
-#eval $pubCmd
-
-#pubCmd="chmod 644 ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
-##echo $pubCmd
-#eval $pubCmd
 
 # Add deployment private SSH key to SSH agent
 eval $(ssh-agent)
