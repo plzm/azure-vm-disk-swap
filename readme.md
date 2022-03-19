@@ -2,6 +2,8 @@
 
 ![01-Deploy-Infrastructure](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/01-deploy-infra.yml/badge.svg)
 <br />
+![02-Create-Source-Images](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/02-create-source-images.yml/badge.svg)
+<br />
 ![Cleanup](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/cleanup.yml/badge.svg)
 
 ## Summary

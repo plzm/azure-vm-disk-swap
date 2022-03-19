@@ -1,8 +1,7 @@
 #!/bin/bash
 # This is the script to run remotely on deployed VMs
+set -eux
 
-touch plzm.txt
-
-sudo mkdir /patrick_was_here
+sudo mkdir /patrick_old_school
 
 # Other configuration etc. etc.

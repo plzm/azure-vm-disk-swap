@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
@@ -14,7 +15,7 @@ setEnvVar() {
   varName=$1
   varValue=$2
 
-	if [ ! -z $GITHUB_ACTIONS ]
+	if [[ ! -z $GITHUB_ACTIONS ]]
 	then
 		# We are in GitHub CI environment - export to GitHub Actions workflow context for availability in later tasks in this workflow
 		cmd=$(echo -e "echo \x22""$varName""=""$varValue""\x22 \x3E\x3E \x24GITHUB_ENV")
@@ -88,7 +89,15 @@ setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
 # ##################################################
 # Variables to export to env vars
 
-setEnvVar "NSG_RULE_INBOUND_100_SRC" "$myLocalIpAddress"
+setEnvVar "NSG_RULE_SRC_ADDRESS_DEV" "$myLocalIpAddress"
+setEnvVar "NSG_RULE_NAME_DEV" "Dev-Inbound"
+setEnvVar "NSG_RULE_PRIORITY_DEV" 100
+setEnvVar "NSG_RULE_NAME_GH_VNET" "GitHub-Runner-SSH-Inbound-VNet"
+setEnvVar "NSG_RULE_PRIORITY_GH_VNET" 101
+setEnvVar "NSG_RULE_NAME_GH_VMV2" "GitHub-Runner-SSH-Inbound-VM-v2"
+setEnvVar "NSG_RULE_PRIORITY_GH_VMV2" 102
+setEnvVar "NSG_RULE_NAME_GH_VMV3" "GitHub-Runner-SSH-Inbound-VM-v3"
+setEnvVar "NSG_RULE_PRIORITY_GH_VMV3" 103
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 subscriptionId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
@@ -127,6 +136,7 @@ setEnvVar "SUBNET_PRIVATE_LINK_NETWORK_POLICIES" "Enabled" # Enabled or Disabled
 # ARM Templates
 setEnvVar "TEMPLATE_UAMI" "$templateRoot""identity.user-assigned-mi.json"
 setEnvVar "TEMPLATE_NSG" "$templateRoot""net.nsg.json"
+setEnvVar "TEMPLATE_NSG_RULE" "$templateRoot""net.nsg.rule.json"
 setEnvVar "TEMPLATE_VNET" "$templateRoot""net.vnet.json"
 setEnvVar "TEMPLATE_SUBNET" "$templateRoot""net.vnet.subnet.json"
 setEnvVar "TEMPLATE_COMPUTE_GALLERY" "$templateRoot""compute.gallery.json"

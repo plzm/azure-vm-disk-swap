@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # ##################################################
 # IMPORTANT DO NOT SKIP THIS - READ THIS!!!!
@@ -12,10 +13,16 @@
 
 doTheSsh() {
   cmd=$1
+  echo $cmd
 
-  code=1
-  while [ $code -gt 0 ]
+  loop=0
+  max=10
+  code=9999
+
+  while [[ $code -gt 0 && $loop -le $max ]]
   do
+    loop=$((loop + 1))
+
     eval $cmd
     code=$?
 
@@ -40,40 +47,43 @@ vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -
 vmFqdnV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-
-# ##################################################
-echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnV2"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpV2"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmFqdnV3"
-ssh-keygen -f ~/.ssh/known_hosts -R "$vmIpV3"
+#echo $vmFqdnV2
+#echo $vmIpV2
+#echo $vmFqdnV3
+#echo $vmIpV3
 
 
-if [ -z "$(ssh-keygen -F $vmFqdnV2)" ]
+if [[ ! -z $GITHUB_ACTIONS ]]
 then
-  echo "Add v2 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
+  echo "We are in GitHub CI environment - create SSH config file to avoid SSH login being interrupted with key prompt"
 
-  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnV2"" >> ~/.ssh/known_hosts"
+  configFile="Host ""$vmFqdnV2"" ""$vmFqdnV3""
+  User ""$DEPLOYMENT_SSH_USER_NAME""
+  IdentityFile ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""
+  StrictHostKeyChecking no"
 
-  doTheSsh "$sshKeyScanCmd"
+  echo -e "$configFile" > ~/.ssh/config
+
+  cat ~/.ssh/config
 fi
 
-if [ -z "$(ssh-keygen -F $vmFqdnV3)" ]
+if [[ -f "~/.ssh/known_hosts" ]]
 then
-  echo "Add v3 VM to SSH known hosts so that SSH login is not interrupted with interactive prompt - NOTE this may be a security concern in highly sensitive environments, ensure you are OK with this"
-
-  sshKeyScanCmd="ssh-keyscan -H ""$vmFqdnV3"" >> ~/.ssh/known_hosts"
-
-  doTheSsh "$sshKeyScanCmd"
+  echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/key validation fail."
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV2"
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV2"
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV3"
+  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV3"
 fi
-# ##################################################
-
 
 # ##################################################
+
+ls -la ~/.ssh
+
 echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 
-remoteCmd=" < remote-cmd.sh"
+remoteCmd=" < ./scripts/02-create-source-images/remote-cmd.sh"
 
 echo "V2 VM"
 sshToVmV2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
@@ -84,4 +94,5 @@ echo "V3 VM"
 sshToVmV3="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV3 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVmV3="${sshToVmV3} ${remoteCmd}"
 doTheSsh "$fullCmdVmV3"
+
 # ##################################################

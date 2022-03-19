@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # Get Shared Image Gallery (SIG) Version References
 sigImageRefV2=$(echo "$(az sig image-version show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" --gallery-name "$GALLERY_NAME" --gallery-image-definition "$VM_IMG_DEF_NAME_V2" --gallery-image-version "$VM_IMG_DEF_VERSION_V2" -o tsv --query "id")" | sed "s/\r//")

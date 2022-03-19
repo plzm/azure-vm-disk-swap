@@ -18,32 +18,15 @@ jobs:
 
       - name: Set Environment Variables
         if: success()
-        env:
-          SP_OBJECT_ID: ${{ secrets.SP_OBJECT_ID }}
         run: |
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
-      - name: Delete Resource Group "${{ env.RG_NAME_DEPLOY }}"
+      - name: Cleanup
         if: success()
-        continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
-
-      - name: Delete Resource Group "${{ env.RG_NAME_SOURCE }}"
-        continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SOURCE }}" --yes --verbose
-
-      - name: Delete Resource Group "${{ env.RG_NAME_GALLERY }}"
-        continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_GALLERY }}" --yes --verbose
-
-      - name: Delete Resource Group "${{ env.RG_NAME_SECURITY }}"
-        continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SECURITY }}" --yes --verbose
-
-      - name: Delete Resource Group "${{ env.RG_NAME_NET }}"
-        continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_NET }}" --yes --verbose
+        run: |
+          chmod +x ./scripts/cleanup.sh
+          ./scripts/cleanup.sh
 
       - name: Azure logout
         if: always()

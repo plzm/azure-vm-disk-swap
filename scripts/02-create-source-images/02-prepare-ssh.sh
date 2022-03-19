@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # Deployment user SSH public and private keys
 # In this context, we'll create a new key pair ONLY for deployment. This way, the source VMs, the OS disks, the deployed VM, etc. all only know
@@ -7,42 +8,29 @@
 
 # If this is a hosted build agent, this SSH public/private key pair's lifetime is only as long as the build agent's.
 
-# Clean up existing key files, if any
-delCmd="rm ./""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
-#echo $delCmd
-eval $delCmd
-delCmd="rm ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
-#echo $delCmd
-eval $delCmd
+if [[ ! -d "~/.ssh" ]]
+then
+  echo "Create ~/.ssh directory"
+  mkdir -p ~/.ssh
+fi
+
+if [[ -f ~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME" ]]
+then
+	echo "Clean up existing key file(s)"
+	delCmd="rm ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
+	#echo $delCmd
+	eval $delCmd
+fi
 
 # Generate new deployment user public and private key pair and write the files here
-ssh-keygen -q -m "PEM" -f "./""$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
+ssh-keygen -v -q -m "PEM" -f ~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
 
 # Also write a file for the admin public key
-echo $VM_ADMIN_SSH_PUBLIC_KEY > "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
-
-# Move SSH key files to ~/.ssh
-mkdir ~/.ssh
-mv "./""$DEPLOYMENT_SSH_USER_KEY_NAME" ~/.ssh
-cp "./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub" ~/.ssh
-cp "./""$VM_ADMIN_SSH_USER_KEY_NAME"".pub" ~/.ssh
-
-# Set SSH key file permissions
-# Private key - restrictive
-privCmd="chmod 600 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-#echo $privCmd
-eval $privCmd
-
-# Public keys - less restrictive
-pubCmd="chmod 644 ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub"
-#echo $pubCmd
-eval $pubCmd
-
-pubCmd="chmod 644 ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"".pub"
-#echo $pubCmd
-eval $pubCmd
+echo $VM_ADMIN_SSH_PUBLIC_KEY > ~/.ssh/"$VM_ADMIN_SSH_USER_KEY_NAME".pub
 
 # Add deployment private SSH key to SSH agent
 eval $(ssh-agent)
 sshAddCmd="ssh-add ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 eval $sshAddCmd
+
+ls -la ~/.ssh
