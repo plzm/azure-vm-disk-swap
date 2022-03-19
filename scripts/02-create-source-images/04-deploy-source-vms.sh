@@ -1,11 +1,7 @@
 #!/bin/bash
 
-echo "Retrieve Deployment Username and SSH Public Key from Key Vault"
-vmDeployUsername=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmDeploySshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
-#echo $vmDeployUsername | cat -v
-#echo $vmDeploySshPublicKey | cat -v
-
+keyFilePath="./""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub"
+vmDeploySshPublicKey=$(<$keyFilePath)
 
 echo "Deploy Source VMs to use for image capture"
 
@@ -48,7 +44,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V2" --verbos
 	sku="$OS_SKU_2" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmDeployUsername" \
+	adminUsername="$DEPLOYMENT_SSH_USER_NAME" \
 	adminSshPublicKey="$vmDeploySshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
@@ -103,7 +99,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V3" --verbos
 	sku="$OS_SKU_3" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
-	adminUsername="$vmDeployUsername" \
+	adminUsername="$DEPLOYMENT_SSH_USER_NAME" \
 	adminSshPublicKey="$vmDeploySshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \

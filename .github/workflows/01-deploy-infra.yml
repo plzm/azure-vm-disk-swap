@@ -23,8 +23,6 @@ jobs:
 
       - name: Set Environment Variables
         if: success()
-        env:
-          SP_OBJECT_ID: ${{ secrets.SP_OBJECT_ID }}
         run: |
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
@@ -43,15 +41,6 @@ jobs:
           deploymentName: ${{ env.USERNAME_UAMI }}
           template: ${{ env.TEMPLATE_UAMI }}
           parameters: location=${{ env.LOCATION }} tenantId=${{ env.TENANT_ID }} identityName=${{ env.USERNAME_UAMI }}
-
-      - name: Deploy Key Vault
-        if: success()
-        uses: azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.RG_NAME_SECURITY }}
-          deploymentName: ${{ env.KEYVAULT_NAME }}
-          template: ${{ env.TEMPLATE_KEYVAULT }}
-          parameters: location=${{ env.LOCATION }} tenantId=${{ env.TENANT_ID }} keyVaultName=${{ env.KEYVAULT_NAME }} skuName=${{ env.KEYVAULT_SKU_NAME }} enableSoftDelete=${{ env.KEYVAULT_SOFT_DELETE }}
 
       - name: Deploy NSG
         if: success()

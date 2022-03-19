@@ -58,19 +58,20 @@ suffixVersion3=$(date -d "+2 months" +"%Y%m")
 # This SSH key is not used in this context to log into the VM. It's added to the VM for eventual use by this user account.
 # It's hard-coded here but of course if this is stored in the Key Vault used elsewhere here, you can just retrieve it from there at this point.
 vmAdminSshUserName="pelazem"
-vmAdminSshKeyName="id_rsa"
+vmAdminSshKeyName="id_""$vmAdminSshUserName"
 vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
 vmAdminSshPublicKey="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName"
 
 deploySshUserName="deploy"
+deploySshKeyName="id_""$deploySshUserName"
 # ##################################################
 
 # ##################################################
 # SSH Key Pair for Deployment
 
 # Deployment username - used only to deploy/configure VM
-setEnvVar "DEPLOYMENT_SSH_USER_NAME" "deploy"
-setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "id_""$deploySshUserName"
+setEnvVar "DEPLOYMENT_SSH_USER_NAME" "$deploySshUserName"
+setEnvVar "DEPLOYMENT_SSH_USER_KEY_NAME" "$deploySshKeyName"
 setEnvVar "DEPLOYMENT_SSH_KEY_TYPE" "rsa"
 setEnvVar "DEPLOYMENT_SSH_KEY_BITS" 4096
 setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as deployment SSH key will be short-lived
@@ -81,13 +82,6 @@ setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as
 setEnvVar "VM_ADMIN_SSH_USER_NAME" "$vmAdminSshUserName"
 setEnvVar "VM_ADMIN_SSH_USER_KEY_NAME" "$vmAdminSshKeyName"
 setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
-
-# Key Vault Secret NAMES of the secrets whose actual VALUES you write to or retrieve from Key Vault
-setEnvVar "KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_USER_NAME" "vm-deploy-ssh-user-name"
-setEnvVar "KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PUBLIC_KEY" "vm-deploy-ssh-public-key"
-setEnvVar "KEYVAULT_SECRET_NAME_DEPLOYMENT_SSH_PRIVATE_KEY" "vm-deploy-ssh-private-key"
-setEnvVar "KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" "vm-admin-ssh-user-name"
-setEnvVar "KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" "vm-admin-ssh-public-key"
 
 # ##################################################
 
@@ -104,19 +98,6 @@ setEnvVar "SUBSCRIPTION_ID" "$subscriptionId"
 tenantId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'tenantId')" | sed "s/\r//")
 setEnvVar "TENANT_ID" "$tenantId"
 
-# Get current user context object ID. Need this to set initial Key Vault Access Policy so secrets etc. can be set/read in these scripts.
-# NOTE: per https://github.com/Azure/azure-cli/issues/10439, this only works for user identities. It crashes when running logged in as a Service Principal, as on a GHA runner. So we have to do it a different way for users vs. SPs. Face-palm.
-# We will crudely assume that if running in GHA, we are in a SP context.
-if [ ! -z $GITHUB_ACTIONS ]
-then
-	# spName=$(echo "$(az account show -o tsv --query 'user.name')" | sed "s/\r//")
-	# --> set/get SECRETS.SP_OBJECT_ID
-	userObjectId="$SP_OBJECT_ID"
-else
-	userObjectId=$(echo "$(az ad signed-in-user show -o tsv --query 'objectId')" | sed "s/\r//")
-fi
-setEnvVar "USER_OBJECT_ID" "$userObjectId"
-
 # Deployment
 setEnvVar "LOCATION" "eastus2"
 
@@ -129,11 +110,6 @@ setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$azureLocation"
 
 # User-Assigned Managed Identity
 setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"
-
-# Key Vault
-setEnvVar "KEYVAULT_SKU_NAME" "Standard"
-setEnvVar "KEYVAULT_NAME" "$resourceNamingInfix""-kv-""$azureLocation"
-setEnvVar "KEYVAULT_SOFT_DELETE" "false"
 
 # Network
 setEnvVar "NSG_NAME" "vm-nsg-""$azureLocation"
@@ -150,8 +126,6 @@ setEnvVar "SUBNET_PRIVATE_LINK_NETWORK_POLICIES" "Enabled" # Enabled or Disabled
 # Now assemble all the individual template paths
 # ARM Templates
 setEnvVar "TEMPLATE_UAMI" "$templateRoot""identity.user-assigned-mi.json"
-setEnvVar "TEMPLATE_KEYVAULT" "$templateRoot""key-vault.json"
-setEnvVar "TEMPLATE_KEYVAULT_SECRET" "$templateRoot""key-vault.secret.json"
 setEnvVar "TEMPLATE_NSG" "$templateRoot""net.nsg.json"
 setEnvVar "TEMPLATE_VNET" "$templateRoot""net.vnet.json"
 setEnvVar "TEMPLATE_SUBNET" "$templateRoot""net.vnet.subnet.json"

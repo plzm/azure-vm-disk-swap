@@ -1,6 +1,7 @@
 # Azure Deployment: Azure Virtual Machine (VM) - Non-Destructively Swap OS Disks
 
 ![01-Deploy-Infrastructure](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/01-deploy-infra.yml/badge.svg)
+<br />
 ![Cleanup](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/cleanup.yml/badge.svg)
 
 ## Summary

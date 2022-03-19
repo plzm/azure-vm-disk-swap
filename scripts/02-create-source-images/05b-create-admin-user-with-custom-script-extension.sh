@@ -1,12 +1,5 @@
 #!/bin/bash
 
-echo "Retrieve VM Admin Username and SSH Public Key from Key Vault"
-vmAdminSshUserName=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_USER_NAME" -o tsv --query 'value')" | sed "s/\r//")
-vmAdminSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSCRIPTION_ID" --vault-name "$KEYVAULT_NAME" --name "$KEYVAULT_SECRET_NAME_VM_ADMIN_SSH_PUBLIC_KEY" -o tsv --query 'value')" | sed "s/\r//")
-
-#echo $vmAdminSshUserName
-#echo $vvmAdminSshPublicKey
-
 # If a Managed Identity Name was provided, get its Principal ID for the custom script extension deploy below
 # This is useful if the custom script task is modified to retrieve a file from an Azure Storage account where the managed identity has access permissions
 if [ ! -z $USERNAME_UAMI ]
@@ -16,16 +9,16 @@ fi
 
 # RHEL
 script="
-sudo useradd ""$vmAdminSshUserName"";
-sudo usermod -aG wheel ""$vmAdminSshUserName"";
-sudo mkdir -p /home/""$vmAdminSshUserName""/.ssh;
-sudo echo \"""$vvmAdminSshPublicKey""\"  > ""$vmAdminSshUserName"".txt;
-sudo cp ./""$vmAdminSshUserName"".txt /home/""$vmAdminSshUserName""/.ssh/authorized_keys;
-sudo rm ""$vmAdminSshUserName"".txt;
-sudo chmod 700 /home/""$vmAdminSshUserName""/.ssh;
-sudo chmod 600 /home/""$vmAdminSshUserName""/.ssh/authorized_keys;
-sudo chown -R ""$vmAdminSshUserName"":""$vmAdminSshUserName"" /home/""$vmAdminSshUserName""/.ssh;
-sudo echo \"""$vmAdminSshUserName""	ALL=(ALL)	NOPASSWD: ALL\" > /etc/sudoers.d/020_""$vmAdminSshUserName"";
+sudo useradd ""$VM_ADMIN_SSH_USER_NAME"";
+sudo usermod -aG wheel ""$VM_ADMIN_SSH_USER_NAME"";
+sudo mkdir -p /home/""$VM_ADMIN_SSH_USER_NAME""/.ssh;
+sudo echo \"""$vVM_ADMIN_SSH_PUBLIC_KEY""\"  > ""$VM_ADMIN_SSH_USER_NAME"".txt;
+sudo cp ./""$VM_ADMIN_SSH_USER_NAME"".txt /home/""$VM_ADMIN_SSH_USER_NAME""/.ssh/authorized_keys;
+sudo rm ""$VM_ADMIN_SSH_USER_NAME"".txt;
+sudo chmod 700 /home/""$VM_ADMIN_SSH_USER_NAME""/.ssh;
+sudo chmod 600 /home/""$VM_ADMIN_SSH_USER_NAME""/.ssh/authorized_keys;
+sudo chown -R ""$VM_ADMIN_SSH_USER_NAME"":""$VM_ADMIN_SSH_USER_NAME"" /home/""$VM_ADMIN_SSH_USER_NAME""/.ssh;
+sudo echo \"""$VM_ADMIN_SSH_USER_NAME""	ALL=(ALL)	NOPASSWD: ALL\" > /etc/sudoers.d/020_""$VM_ADMIN_SSH_USER_NAME"";
 "
 
 # TODO - Ubuntu version of above script - will need to change the usermod line to make new user an admin
