@@ -1,5 +1,8 @@
 #!/bin/bash
 
+keyFilePath="~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"".pub"
+vmDeploySshPublicKey=$(<$keyFilePath)
+
 echo "Deploy Source VMs to use for image capture"
 
 echo "Source VM v2"
