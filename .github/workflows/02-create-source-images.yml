@@ -27,6 +27,19 @@ jobs:
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
+      - name: Create Resource Groups
+        if: success()
+        run: |
+          chmod +x ./scripts/02-create-source-images/01-deploy-rgs.sh
+          ./scripts/02-create-source-images/01-deploy-rgs.sh
+
+      - name: Prepare SSH keys
+        if: success()
+        run: |
+          chmod +x ./scripts/02-create-source-images/02-prepare-ssh.sh
+          ./scripts/02-create-source-images/02-prepare-ssh.sh
+
+
       - name: Prepare VMs for Capture
         if: success()
         run: |
