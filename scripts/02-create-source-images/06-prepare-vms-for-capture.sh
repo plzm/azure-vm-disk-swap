@@ -73,6 +73,7 @@ then
 fi
 
 if [[ -f "~/.ssh/known_hosts" ]]
+then
   echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
   ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV2"
   ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV2"
