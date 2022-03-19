@@ -17,7 +17,7 @@ fi
 
 
 # Generate new deployment user public and private key pair and write the files here
-ssh-keygen -q -m "PEM" -f ~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
+ssh-keygen -v -q -m "PEM" -f ~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME" -t "$DEPLOYMENT_SSH_KEY_TYPE" -b $DEPLOYMENT_SSH_KEY_BITS -N "$DEPLOYMENT_SSH_KEY_PASSPHRASE" -C "$DEPLOYMENT_SSH_USER_NAME"
 
 # Also write a file for the admin public key
 echo $VM_ADMIN_SSH_PUBLIC_KEY > ~/.ssh/"$VM_ADMIN_SSH_USER_KEY_NAME".pub
