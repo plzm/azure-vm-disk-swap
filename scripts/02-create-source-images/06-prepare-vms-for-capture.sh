@@ -66,15 +66,13 @@ then
   IdentityFile ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""\n
   StrictHostKeyChecking no\n"
 
-  echo -e $configFile > "~/.ssh/config"
+  echo -e "$configFile" > ~/.ssh/config
+
+  echo "Meow"
+  cat ~/.ssh/config
 fi
 
-if [[ ! -f "~/.ssh/known_hosts" ]]
-then
-  echo "Create new known_hosts file"
-  touch ~/.ssh/known_hosts
-  chmod 644 ~/.ssh/known_hosts
-else
+if [[ -f "~/.ssh/known_hosts" ]]
   echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
   ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV2"
   ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV2"
