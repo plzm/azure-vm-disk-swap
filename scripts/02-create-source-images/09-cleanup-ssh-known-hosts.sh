@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # Get source VM FQDNs and public IP addresses
 vmFqdnV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")

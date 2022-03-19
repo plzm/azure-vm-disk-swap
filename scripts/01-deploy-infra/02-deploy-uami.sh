@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 if [ ! -z $USERNAME_UAMI ]
 then

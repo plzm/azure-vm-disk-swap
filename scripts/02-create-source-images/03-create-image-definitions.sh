@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # https://docs.microsoft.com/cli/azure/sig/image-definition?view=azure-cli-latest#az_sig_image_definition_create
 

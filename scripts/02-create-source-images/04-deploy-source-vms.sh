@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 keyFilePath=~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME".pub
 vmDeploySshPublicKey=$(<$keyFilePath)

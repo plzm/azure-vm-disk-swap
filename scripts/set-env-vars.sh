@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
