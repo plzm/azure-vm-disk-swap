@@ -27,35 +27,35 @@ jobs:
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
-      - name: Create Resource Groups
-        if: success()
-        run: |
-          chmod +x ./scripts/02-create-source-images/01-deploy-rgs.sh
-          ./scripts/02-create-source-images/01-deploy-rgs.sh
+      #- name: Create Resource Groups
+      #  if: success()
+      #  run: |
+      #    chmod +x ./scripts/02-create-source-images/01-deploy-rgs.sh
+      #    ./scripts/02-create-source-images/01-deploy-rgs.sh
 
-      - name: Prepare SSH keys
-        if: success()
-        run: |
-          chmod +x ./scripts/02-create-source-images/02-prepare-ssh.sh
-          ./scripts/02-create-source-images/02-prepare-ssh.sh
+      #- name: Prepare SSH keys
+      #  if: success()
+      #  run: |
+      #    chmod +x ./scripts/02-create-source-images/02-prepare-ssh.sh
+      #    ./scripts/02-create-source-images/02-prepare-ssh.sh
 
-      - name: Create Gallery Image Definitions
-        if: success()
-        run: |
-          chmod +x ./scripts/02-create-source-images/03-create-image-definitions.sh
-          ./scripts/02-create-source-images/03-create-image-definitions.sh
+      #- name: Create Gallery Image Definitions
+      #  if: success()
+      #  run: |
+      #    chmod +x ./scripts/02-create-source-images/03-create-image-definitions.sh
+      #    ./scripts/02-create-source-images/03-create-image-definitions.sh
 
-      - name: Deploy Source VMs
-        if: success()
-        run: |
-          chmod +x ./scripts/02-create-source-images/04-deploy-source-vms.sh
-          ./scripts/02-create-source-images/04-deploy-source-vms.sh
+      #- name: Deploy Source VMs
+      #  if: success()
+      #  run: |
+      #    chmod +x ./scripts/02-create-source-images/04-deploy-source-vms.sh
+      #    ./scripts/02-create-source-images/04-deploy-source-vms.sh
 
-      - name: Create Admin User on Source VMs
-        if: success()
-        run: |
-          chmod +x ./scripts/02-create-source-images/05a-create-admin-user-with-azure-cli.sh
-          ./scripts/02-create-source-images/05a-create-admin-user-with-azure-cli.sh
+      #- name: Create Admin User on Source VMs
+      #  if: success()
+      #  run: |
+      #    chmod +x ./scripts/02-create-source-images/05a-create-admin-user-with-azure-cli.sh
+      #    ./scripts/02-create-source-images/05a-create-admin-user-with-azure-cli.sh
 
       - name: Prepare VMs for Capture
         if: success()

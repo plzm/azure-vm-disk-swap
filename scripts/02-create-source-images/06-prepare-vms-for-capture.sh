@@ -12,8 +12,10 @@
 
 doTheSsh() {
   cmd=$1
+  echo $cmd
 
-  code=1
+  code=9999
+
   while [ $code -gt 0 ]
   do
     eval $cmd
@@ -40,6 +42,12 @@ vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -
 vmFqdnV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
+echo $vmFqdnV2
+echo $vmIpV2
+echo $vmFqdnV3
+echo $vmIpV3
+
+ls ~/.ssh -la
 
 # ##################################################
 echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
