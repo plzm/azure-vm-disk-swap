@@ -23,8 +23,6 @@ jobs:
 
       - name: Set Environment Variables
         if: success()
-        env:
-          SP_OBJECT_ID: ${{ secrets.SP_OBJECT_ID }}
         run: |
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
