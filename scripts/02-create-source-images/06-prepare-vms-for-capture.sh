@@ -108,7 +108,7 @@ fi
 echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 
-remoteCmd=" < remote-cmd.sh"
+remoteCmd=" < ./scripts/02-create-source-images/remote-cmd.sh"
 
 echo "V2 VM"
 sshToVmV2="ssh -v -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
