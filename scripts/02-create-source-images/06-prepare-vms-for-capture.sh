@@ -12,7 +12,6 @@
 
 doTheSsh() {
   cmd=$1
-  echo $cmd
 
   code=9999
 
@@ -47,7 +46,13 @@ echo $vmIpV2
 echo $vmFqdnV3
 echo $vmIpV3
 
-ls ~/.ssh -la
+ls -la ~/.ssh
+
+if [ ! -f "~/.ssh/known_hosts" ]
+then
+  touch ~/.ssh/known_hosts
+  chmod 644 ~/.ssh/known_hosts
+fi
 
 # ##################################################
 echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/strict key validation fail."
