@@ -43,8 +43,8 @@ jobs:
       - name: Prepare VMs for Capture
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/06-prepare-vms-for-capture.sh
-          ./scripts/02-create-source-images/06-prepare-vms-for-capture.sh
+          chmod +x ./scripts/02-create-source-images/07-prepare-vms-for-capture.sh
+          ./scripts/02-create-source-images/07-prepare-vms-for-capture.sh
 
 
       - name: Azure logout
