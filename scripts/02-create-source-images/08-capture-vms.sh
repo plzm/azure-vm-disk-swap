@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 echo "Get source VM Resource IDs"
 vmIdV2=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_SRC_NAME_V2" -o tsv --query "id")" | sed "s/\r//")

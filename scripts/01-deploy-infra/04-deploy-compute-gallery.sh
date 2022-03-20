@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 ## SIGSoftDelete currently in preview
 # az feature register --subscription "$SUBSCRIPTION_ID" --namespace Microsoft.Compute --name SIGSoftDelete

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # If a Managed Identity Name was provided, get its Principal ID for the custom script extension deploy below
 # This is useful if the custom script task is modified to retrieve a file from an Azure Storage account where the managed identity has access permissions

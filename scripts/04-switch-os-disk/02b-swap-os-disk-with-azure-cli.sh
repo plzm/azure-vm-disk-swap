@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 echo "Get the resource IDs of the OS disks"
 vm1OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_1_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")

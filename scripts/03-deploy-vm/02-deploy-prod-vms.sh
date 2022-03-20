@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # If a Managed Identity Name was provided, get its Resource ID
 if [ ! -z $USERNAME_UAMI ]

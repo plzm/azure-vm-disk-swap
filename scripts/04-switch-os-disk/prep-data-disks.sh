@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # NOTE - for complex situations, it may make more sense to detach data disks from a VM; then swap OS disk; then re-attach data disks.
 # Recommend you test through your scenario to determine what works well.

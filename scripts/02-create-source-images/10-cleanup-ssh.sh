@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # Clean out deploy identity
 eval $(ssh-agent)

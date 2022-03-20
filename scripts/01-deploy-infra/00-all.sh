@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 ./01-deploy-rgs.sh
 ./02-deploy-uami.sh

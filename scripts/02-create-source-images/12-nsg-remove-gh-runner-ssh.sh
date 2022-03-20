@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 echo "Add NSG rules to allow SSH from GitHub runner"
 
