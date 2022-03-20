@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 echo "Create NSG"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-""$LOCATION" --verbose \

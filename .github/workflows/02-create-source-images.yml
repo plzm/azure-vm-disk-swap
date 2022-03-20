@@ -7,6 +7,10 @@ jobs:
   create_images:
     runs-on: ubuntu-latest
     steps:
+      - name: Bash Set
+        run: |
+          set -eux
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -77,12 +81,14 @@ jobs:
 
       - name: Clean up SSH known hosts
         if: success()
+        continue-on-error: true
         run: |
           chmod +x ./scripts/02-create-source-images/09-cleanup-ssh-known-hosts.sh
           ./scripts/02-create-source-images/09-cleanup-ssh-known-hosts.sh
 
       - name: Clean up SSH keys
         if: success()
+        continue-on-error: true
         run: |
           chmod +x ./scripts/02-create-source-images/10-cleanup-ssh.sh
           ./scripts/02-create-source-images/10-cleanup-ssh.sh
