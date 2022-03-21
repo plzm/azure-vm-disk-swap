@@ -1,10 +1,9 @@
 # Azure Deployment: Azure Virtual Machine (VM) - Non-Destructively Swap OS Disks
 
-![01-Deploy-Infrastructure](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/01-deploy-infra.yml/badge.svg)
-<br />
-![02-Create-Source-Images](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/02-create-source-images.yml/badge.svg)
-<br />
-![Cleanup](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/cleanup.yml/badge.svg)
+![01-Deploy-Infrastructure](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/01-deploy-infra.yml/badge.svg)  
+![02-Create-Source-Images](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/02-create-source-images.yml/badge.svg)  
+![03-Deploy-Prod-VMs](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/03-deploy-prod-vms.yml/badge.svg)  
+![Cleanup](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/cleanup.yml/badge.svg)  
 
 ## Summary
 

@@ -2,8 +2,8 @@
 
 echo "Add NSG rules to allow SSH from GitHub runner"
 
-vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
-vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmIp1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmIp2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_DEPLOY"" -n ""$VM_PROD_NAME_2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 echo "Create NSG rule for GitHub runner inbound access to VNet"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VNet" --verbose \
@@ -20,32 +20,32 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub
 	destinationAddressPrefix="VirtualNetwork" \
 	destinationPortRange="22"
 
-echo "Create NSG rule for GitHub runner inbound access to VM v2"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VMv2" --verbose \
+echo "Create NSG rule for GitHub runner inbound access to Prod VM1"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VM1" --verbose \
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleName="$NSG_RULE_NAME_GH_SOURCE_VM_V2" \
-	priority=$NSG_RULE_PRIORITY_GH_SOURCE_VM_V2 \
+	nsgRuleName="$NSG_RULE_NAME_GH_PROD_VM_1" \
+	priority=$NSG_RULE_PRIORITY_GH_PROD_VM_1 \
 	direction="Inbound" \
 	access="Allow" \
 	protocol="*" \
 	sourceAddressPrefix="AzureCloud" \
 	sourcePortRange="*" \
-	destinationAddressPrefix="$vmIpV2" \
+	destinationAddressPrefix="$vmIp1" \
 	destinationPortRange="22"
 
-echo "Create NSG rule for GitHub runner inbound access to VM v3"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VMv3" --verbose \
+echo "Create NSG rule for GitHub runner inbound access to Prod VM2"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VM1" --verbose \
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \
 	nsgName="$NSG_NAME" \
-	nsgRuleName="$NSG_RULE_NAME_GH_SOURCE_VM_V3" \
-	priority=$NSG_RULE_PRIORITY_GH_SOURCE_VM_V3 \
+	nsgRuleName="$NSG_RULE_NAME_GH_PROD_VM_2" \
+	priority=$NSG_RULE_PRIORITY_GH_PROD_VM_2 \
 	direction="Inbound" \
 	access="Allow" \
 	protocol="*" \
 	sourceAddressPrefix="AzureCloud" \
 	sourcePortRange="*" \
-	destinationAddressPrefix="$vmIpV3" \
+	destinationAddressPrefix="$vmIp2" \
 	destinationPortRange="22"
