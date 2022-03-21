@@ -9,5 +9,5 @@ eval $sshAddCmd
 delCmd="rm ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""*"
 eval $delCmd
 
-delCmd="rm ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME""*"
-eval $delCmd
+#delCmd="rm ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME""*"
+#eval $delCmd

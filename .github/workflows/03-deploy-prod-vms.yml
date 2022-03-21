@@ -1,0 +1,71 @@
+name: 03-Deploy-Prod-VMs
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  deploy_vms:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bash Set
+        run: |
+          set -eux
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Azure login
+        if: success()
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set Azure CLI extensions to auto-install
+        if: success()
+        run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+
+      - name: Set Environment Variables
+        if: success()
+        run: |
+          chmod +x ./scripts/set-env-vars.sh
+          ./scripts/set-env-vars.sh
+
+      - name: Create Resource Groups
+        if: success()
+        run: |
+          chmod +x ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
+          ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
+
+      - name: Deploy Prod VMs
+        if: success()
+        run: |
+          chmod +x ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
+          ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
+
+      - name: Allow GH Runner SSH Access
+        if: success()
+        run: |
+          chmod +x ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
+          ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
+
+      - name: Configure Prod VMs
+        if: success()
+        run: |
+          chmod +x ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
+          ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
+
+      - name: Remove GH Runner SSH Access
+        if: success()
+        run: |
+          chmod +x ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
+          ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
+
+      - name: Azure logout
+        if: always()
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az logout
+            az cache purge
+            az account clear

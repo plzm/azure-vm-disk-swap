@@ -30,16 +30,16 @@ newVmOsDiskIdVm2=$vm2OsDiskIdV2
 
 
 echo "Deallocate the existing VMs so we can swap in different OS disks"
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_1" --verbose
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_NAME_2" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_PROD_NAME_1" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_PROD_NAME_2" --verbose
 
 echo "Update VM 1"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_NAME_1""-OS-DISK" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_PROD_NAME_1""-OS-DISK" --verbose \
 	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
-	virtualMachineName="$VM_NAME_1" \
+	virtualMachineName="$VM_PROD_NAME_1" \
 	virtualMachineSize="$VM_SIZE" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
@@ -55,15 +55,15 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_NAME_1""-OS
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
 	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
-	networkInterfaceName="$VM_NAME_1"
+	networkInterfaceName="$VM_PROD_NAME_1"
 
 echo "Update VM 2"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_NAME_2""-OS-DISK" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_PROD_NAME_2""-OS-DISK" --verbose \
 	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
-	virtualMachineName="$VM_NAME_2" \
+	virtualMachineName="$VM_PROD_NAME_2" \
 	virtualMachineSize="$VM_SIZE" \
 	version="$VM_VERSION" \
 	provisionVmAgent="$PROVISION_VM_AGENT" \
@@ -79,8 +79,8 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_NAME_2""-OS
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
 	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
-	networkInterfaceName="$VM_NAME_2"
+	networkInterfaceName="$VM_PROD_NAME_2"
 
 echo "Start the VMs"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_NAME_1" --verbose
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_NAME_2" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_PROD_NAME_1" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_PROD_NAME_2" --verbose

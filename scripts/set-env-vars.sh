@@ -93,10 +93,17 @@ setEnvVar "NSG_RULE_NAME_DEV" "Dev-Inbound"
 setEnvVar "NSG_RULE_PRIORITY_DEV" 100
 setEnvVar "NSG_RULE_NAME_GH_VNET" "GitHub-Runner-SSH-Inbound-VNet"
 setEnvVar "NSG_RULE_PRIORITY_GH_VNET" 101
-setEnvVar "NSG_RULE_NAME_GH_VMV2" "GitHub-Runner-SSH-Inbound-VM-v2"
-setEnvVar "NSG_RULE_PRIORITY_GH_VMV2" 102
-setEnvVar "NSG_RULE_NAME_GH_VMV3" "GitHub-Runner-SSH-Inbound-VM-v3"
-setEnvVar "NSG_RULE_PRIORITY_GH_VMV3" 103
+# Source VMs
+setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V2" "GitHub-Runner-SSH-Inbound-Source-VM-v2"
+setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V2" 102
+setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V3" "GitHub-Runner-SSH-Inbound-Source-VM-v3"
+setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V3" 103
+# Prod VMs
+setEnvVar "NSG_RULE_NAME_GH_PROD_VM_1" "GitHub-Runner-SSH-Inbound-Prod-VM-1"
+setEnvVar "NSG_RULE_PRIORITY_GH_PROD_VM_1" 104
+setEnvVar "NSG_RULE_NAME_GH_PROD_VM_2" "GitHub-Runner-SSH-Inbound-Prod-VM-2"
+setEnvVar "NSG_RULE_PRIORITY_GH_PROD_VM_2" 105
+
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 subscriptionId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
@@ -211,16 +218,16 @@ setEnvVar "VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" 15
 setEnvVar "VM_SRC_NAME_V2" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion2"
 setEnvVar "VM_SRC_NAME_V3" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion3"
 
-# Deployed VMs
-setEnvVar "VM_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_NAME_1""-""$suffixVersion1"
-setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_NAME_1""-""$suffixVersion2"
-setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_NAME_1""-""$suffixVersion3"
+# Production VMs
+setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
+setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_PROD_NAME_1""-""$suffixVersion1"
+setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_PROD_NAME_1""-""$suffixVersion2"
+setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_PROD_NAME_1""-""$suffixVersion3"
 
-setEnvVar "VM_NAME_2" "$resourceNamingInfix""-""$osInfix""-2"
-setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_NAME_2""-""$suffixVersion1"
-setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_NAME_2""-""$suffixVersion2"
-setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_NAME_2""-""$suffixVersion3"
+setEnvVar "VM_PROD_NAME_2" "$resourceNamingInfix""-""$osInfix""-2"
+setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_PROD_NAME_2""-""$suffixVersion1"
+setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_PROD_NAME_2""-""$suffixVersion2"
+setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_PROD_NAME_2""-""$suffixVersion3"
 
 # Azure Compute Gallery (used to be called Shared Image Gallery but let's-rename-things-gremlins visited)
 setEnvVar "GALLERY_NAME" "$resourceNamingInfix""_gallery_""$azureLocation"
