@@ -5,12 +5,9 @@ on:
 
 jobs:
   cleanup:
+    name: Clean up all Azure Resources
     runs-on: ubuntu-latest
     steps:
-      - name: Bash Set
-        run: |
-          set -eux
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -23,6 +20,7 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
+          set -eux
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
