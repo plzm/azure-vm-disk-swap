@@ -25,42 +25,36 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
       - name: Create Resource Groups
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
           ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
 
       - name: Deploy Prod VMs
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
           ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
 
       - name: Allow GH Runner SSH Access
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
           ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
 
       - name: Configure Prod VMs
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
           ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
 
       - name: Remove GH Runner SSH Access
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
           ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
 

@@ -25,63 +25,54 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
       - name: Create Resource Groups
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/01-deploy-rgs.sh
           ./scripts/02-create-source-images/01-deploy-rgs.sh
 
       - name: Prepare SSH keys
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/02-prepare-ssh.sh
           ./scripts/02-create-source-images/02-prepare-ssh.sh
 
       - name: Create Gallery Image Definitions
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/03-create-image-definitions.sh
           ./scripts/02-create-source-images/03-create-image-definitions.sh
 
       - name: Deploy Source VMs
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/04-deploy-source-vms.sh
           ./scripts/02-create-source-images/04-deploy-source-vms.sh
 
       - name: Allow GH Runner SSH Access
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/05-nsg-allow-gh-runner-ssh.sh
           ./scripts/02-create-source-images/05-nsg-allow-gh-runner-ssh.sh
 
       - name: Create Admin User on Source VMs
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/06a-create-admin-user-with-azure-cli.sh
           ./scripts/02-create-source-images/06a-create-admin-user-with-azure-cli.sh
 
       - name: Prepare VMs for Capture
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/07-prepare-vms-for-capture.sh
           ./scripts/02-create-source-images/07-prepare-vms-for-capture.sh
 
       - name: Capture VMs
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/08-capture-vms.sh
           ./scripts/02-create-source-images/08-capture-vms.sh
 
@@ -89,7 +80,6 @@ jobs:
         if: success()
         continue-on-error: true
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/09-cleanup-ssh-known-hosts.sh
           ./scripts/02-create-source-images/09-cleanup-ssh-known-hosts.sh
 
@@ -97,21 +87,18 @@ jobs:
         if: success()
         continue-on-error: true
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/10-cleanup-ssh.sh
           ./scripts/02-create-source-images/10-cleanup-ssh.sh
 
       - name: Clean up Azure resources
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/11-cleanup.sh
           ./scripts/02-create-source-images/11-cleanup.sh
 
       - name: Remove GH Runner SSH Access
         if: success()
         run: |
-          set -eux
           chmod +x ./scripts/02-create-source-images/12-nsg-remove-gh-runner-ssh.sh
           ./scripts/02-create-source-images/12-nsg-remove-gh-runner-ssh.sh
 
