@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # ##################################################
 # IMPORTANT DO NOT SKIP THIS - READ THIS!!!!

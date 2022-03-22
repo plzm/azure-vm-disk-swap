@@ -1,4 +1,6 @@
 #!/bin/bash
+# We do not warn re unbound vars here since in a non-GitHub context, we'd get warnings about $GITHUB_ACTIONS
+set -ex
 
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
