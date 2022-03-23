@@ -52,11 +52,14 @@ jobs:
           chmod +x ./scripts/02-create-source-images/03-deploy-source-vms.sh
           ./scripts/02-create-source-images/03-deploy-source-vms.sh
 
-      - name: Allow GH Runner SSH Access
+      - name: Allow GH Runner SSH Access to VNet and VMs
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/04-nsg-allow-gh-runner-ssh.sh
-          ./scripts/02-create-source-images/04-nsg-allow-gh-runner-ssh.sh
+          chmod +x ./scripts/ssh/04-nsg-allow-gh-runner-ssh-vnet.sh
+          chmod +x ./scripts/ssh/06-nsg-allow-gh-runner-ssh-vm.sh
+          ./scripts/ssh/04-nsg-allow-gh-runner-ssh-vnet.sh
+          ./scripts/ssh/06-nsg-allow-gh-runner-ssh-vm.sh "${{ env.RG_NAME_VM_SOURCE }}" "${{ env.VM_SRC_NAME_V2 }}" "${{ env.NSG_RULE_NAME_GH_SOURCE_VM_V2 }}" "${{ env.NSG_RULE_PRIORITY_GH_SOURCE_VM_V2 }}"
+          ./scripts/ssh/06-nsg-allow-gh-runner-ssh-vm.sh "${{ env.RG_NAME_VM_SOURCE }}" "${{ env.VM_SRC_NAME_V3 }}" "${{ env.NSG_RULE_NAME_GH_SOURCE_VM_V3 }}" "${{ env.NSG_RULE_PRIORITY_GH_SOURCE_VM_V3 }}"
 
       - name: Create Admin User on Source VMs
         if: success()
@@ -79,8 +82,11 @@ jobs:
       - name: Remove GH Runner SSH Access
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/08-nsg-remove-gh-runner-ssh.sh
-          ./scripts/02-create-source-images/08-nsg-remove-gh-runner-ssh.sh
+          chmod +x ./scripts/ssh/05-nsg-remove-gh-runner-ssh-vnet.sh
+          chmod +x ./scripts/ssh/07-nsg-remove-gh-runner-ssh-vm.sh
+          ./scripts/ssh/05-nsg-remove-gh-runner-ssh-vnet.sh
+          ./scripts/ssh/07-nsg-remove-gh-runner-ssh-vm.sh "${{ env.NSG_RULE_NAME_GH_SOURCE_VM_V2 }}"
+          ./scripts/ssh/07-nsg-remove-gh-runner-ssh-vm.sh "${{ env.NSG_RULE_NAME_GH_SOURCE_VM_V3 }}"
 
       - name: Clean up SSH keys
         if: success()
