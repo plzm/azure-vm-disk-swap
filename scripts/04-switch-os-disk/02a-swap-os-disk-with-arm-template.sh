@@ -13,13 +13,13 @@ vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSC
 
 
 echo "Get the resource IDs of the OS disks"
-vm1OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_1_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")
-vm1OsDiskIdV2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_1_OS_DISK_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
-vm1OsDiskIdV3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_1_OS_DISK_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
+vm1OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")
+vm1OsDiskIdV2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
+vm1OsDiskIdV3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
 
-vm2OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_2_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")
-vm2OsDiskIdV2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_2_OS_DISK_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
-vm2OsDiskIdV3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_2_OS_DISK_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
+vm2OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_2_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")
+vm2OsDiskIdV2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_2_OS_DISK_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
+vm2OsDiskIdV3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_2_OS_DISK_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
 
 
 
@@ -31,12 +31,12 @@ newVmOsDiskIdVm2=$vm2OsDiskIdV2
 
 
 echo "Deallocate the existing VMs so we can swap in different OS disks"
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_PROD_NAME_1" --verbose
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_PROD_NAME_2" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_2" --verbose
 
 echo "Update VM 1"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_PROD_NAME_1""-OS-DISK" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
@@ -55,12 +55,12 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_PROD_NAME_1
 	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
-	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
+	resourceGroupNameNetworkInterface="$RG_NAME_VM_PROD" \
 	networkInterfaceName="$VM_PROD_NAME_1"
 
 echo "Update VM 2"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_PROD_NAME_2""-OS-DISK" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
@@ -79,9 +79,9 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "$VM_PROD_NAME_2
 	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
-	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
+	resourceGroupNameNetworkInterface="$RG_NAME_VM_PROD" \
 	networkInterfaceName="$VM_PROD_NAME_2"
 
 echo "Start the VMs"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_PROD_NAME_1" --verbose
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" -n "$VM_PROD_NAME_2" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_PROD_NAME_1" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_PROD_NAME_2" --verbose

@@ -9,7 +9,7 @@ fi
 
 echo "Deploy Prod VM1 Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-PIP" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM_PROD_NAME_1" \
@@ -19,7 +19,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-PIP" -
 
 echo "Deploy Prod VM1 Network Interface"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-NIC" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_NIC" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM_PROD_NAME_1" \
@@ -28,13 +28,13 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-NIC" -
 	subnetName="$SUBNET_NAME" \
 	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
 	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
-	publicIpResourceGroup="$RG_NAME_DEPLOY" \
+	publicIpResourceGroup="$RG_NAME_VM_PROD" \
 	publicIpName="$VM_PROD_NAME_1" \
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "Deploy Prod VM1 with initial OS"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
@@ -58,13 +58,13 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --ver
 	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
-	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
+	resourceGroupNameNetworkInterface="$RG_NAME_VM_PROD" \
 	networkInterfaceName="$VM_PROD_NAME_1"
 
 
 echo "Deploy Prod VM2 Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM2-PIP" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM_PROD_NAME_2" \
@@ -74,7 +74,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM2-PIP" -
 
 echo "Deploy Prod VM2 Network Interface"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM2-NIC" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_NIC" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM_PROD_NAME_2" \
@@ -83,13 +83,13 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM2-NIC" -
 	subnetName="$SUBNET_NAME" \
 	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
 	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
-	publicIpResourceGroup="$RG_NAME_DEPLOY" \
+	publicIpResourceGroup="$RG_NAME_VM_PROD" \
 	publicIpName="$VM_PROD_NAME_2" \
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "Deploy Prod VM2 with initial OS"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM2" --verbose \
-	-g "$RG_NAME_DEPLOY" --template-uri "$TEMPLATE_VM" \
+	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
@@ -113,12 +113,12 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM2" --ver
 	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
-	resourceGroupNameNetworkInterface="$RG_NAME_DEPLOY" \
+	resourceGroupNameNetworkInterface="$RG_NAME_VM_PROD" \
 	networkInterfaceName="$VM_PROD_NAME_2"
 
 echo "Production VMs deployed"
 
 
 echo "Deallocate Production VMs"
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_PROD_NAME_1" --verbose
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_DEPLOY" --name "$VM_PROD_NAME_2" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_2" --verbose

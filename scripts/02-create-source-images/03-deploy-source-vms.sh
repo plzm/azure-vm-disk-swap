@@ -6,7 +6,7 @@ vmDeploySshPublicKey=$(<$keyFilePath)
 
 echo "Public IP VM v2"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V2" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM_SRC_NAME_V2" \
@@ -16,7 +16,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V2" --ve
 
 echo "Public IP VM v3"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V3" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
 	publicIpName="$VM_SRC_NAME_V3" \
@@ -27,7 +27,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V3" --ve
 
 echo "Network Interface VM v2"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V2" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM_SRC_NAME_V2" \
@@ -36,13 +36,13 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V2" --ve
 	subnetName="$SUBNET_NAME" \
 	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
 	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
-	publicIpResourceGroup="$RG_NAME_SOURCE" \
+	publicIpResourceGroup="$RG_NAME_VM_SOURCE" \
 	publicIpName="$VM_SRC_NAME_V2" \
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "Network Interface VM v3"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V3" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_NIC" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM_SRC_NAME_V3" \
@@ -51,14 +51,14 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V3" --ve
 	subnetName="$SUBNET_NAME" \
 	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
 	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
-	publicIpResourceGroup="$RG_NAME_SOURCE" \
+	publicIpResourceGroup="$RG_NAME_VM_SOURCE" \
 	publicIpName="$VM_SRC_NAME_V3" \
 	ipConfigName="$IP_CONFIG_NAME"
 
 
 echo "VM v2"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V2" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	virtualMachineName="$VM_SRC_NAME_V2" \
@@ -81,12 +81,12 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V2" --verbos
 	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
-	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
+	resourceGroupNameNetworkInterface="$RG_NAME_VM_SOURCE" \
 	networkInterfaceName="$VM_SRC_NAME_V2"
 
 echo "VM v3"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V3" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
 	virtualMachineName="$VM_SRC_NAME_V3" \
@@ -109,5 +109,5 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V3" --verbos
 	enableAutoShutdownNotification="$VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" \
 	autoShutdownNotificationWebhookURL="$VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" \
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
-	resourceGroupNameNetworkInterface="$RG_NAME_SOURCE" \
+	resourceGroupNameNetworkInterface="$RG_NAME_VM_SOURCE" \
 	networkInterfaceName="$VM_SRC_NAME_V3"

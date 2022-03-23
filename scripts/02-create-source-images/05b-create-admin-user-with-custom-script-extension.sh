@@ -26,7 +26,7 @@ sudo echo \"""$VM_ADMIN_SSH_USER_NAME""	ALL=(ALL)	NOPASSWD: ALL\" > /etc/sudoers
 
 echo "Add admin user and public SSH key to v2 VM"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
 	virtualMachineName="$VM_SRC_NAME_V2" \
@@ -35,7 +35,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomSc
 
 echo "Add admin user and public SSH key to v3 VM"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-Ext-CustomScript" --verbose \
-	-g "$RG_NAME_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
+	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_VM_EXTENSION_CUSTOM_SCRIPT" \
 	--parameters \
 	location="$LOCATION" \
 	virtualMachineName="$VM_SRC_NAME_V3" \

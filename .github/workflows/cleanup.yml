@@ -23,14 +23,14 @@ jobs:
           chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
-      - name: Delete Resource Group "${{ env.RG_NAME_DEPLOY }}"
+      - name: Delete Resource Group "${{ env.RG_NAME_VM_PROD }}"
         if: success()
         continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_VM_PROD }}" --yes --verbose
 
-      - name: Delete Resource Group "${{ env.RG_NAME_SOURCE }}"
+      - name: Delete Resource Group "${{ env.RG_NAME_VM_SOURCE }}"
         continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SOURCE }}" --yes --verbose
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_VM_SOURCE }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_GALLERY }}"
         continue-on-error: true

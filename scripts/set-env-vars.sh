@@ -1,6 +1,4 @@
 #!/bin/bash
-# We do not warn re unbound vars here since in a non-GitHub context, we'd get warnings about $GITHUB_ACTIONS
-set -ex
 
 # ##################################################
 # NOTE - in non-GitHub environment, to work with the env vars exported herein from other files, remember to dot-source this file at the prompt!
@@ -95,12 +93,12 @@ setEnvVar "NSG_RULE_NAME_DEV" "Dev-Inbound"
 setEnvVar "NSG_RULE_PRIORITY_DEV" 100
 setEnvVar "NSG_RULE_NAME_GH_VNET" "GitHub-Runner-SSH-Inbound-VNet"
 setEnvVar "NSG_RULE_PRIORITY_GH_VNET" 101
-# Source VMs
+# Source VMs NSG rules
 setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V2" "GitHub-Runner-SSH-Inbound-Source-VM-v2"
 setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V2" 102
 setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V3" "GitHub-Runner-SSH-Inbound-Source-VM-v3"
 setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V3" 103
-# Prod VMs
+# Prod VMs NSG rules
 setEnvVar "NSG_RULE_NAME_GH_PROD_VM_1" "GitHub-Runner-SSH-Inbound-Prod-VM-1"
 setEnvVar "NSG_RULE_PRIORITY_GH_PROD_VM_1" 104
 setEnvVar "NSG_RULE_NAME_GH_PROD_VM_2" "GitHub-Runner-SSH-Inbound-Prod-VM-2"
@@ -122,8 +120,8 @@ setEnvVar "LOCATION" "eastus2"
 setEnvVar "RG_NAME_SECURITY" "$resourceNamingInfix""-security-""$azureLocation"
 setEnvVar "RG_NAME_GALLERY" "$resourceNamingInfix""-gallery-""$azureLocation"
 setEnvVar "RG_NAME_NET" "$resourceNamingInfix""-net-""$azureLocation"
-setEnvVar "RG_NAME_SOURCE" "$resourceNamingInfix""-vm-source-""$azureLocation"
-setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$azureLocation"
+setEnvVar "RG_NAME_VM_SOURCE" "$resourceNamingInfix""-vm-source-""$azureLocation"
+setEnvVar "RG_NAME_VM_PROD" "$resourceNamingInfix""-vm-prod-""$azureLocation"
 
 # User-Assigned Managed Identity
 setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"

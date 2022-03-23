@@ -2,20 +2,20 @@
 set -eux
 
 echo "Get source VM Resource IDs"
-vmIdV2=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_SRC_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
-vmIdV3=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" -n "$VM_SRC_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
+vmIdV2=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" -n "$VM_SRC_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
+vmIdV3=$(echo "$(az vm show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" -n "$VM_SRC_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_deallocate
 echo "Deallocate Source VMs"
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
 
 
 # https://docs.microsoft.com/cli/azure/vm?view=azure-cli-latest#az_vm_generalize
 echo "Generalize Source VMs"
-az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
-az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
+az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
+az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
 
 
 # https://docs.microsoft.com/cli/azure/image?view=azure-cli-latest#az_image_create

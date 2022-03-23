@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # Deployment user SSH public and private keys
 # In this context, we'll create a new key pair ONLY for deployment. This way, the source VMs, the OS disks, the deployed VM, etc. all only know

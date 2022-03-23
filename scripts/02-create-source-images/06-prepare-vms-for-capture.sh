@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eux
 
 # ##################################################
 # IMPORTANT DO NOT SKIP THIS - READ THIS!!!!
@@ -37,46 +36,15 @@ doTheSsh() {
 
 
 echo "Start Source VMs"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_V2" --verbose
+az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_V3" --verbose
 
 echo "Get source VM FQDNs and public IP addresses"
-vmFqdnV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpV2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_SOURCE"" -n ""$VM_SRC_NAME_V2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-vmFqdnV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
-
-#echo $vmFqdnV2
-#echo $vmIpV2
-#echo $vmFqdnV3
-#echo $vmIpV3
-
-
-#if [[ ! -z $GITHUB_ACTIONS ]]
-#then
-#  echo "We are in GitHub CI environment - create SSH config file to avoid SSH login being interrupted with key prompt"
-
-#  configFile="Host ""$vmFqdnV2"" ""$vmFqdnV3""
-#  User ""$DEPLOYMENT_SSH_USER_NAME""
-#  IdentityFile ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME""
-#  StrictHostKeyChecking no"
-
-#  echo -e "$configFile" > ~/.ssh/config
-
-#  cat ~/.ssh/config
-#fi
-
-#if [[ -f "~/.ssh/known_hosts" ]]
-#then
-#  echo "Clean out existing source VM entries from known_hosts, if any, to avoid warnings/key validation fail."
-#  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV2"
-#  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV2"
-#  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmFqdnV3"
-#  ssh-keygen -v -f ~/.ssh/known_hosts -R "$vmIpV3"
-#fi
-
-# ##################################################
+vmFqdnV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_SOURCE"" -n ""$VM_SRC_NAME_V3"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
