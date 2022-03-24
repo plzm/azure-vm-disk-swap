@@ -2,7 +2,6 @@
 
 echo "Add NSG rule to allow SSH from GitHub runner to VNet"
 
-echo "Create NSG rule for GitHub runner inbound access to VNet"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "NSG-Rule-GitHub-VNet" --verbose \
 	-g "$RG_NAME_NET" --template-uri "$TEMPLATE_NSG_RULE" \
 	--parameters \

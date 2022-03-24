@@ -1,7 +1,8 @@
 #!/bin/bash
 
+# Usage: ./07-nsg-remove-gh-runner-ssh-vm.sh \$nsgRuleName
+
 echo "Remove NSG rule to allow SSH from GitHub runner to VM"
-echo "Usage: ./07-nsg-remove-gh-runner-ssh-vm.sh \$nsgRuleName"
 
 nsgRuleName=$1
 
