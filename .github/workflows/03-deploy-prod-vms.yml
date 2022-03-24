@@ -5,14 +5,15 @@ on:
 
 jobs:
   deploy_vms:
+    name: Deploy Production VMs
     runs-on: ubuntu-latest
     steps:
-      - name: Bash Set
-        run: |
-          set -eux
-
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Make scripts executable
+        run: |
+          find ./scripts -type f -exec chmod +x {} \;
 
       - name: Azure login
         if: success()
@@ -28,38 +29,59 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
       - name: Create Resource Groups
         if: success()
         run: |
-          chmod +x ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
           ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
+
+      - name: Prepare local SSH keys
+        if: success()
+        run: |
+          ./scripts/ssh/01-prepare-local-keys.sh
 
       - name: Deploy Prod VMs
         if: success()
         run: |
-          chmod +x ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
           ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
 
-      - name: Allow GH Runner SSH Access
+      - name: Allow GH Runner SSH Access to VNet and VMs
         if: success()
         run: |
-          chmod +x ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
           ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
+
+      - name: Create Admin User on Prod VMs
+        if: success()
+        run: |
+          ./scripts/03-deploy-prod-vms/04-create-admin-user.sh
 
       - name: Configure Prod VMs
         if: success()
         run: |
-          chmod +x ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
-          ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
+          ./scripts/03-deploy-prod-vms/05-configure-prod-vms.sh
 
-      - name: Remove GH Runner SSH Access
+      - name: Delete Deploy User from Prod VMs
         if: success()
         run: |
-          chmod +x ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
-          ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
+          ./scripts/03-deploy-prod-vms/06-delete-deploy-user.sh
+
+      - name: Remove GH Runner SSH Access
+        if: always()
+        run: |
+          ./scripts/03-deploy-prod-vms/07-nsg-remove-gh-runner-ssh.sh
+
+      - name: Clean up SSH keys
+        if: always()
+        continue-on-error: true
+        run: |
+          ./scripts/ssh/02-cleanup-local-keys.sh
+
+      - name: Clean up SSH known hosts
+        if: always()
+        continue-on-error: true
+        run: |
+          ./scripts/ssh/03-cleanup-known-hosts.sh
 
       - name: Azure logout
         if: always()

@@ -5,14 +5,15 @@ on:
 
 jobs:
   deploy:
+    name: Deploy Infrastructure
     runs-on: ubuntu-latest
     steps:
-      - name: Bash Set
-        run: |
-          set -eux
-
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Make scripts executable
+        run: |
+          find ./scripts -type f -exec chmod +x {} \;
 
       - name: Azure login
         if: success()
@@ -28,31 +29,26 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
       - name: Create Resource Groups
         if: success()
         run: |
-          chmod +x ./scripts/01-deploy-infra/01-deploy-rgs.sh
           ./scripts/01-deploy-infra/01-deploy-rgs.sh
 
       - name: Deploy User-Assigned MI
         if: success()
         run: |
-          chmod +x ./scripts/01-deploy-infra/02-deploy-uami.sh
           ./scripts/01-deploy-infra/02-deploy-uami.sh
 
       - name: Deploy Network
         if: success()
         run: |
-          chmod +x ./scripts/01-deploy-infra/03-deploy-network.sh
           ./scripts/01-deploy-infra/03-deploy-network.sh
 
       - name: Deploy Azure Compute Gallery
         if: success()
         run: |
-          chmod +x ./scripts/01-deploy-infra/04-deploy-compute-gallery.sh
           ./scripts/01-deploy-infra/04-deploy-compute-gallery.sh
 
       - name: Azure logout

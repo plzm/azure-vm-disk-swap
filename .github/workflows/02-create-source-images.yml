@@ -5,14 +5,15 @@ on:
 
 jobs:
   create_images:
+    name: Create VM OS Drive Source Images
     runs-on: ubuntu-latest
     steps:
-      - name: Bash Set
-        run: |
-          set -eux
-
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Make scripts executable
+        run: |
+          find ./scripts -type f -exec chmod +x {} \;
 
       - name: Azure login
         if: success()
@@ -28,82 +29,69 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
       - name: Create Resource Groups
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/01-deploy-rgs.sh
           ./scripts/02-create-source-images/01-deploy-rgs.sh
 
-      - name: Prepare SSH keys
+      - name: Prepare local SSH keys
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/02-prepare-ssh.sh
-          ./scripts/02-create-source-images/02-prepare-ssh.sh
+          ./scripts/ssh/01-prepare-local-keys.sh
 
       - name: Create Gallery Image Definitions
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/03-create-image-definitions.sh
-          ./scripts/02-create-source-images/03-create-image-definitions.sh
+          ./scripts/02-create-source-images/02-create-image-definitions.sh
 
       - name: Deploy Source VMs
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/04-deploy-source-vms.sh
-          ./scripts/02-create-source-images/04-deploy-source-vms.sh
+          ./scripts/02-create-source-images/03-deploy-source-vms.sh
 
-      - name: Allow GH Runner SSH Access
+      - name: Allow GH Runner SSH Access to VNet and VMs
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/05-nsg-allow-gh-runner-ssh.sh
-          ./scripts/02-create-source-images/05-nsg-allow-gh-runner-ssh.sh
+          ./scripts/02-create-source-images/04-nsg-allow-gh-runner-ssh.sh
 
       - name: Create Admin User on Source VMs
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/06a-create-admin-user-with-azure-cli.sh
-          ./scripts/02-create-source-images/06a-create-admin-user-with-azure-cli.sh
+          ./scripts/02-create-source-images/05a-create-admin-user-with-azure-cli.sh
 
       - name: Prepare VMs for Capture
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/07-prepare-vms-for-capture.sh
-          ./scripts/02-create-source-images/07-prepare-vms-for-capture.sh
+          ./scripts/02-create-source-images/06-prepare-vms-for-capture.sh
 
       - name: Capture VMs
         if: success()
         run: |
-          chmod +x ./scripts/02-create-source-images/08-capture-vms.sh
-          ./scripts/02-create-source-images/08-capture-vms.sh
-
-      - name: Clean up SSH known hosts
-        if: success()
-        continue-on-error: true
-        run: |
-          chmod +x ./scripts/02-create-source-images/09-cleanup-ssh-known-hosts.sh
-          ./scripts/02-create-source-images/09-cleanup-ssh-known-hosts.sh
-
-      - name: Clean up SSH keys
-        if: success()
-        continue-on-error: true
-        run: |
-          chmod +x ./scripts/02-create-source-images/10-cleanup-ssh.sh
-          ./scripts/02-create-source-images/10-cleanup-ssh.sh
-
-      - name: Clean up Azure resources
-        if: success()
-        run: |
-          chmod +x ./scripts/02-create-source-images/11-cleanup.sh
-          ./scripts/02-create-source-images/11-cleanup.sh
+          ./scripts/02-create-source-images/07-capture-vms.sh
 
       - name: Remove GH Runner SSH Access
-        if: success()
+        if: always()
         run: |
-          chmod +x ./scripts/02-create-source-images/12-nsg-remove-gh-runner-ssh.sh
-          ./scripts/02-create-source-images/12-nsg-remove-gh-runner-ssh.sh
+          ./scripts/02-create-source-images/08-nsg-remove-gh-runner-ssh.sh
+
+      - name: Clean up SSH keys
+        if: always()
+        continue-on-error: true
+        run: |
+          ./scripts/ssh/02-cleanup-local-keys.sh
+
+      - name: Clean up SSH known hosts
+        if: always()
+        continue-on-error: true
+        run: |
+          ./scripts/ssh/03-cleanup-known-hosts.sh
+
+      - name: Clean up Azure resources
+        if: always()
+        run: |
+          ./scripts/02-create-source-images/09-cleanup.sh
 
       - name: Azure logout
         if: always()

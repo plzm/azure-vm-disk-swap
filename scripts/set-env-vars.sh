@@ -57,7 +57,7 @@ suffixVersion3=$(date -d "+2 months" +"%Y%m")
 # We use this to enable a deployed VM to be logged into and used by the user account whose public SSH key this is.
 # This SSH key is not used in this context to log into the VM. It's added to the VM for eventual use by this user account.
 # It's hard-coded here but of course if this is stored in the Key Vault used elsewhere here, you can just retrieve it from there at this point.
-vmAdminSshUserName="pelazem"
+vmAdminSshUserName="vmadmin"
 vmAdminSshKeyName="id_""$vmAdminSshUserName"
 vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
 vmAdminSshPublicKey="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName"
@@ -93,12 +93,12 @@ setEnvVar "NSG_RULE_NAME_DEV" "Dev-Inbound"
 setEnvVar "NSG_RULE_PRIORITY_DEV" 100
 setEnvVar "NSG_RULE_NAME_GH_VNET" "GitHub-Runner-SSH-Inbound-VNet"
 setEnvVar "NSG_RULE_PRIORITY_GH_VNET" 101
-# Source VMs
+# Source VMs NSG rules
 setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V2" "GitHub-Runner-SSH-Inbound-Source-VM-v2"
 setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V2" 102
 setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V3" "GitHub-Runner-SSH-Inbound-Source-VM-v3"
 setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V3" 103
-# Prod VMs
+# Prod VMs NSG rules
 setEnvVar "NSG_RULE_NAME_GH_PROD_VM_1" "GitHub-Runner-SSH-Inbound-Prod-VM-1"
 setEnvVar "NSG_RULE_PRIORITY_GH_PROD_VM_1" 104
 setEnvVar "NSG_RULE_NAME_GH_PROD_VM_2" "GitHub-Runner-SSH-Inbound-Prod-VM-2"
@@ -120,8 +120,8 @@ setEnvVar "LOCATION" "eastus2"
 setEnvVar "RG_NAME_SECURITY" "$resourceNamingInfix""-security-""$azureLocation"
 setEnvVar "RG_NAME_GALLERY" "$resourceNamingInfix""-gallery-""$azureLocation"
 setEnvVar "RG_NAME_NET" "$resourceNamingInfix""-net-""$azureLocation"
-setEnvVar "RG_NAME_SOURCE" "$resourceNamingInfix""-vm-source-""$azureLocation"
-setEnvVar "RG_NAME_DEPLOY" "$resourceNamingInfix""-vm-deploy-""$azureLocation"
+setEnvVar "RG_NAME_VM_SOURCE" "$resourceNamingInfix""-vm-source-""$azureLocation"
+setEnvVar "RG_NAME_VM_PROD" "$resourceNamingInfix""-vm-prod-""$azureLocation"
 
 # User-Assigned Managed Identity
 setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"

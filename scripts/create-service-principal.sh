@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # This script is provided so you can create an Azure Service Principal (SP) and copy its output to a Github repo secret.
 # This SP will be used to execute Azure commands in workflows.

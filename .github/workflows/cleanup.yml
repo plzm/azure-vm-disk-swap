@@ -5,14 +5,15 @@ on:
 
 jobs:
   cleanup:
+    name: Clean up all Azure Resources
     runs-on: ubuntu-latest
     steps:
-      - name: Bash Set
-        run: |
-          set -eux
-
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Make scripts executable
+        run: |
+          find ./scripts -type f -exec chmod +x {} \;
 
       - name: Azure login
         if: success()
@@ -23,17 +24,16 @@ jobs:
       - name: Set Environment Variables
         if: success()
         run: |
-          chmod +x ./scripts/set-env-vars.sh
           ./scripts/set-env-vars.sh
 
-      - name: Delete Resource Group "${{ env.RG_NAME_DEPLOY }}"
+      - name: Delete Resource Group "${{ env.RG_NAME_VM_PROD }}"
         if: success()
         continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_DEPLOY }}" --yes --verbose
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_VM_PROD }}" --yes --verbose
 
-      - name: Delete Resource Group "${{ env.RG_NAME_SOURCE }}"
+      - name: Delete Resource Group "${{ env.RG_NAME_VM_SOURCE }}"
         continue-on-error: true
-        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_SOURCE }}" --yes --verbose
+        run: az group delete --subscription "${{ env.SUBSCRIPTION_ID }}" -n "${{ env.RG_NAME_VM_SOURCE }}" --yes --verbose
 
       - name: Delete Resource Group "${{ env.RG_NAME_GALLERY }}"
         continue-on-error: true
