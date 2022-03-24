@@ -57,7 +57,7 @@ suffixVersion3=$(date -d "+2 months" +"%Y%m")
 # We use this to enable a deployed VM to be logged into and used by the user account whose public SSH key this is.
 # This SSH key is not used in this context to log into the VM. It's added to the VM for eventual use by this user account.
 # It's hard-coded here but of course if this is stored in the Key Vault used elsewhere here, you can just retrieve it from there at this point.
-vmAdminSshUserName="pelazem"
+vmAdminSshUserName="vmadmin"
 vmAdminSshKeyName="id_""$vmAdminSshUserName"
 vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
 vmAdminSshPublicKey="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName"

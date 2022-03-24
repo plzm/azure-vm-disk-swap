@@ -36,25 +36,52 @@ jobs:
         run: |
           ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
 
+      - name: Prepare local SSH keys
+        if: success()
+        run: |
+          ./scripts/ssh/01-prepare-local-keys.sh
+
       - name: Deploy Prod VMs
         if: success()
         run: |
           ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
 
-      - name: Allow GH Runner SSH Access
+      - name: Allow GH Runner SSH Access to VNet and VMs
         if: success()
         run: |
           ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
 
+      - name: Create Admin User on Prod VMs
+        if: success()
+        run: |
+          ./scripts/03-deploy-prod-vms/04-create-admin-user.sh
+
       - name: Configure Prod VMs
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/04-configure-prod-vms.sh
+          ./scripts/03-deploy-prod-vms/05-configure-prod-vms.sh
+
+      - name: Delete Deploy User from Prod VMs
+        if: success()
+        run: |
+          ./scripts/03-deploy-prod-vms/06-delete-deploy-user.sh
 
       - name: Remove GH Runner SSH Access
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/05-nsg-remove-gh-runner-ssh.sh
+          ./scripts/03-deploy-prod-vms/07-nsg-remove-gh-runner-ssh.sh
+
+      - name: Clean up SSH keys
+        if: success()
+        continue-on-error: true
+        run: |
+          ./scripts/ssh/02-cleanup-local-keys.sh
+
+      - name: Clean up SSH known hosts
+        if: success()
+        continue-on-error: true
+        run: |
+          ./scripts/ssh/03-cleanup-known-hosts.sh
 
       - name: Azure logout
         if: always()

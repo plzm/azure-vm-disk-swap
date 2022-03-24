@@ -45,21 +45,18 @@ remoteCmd=" < ./scripts/03-deploy-prod-vms/remote-cmd.sh"
 
 # ##################################################
 
-echo "NOTE wherever you run this, you MUST have the admin user PRIVATE key file available, named ""$VM_ADMIN_SSH_USER_KEY_NAME"
-echo "A GitHub-hosted runner will NOT have this by default unless YOU have provided for it to be there"
-
-sshToVm1="ssh -t $VM_ADMIN_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
+sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVm1="${sshToVm1} ${remoteCmd}"
 doTheSsh "$fullCmdVm1"
 
-sshToVm2="ssh -t $VM_ADMIN_SSH_USER_NAME@$vmFqdn2 -o StrictHostKeyChecking=off -i ~/.ssh/""$VM_ADMIN_SSH_USER_KEY_NAME"
+sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn2 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVm2="${sshToVm2} ${remoteCmd}"
 doTheSsh "$fullCmdVm2"
 
 # ##################################################
 
-echo "Deallocate Production VMs"
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
-az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_2" --verbose
+#echo "Deallocate Production VMs"
+#az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
+#az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_2" --verbose
 
 # ##################################################
