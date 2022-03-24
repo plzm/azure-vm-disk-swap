@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eux
 
+scriptdir="$(dirname "$0")"
+cd "$scriptdir"
+
 doTheSsh() {
   cmd=$1
   echo $cmd
@@ -41,7 +44,7 @@ vmFqdn2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" 
 vmIp2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 # We will run the script in remote-cmd.sh on each deployed production VM next
-remoteCmd=" < ./scripts/03-deploy-prod-vms/remote-cmd.sh"
+remoteCmd=" < ./remote-cmd.sh"
 
 # ##################################################
 

@@ -10,6 +10,9 @@
 # before OS disk swap, then swap OS disk, then re-attach large data disks.
 # ##################################################
 
+scriptdir="$(dirname "$0")"
+cd "$scriptdir"
+
 doTheSsh() {
   cmd=$1
   echo $cmd
@@ -49,7 +52,7 @@ vmIpV3=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -
 echo "Connect to VMs, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 
-remoteCmd=" < ./scripts/02-create-source-images/remote-cmd.sh"
+remoteCmd=" < ./remote-cmd.sh"
 
 echo "V2 VM"
 sshToVmV2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
