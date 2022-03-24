@@ -67,18 +67,18 @@ jobs:
           ./scripts/03-deploy-prod-vms/06-delete-deploy-user.sh
 
       - name: Remove GH Runner SSH Access
-        if: success()
+        if: always()
         run: |
           ./scripts/03-deploy-prod-vms/07-nsg-remove-gh-runner-ssh.sh
 
       - name: Clean up SSH keys
-        if: success()
+        if: always()
         continue-on-error: true
         run: |
           ./scripts/ssh/02-cleanup-local-keys.sh
 
       - name: Clean up SSH known hosts
-        if: success()
+        if: always()
         continue-on-error: true
         run: |
           ./scripts/ssh/03-cleanup-known-hosts.sh
