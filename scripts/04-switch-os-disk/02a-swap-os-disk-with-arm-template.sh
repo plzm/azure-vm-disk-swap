@@ -13,8 +13,8 @@ vmAdminUserSshPublicKey=$(echo "$(az keyvault secret show --subscription "$SUBSC
 
 
 echo "Get the resource IDs of the OS disks"
-vm1OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")
-vm1OsDiskIdV2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_V2" -o tsv --query "id")" | sed "s/\r//")
+vm1OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_VNOW" -o tsv --query "id")" | sed "s/\r//")
+vm1OsDiskIdV2=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_VNEXT" -o tsv --query "id")" | sed "s/\r//")
 vm1OsDiskIdV3=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_1_OS_DISK_NAME_V3" -o tsv --query "id")" | sed "s/\r//")
 
 vm2OsDiskIdV1=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" -n "$VM_2_OS_DISK_NAME_V1" -o tsv --query "id")" | sed "s/\r//")

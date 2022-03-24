@@ -1,11 +1,11 @@
-name: 03-Deploy-Prod-VMs
+name: 03-Create-Source-Image
 
 on: 
   workflow_dispatch:
 
 jobs:
-  deploy_vms:
-    name: Deploy Production VMs
+  create_images:
+    name: Create VM OS Drive Source Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -34,42 +34,47 @@ jobs:
       - name: Create Resource Groups
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/01-deploy-rgs.sh
+          ./scripts/03-create-source-image/01-deploy-rgs.sh
 
       - name: Prepare local SSH keys
         if: success()
         run: |
           ./scripts/ssh/01-prepare-local-keys.sh
 
-      - name: Deploy Prod VMs
+      - name: Create Gallery Image Definition
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/02-deploy-prod-vms.sh
+          ./scripts/03-create-source-image/02-create-image-definition.sh
+
+      - name: Deploy Source VM
+        if: success()
+        run: |
+          ./scripts/03-create-source-image/03-deploy-source-vm.sh
 
       - name: Allow GH Runner SSH Access to VNet and VMs
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/03-nsg-allow-gh-runner-ssh.sh
+          ./scripts/ssh/04-nsg-allow-gh-runner-ssh-vnet.sh
 
-      - name: Create Admin User on Prod VMs
+      - name: Create Admin User on Source VM
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/04-create-admin-user.sh
+          ./scripts/03-create-source-image/04-create-admin-user.sh
 
-      - name: Configure Prod VMs
+      - name: Prepare Source VM for Capture
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/05-configure-prod-vms.sh
+          ./scripts/03-create-source-image/05-prepare-vm-for-capture.sh
 
-      - name: Delete Deploy User from Prod VMs
+      - name: Capture Source VM
         if: success()
         run: |
-          ./scripts/03-deploy-prod-vms/06-delete-deploy-user.sh
+          ./scripts/03-create-source-image/06-capture-vm.sh
 
       - name: Remove GH Runner SSH Access
         if: always()
         run: |
-          ./scripts/03-deploy-prod-vms/07-nsg-remove-gh-runner-ssh.sh
+          ./scripts/ssh/05-nsg-remove-gh-runner-ssh-vnet.sh
 
       - name: Clean up SSH keys
         if: always()
@@ -82,6 +87,11 @@ jobs:
         continue-on-error: true
         run: |
           ./scripts/ssh/03-cleanup-known-hosts.sh
+
+      - name: Clean up Azure resources
+        if: always()
+        run: |
+          ./scripts/03-create-source-image/07-cleanup.sh
 
       - name: Azure logout
         if: always()

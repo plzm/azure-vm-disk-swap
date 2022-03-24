@@ -46,12 +46,11 @@ templateRootUri="https://raw.githubusercontent.com/plzm/azure-deploy/main/templa
 # Use this to choose local or remote templates
 templateRoot=$templateRootUri # We will use remote template files via --template-uri
 
-# Suffixes for three VM versions - we'll deploy with 1 and prepare images for 2 and 3. Then all three will be swappable.
-# This simulates starting with a deployed VM and wanting to swap between its initial OS disk and additional disks created from images.
-# Here we just use suffixes for months - current, then next month, then next month after that. You can swap in your own versioning scheme.
-suffixVersion1=$(date +"%Y%m")
-suffixVersion2=$(date -d "+1 month" +"%Y%m")
-suffixVersion3=$(date -d "+2 months" +"%Y%m")
+# Suffixes for VM versions - we'll deploy with vNow and prepare image for vNext. vNow and vNext will be swappable.
+# This simulates starting with a deployed VM and wanting to swap between its initial OS disk and a new disk created from image.
+# Here we just use suffixes for months - current and next month. You can swap in your own versioning scheme.
+suffixVNow=$(date +"%Y%m")
+suffixVNext=$(date -d "+1 month" +"%Y%m")
 
 # VM Admin user SSH public key - we assume we are provided ONLY a public key, not the private key, and that it is generated and managed outside this context.
 # We use this to enable a deployed VM to be logged into and used by the user account whose public SSH key this is.
@@ -93,17 +92,6 @@ setEnvVar "NSG_RULE_NAME_DEV" "Dev-Inbound"
 setEnvVar "NSG_RULE_PRIORITY_DEV" 100
 setEnvVar "NSG_RULE_NAME_GH_VNET" "GitHub-Runner-SSH-Inbound-VNet"
 setEnvVar "NSG_RULE_PRIORITY_GH_VNET" 101
-# Source VMs NSG rules
-setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V2" "GitHub-Runner-SSH-Inbound-Source-VM-v2"
-setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V2" 102
-setEnvVar "NSG_RULE_NAME_GH_SOURCE_VM_V3" "GitHub-Runner-SSH-Inbound-Source-VM-v3"
-setEnvVar "NSG_RULE_PRIORITY_GH_SOURCE_VM_V3" 103
-# Prod VMs NSG rules
-setEnvVar "NSG_RULE_NAME_GH_PROD_VM_1" "GitHub-Runner-SSH-Inbound-Prod-VM-1"
-setEnvVar "NSG_RULE_PRIORITY_GH_PROD_VM_1" 104
-setEnvVar "NSG_RULE_NAME_GH_PROD_VM_2" "GitHub-Runner-SSH-Inbound-Prod-VM-2"
-setEnvVar "NSG_RULE_PRIORITY_GH_PROD_VM_2" 105
-
 
 # Subscription ID. bash/az cli started appending line feed so here we get rid of it.
 subscriptionId=$(echo "$(az account show -s $subscriptionName -o tsv --query 'id')" | sed "s/\r//")
@@ -165,29 +153,21 @@ setEnvVar "OS_STATE" "Generalized"
 # ##################################################
 # az vm image list-skus -l $LOCATION --publisher RedHat --offer RHEL -o tsv --query '[].name'
 # ##################################################
-setEnvVar "OS_PUBLISHER_1" "Canonical"
-setEnvVar "OS_OFFER_1" "UbuntuServer"
-setEnvVar "OS_SKU_1" "18.04-LTS"
+setEnvVar "OS_PUBLISHER_VNOW" "Canonical"
+setEnvVar "OS_OFFER_VNOW" "0001-com-ubuntu-server-focal"
+setEnvVar "OS_SKU_VNOW" "20_04-lts"
 
-setEnvVar "OS_PUBLISHER_2" "Canonical"
-setEnvVar "OS_OFFER_2" "0001-com-ubuntu-server-focal"
-setEnvVar "OS_SKU_2" "20_04-lts"
-
-setEnvVar "OS_PUBLISHER_3" "Canonical"
-setEnvVar "OS_OFFER_3" "0001-com-ubuntu-server-impish"
-setEnvVar "OS_SKU_3" "21_10"
+setEnvVar "OS_PUBLISHER_VNEXT" "Canonical"
+setEnvVar "OS_OFFER_VNEXT" "0001-com-ubuntu-server-impish"
+setEnvVar "OS_SKU_VNEXT" "21_10"
 # ##################################################
-# setEnvVar "OS_PUBLISHER_1" "RedHat"
-# setEnvVar "OS_OFFER_1" "RHEL"
-# setEnvVar "OS_SKU_1" "8_3"
+# setEnvVar "OS_PUBLISHER_VNOW" "RedHat"
+# setEnvVar "OS_OFFER_VNOW" "RHEL"
+# setEnvVar "OS_SKU_VNOW" "8_3"
 
-# setEnvVar "OS_PUBLISHER_2" "RedHat"
-# setEnvVar "OS_OFFER_2" "RHEL"
-# setEnvVar "OS_SKU_2" "8_4"
-
-# setEnvVar "OS_PUBLISHER_3" "RedHat"
-# setEnvVar "OS_OFFER_3" "RHEL"
-# setEnvVar "OS_SKU_3" "8_5"
+# setEnvVar "OS_PUBLISHER_VNEXT" "RedHat"
+# setEnvVar "OS_OFFER_VNEXT" "RHEL"
+# setEnvVar "OS_SKU_VNEXT" "8_4"
 # ##################################################
 
 setEnvVar "VM_VERSION" "latest"
@@ -214,29 +194,19 @@ setEnvVar "VM_ENABLE_AUTO_SHUTDOWN_NOTIFICATION" "Disabled" # Disabled | Enabled
 setEnvVar "VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" "" # Provide if set enableAutoShutdownNotification "Enabled"
 setEnvVar "VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" 15
 
-# Image source VMs - versions 2 and 3
-setEnvVar "VM_SRC_NAME_V2" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion2"
-setEnvVar "VM_SRC_NAME_V3" "$resourceNamingInfix""-""$osInfix""-""$suffixVersion3"
-
-# Production VMs
-setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-setEnvVar "VM_1_OS_DISK_NAME_V1" "$VM_PROD_NAME_1""-""$suffixVersion1"
-setEnvVar "VM_1_OS_DISK_NAME_V2" "$VM_PROD_NAME_1""-""$suffixVersion2"
-setEnvVar "VM_1_OS_DISK_NAME_V3" "$VM_PROD_NAME_1""-""$suffixVersion3"
-
-setEnvVar "VM_PROD_NAME_2" "$resourceNamingInfix""-""$osInfix""-2"
-setEnvVar "VM_2_OS_DISK_NAME_V1" "$VM_PROD_NAME_2""-""$suffixVersion1"
-setEnvVar "VM_2_OS_DISK_NAME_V2" "$VM_PROD_NAME_2""-""$suffixVersion2"
-setEnvVar "VM_2_OS_DISK_NAME_V3" "$VM_PROD_NAME_2""-""$suffixVersion3"
+# Image source VM
+setEnvVar "VM_SRC_NAME_VNEXT" "$resourceNamingInfix""-""$osInfix""-""$suffixVNext"
 
 # Azure Compute Gallery (used to be called Shared Image Gallery but let's-rename-things-gremlins visited)
 setEnvVar "GALLERY_NAME" "$resourceNamingInfix""_gallery_""$azureLocation"
 setEnvVar "VM_OS_TYPE" "Linux" # Linux | Windows
-setEnvVar "VM_IMG_DEF_NAME_V2" "custom-""$osInfix""-""$OS_PUBLISHER_2""-""$OS_OFFER_2""-""$OS_SKU_2""-""$suffixVersion2"
-setEnvVar "VM_IMG_DEF_VERSION_V2" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
-setEnvVar "VM_IMG_DEF_NAME_V3" "custom-""$osInfix""-""$OS_PUBLISHER_3""-""$OS_OFFER_3""-""$OS_SKU_3""-""$suffixVersion3"
-setEnvVar "VM_IMG_DEF_VERSION_V3" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
+setEnvVar "VM_IMG_DEF_NAME_VNEXT" "custom-""$osInfix""-""$OS_PUBLISHER_VNEXT""-""$OS_OFFER_VNEXT""-""$OS_SKU_VNEXT""-""$suffixVNext"
+setEnvVar "VM_IMG_DEF_VERSION_VNEXT" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
 
-setEnvVar "VM_IMG_NAME_V2" "$VM_SRC_NAME_V2""-image"
-setEnvVar "VM_IMG_NAME_V3" "$VM_SRC_NAME_V3""-image"
+setEnvVar "VM_1_OS_DISK_NAME_VNEXT" "$VM_SRC_NAME_VNEXT""-image"
+
+# Production VM
+setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
+setEnvVar "VM_1_OS_DISK_NAME_VNOW" "$VM_PROD_NAME_1""-""$suffixVNow"
+setEnvVar "VM_1_OS_DISK_NAME_VNEXT" "$VM_PROD_NAME_1""-""$suffixVNext"
 # ##################################################

@@ -32,7 +32,6 @@ doTheSsh() {
 
 echo "Start Production VMs"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_2" --verbose
 
 # ##################################################
 
@@ -40,10 +39,7 @@ echo "Get Production VM FQDNs and public IP addresses"
 vmFqdn1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 vmIp1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-vmFqdn2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_2"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIp2=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_2"" -o tsv --query 'ipAddress')" | sed "s/\r//")
-
-# We will run the script in remote-cmd.sh on each deployed production VM next
+# We will run the script in remote-cmd.sh on deployed production VM next
 remoteCmd=" < ./remote-cmd.sh"
 
 # ##################################################
@@ -52,14 +48,9 @@ sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off
 fullCmdVm1="${sshToVm1} ${remoteCmd}"
 doTheSsh "$fullCmdVm1"
 
-sshToVm2="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn2 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-fullCmdVm2="${sshToVm2} ${remoteCmd}"
-doTheSsh "$fullCmdVm2"
-
 # ##################################################
 
 #echo "Deallocate Production VMs"
 #az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
-#az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_2" --verbose
 
 # ##################################################
