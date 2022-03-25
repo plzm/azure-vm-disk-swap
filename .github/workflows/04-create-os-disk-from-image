@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy:
-    name: Create OS Disk
+    name: Create OS Disk from Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,9 +35,6 @@ jobs:
         if: success()
         run: |
           ./scripts/04-create-os-disk-from-image/01-create-os-disk-from-image.sh
-
-
-
 
       - name: Azure logout
         if: always()
