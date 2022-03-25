@@ -31,6 +31,11 @@ jobs:
         run: |
           ./scripts/set-env-vars.sh
 
+      - name: Create OS Disk from Image
+        if: success()
+        run: |
+          ./scripts/04-create-os-disk-from-image/01-create-os-disk-from-image.sh
+
 
 
 
