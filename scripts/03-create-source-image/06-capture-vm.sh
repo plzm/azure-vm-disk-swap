@@ -18,10 +18,10 @@ az vm generalize --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --nam
 # https://docs.microsoft.com/cli/azure/image?view=azure-cli-latest#az_image_create
 echo "Create Source VM Image"
 az image create --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" --verbose \
-	-n "$VM_1_OS_DISK_NAME_VNEXT" --source "$vmIdVNext" --os-type "$VM_OS_TYPE" --storage-sku "$OS_DISK_STORAGE_TYPE"
+	-n "$VM_IMG_NAME_VNEXT" --source "$vmIdVNext" --os-type "$VM_OS_TYPE" --storage-sku "$OS_DISK_STORAGE_TYPE"
 
 # Get VM Image ID for Gallery Image Version Creation
-imageIdVNext=$(echo "$(az image show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" -n "$VM_1_OS_DISK_NAME_VNEXT" -o tsv --query "id")" | sed "s/\r//")
+imageIdVNext=$(echo "$(az image show --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_GALLERY" -n "$VM_IMG_NAME_VNEXT" -o tsv --query "id")" | sed "s/\r//")
 
 
 # https://docs.microsoft.com/cli/azure/sig/image-version?view=azure-cli-latest#az_sig_image_version_create

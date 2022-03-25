@@ -202,8 +202,7 @@ setEnvVar "GALLERY_NAME" "$resourceNamingInfix""_gallery_""$azureLocation"
 setEnvVar "VM_OS_TYPE" "Linux" # Linux | Windows
 setEnvVar "VM_IMG_DEF_NAME_VNEXT" "custom-""$osInfix""-""$OS_PUBLISHER_VNEXT""-""$OS_OFFER_VNEXT""-""$OS_SKU_VNEXT""-""$suffixVNext"
 setEnvVar "VM_IMG_DEF_VERSION_VNEXT" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
-
-setEnvVar "VM_1_OS_DISK_NAME_VNEXT" "$VM_SRC_NAME_VNEXT""-image"
+setEnvVar "VM_IMG_NAME_VNEXT" "$VM_SRC_NAME_VNEXT""-image"
 
 # Production VM
 setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
