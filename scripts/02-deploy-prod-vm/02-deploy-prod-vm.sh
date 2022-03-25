@@ -63,6 +63,3 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --ver
 	autoShutdownNotificationMinutesBefore="$VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" \
 	resourceGroupNameNetworkInterface="$RG_NAME_VM_PROD" \
 	networkInterfaceName="$VM_PROD_NAME_1"
-
-#echo "Deallocate Production VM"
-#az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose

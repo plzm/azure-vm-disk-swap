@@ -61,10 +61,17 @@ jobs:
         run: |
           ./scripts/02-deploy-prod-vm/04-configure-prod-vm.sh
 
-      - name: Delete Deploy User from Prod VMs
+      - name: Delete Deploy User from Prod VM
         if: success()
         run: |
           ./scripts/02-deploy-prod-vm/05-delete-deploy-user.sh
+
+      - name: Deallocate Prod VM
+        if: always()
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az vm deallocate --subscription "${{ env.SUBSCRIPTION_ID }}" -g "${{ env.RG_NAME_VM_PROD }}" --name "${{ env.VM_PROD_NAME_1 }}" --verbose
 
       - name: Remove GH Runner SSH Access
         if: always()

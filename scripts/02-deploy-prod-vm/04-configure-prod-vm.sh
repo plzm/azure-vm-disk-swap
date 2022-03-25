@@ -49,8 +49,3 @@ fullCmdVm1="${sshToVm1} ${remoteCmd}"
 doTheSsh "$fullCmdVm1"
 
 # ##################################################
-
-#echo "Deallocate Production VMs"
-#az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
-
-# ##################################################
