@@ -41,9 +41,9 @@ doTheSsh() {
 echo "Start Source VM"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_SOURCE" --name "$VM_SRC_NAME_VNEXT" --verbose
 
-echo "Get source VM FQDN and public IP address"
+echo "Get source VM FQDN"
 vmFqdnVNext=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_SOURCE"" -n ""$VM_SRC_NAME_VNEXT"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIpVNext=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_SOURCE"" -n ""$VM_SRC_NAME_VNEXT"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+echo $vmFqdnVNext
 
 echo "Connect to VM, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
@@ -51,7 +51,7 @@ echo "NOTE - the environment where this is executed MUST have the SSH private ke
 remoteCmd=" < ./remote-cmd.sh"
 
 echo "vNext VM"
-sshToVm="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnV2 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+sshToVm="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnVNext -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 fullCmdVm="${sshToVm} ${remoteCmd}"
 doTheSsh "$fullCmdVm"
 

@@ -5,7 +5,7 @@ keyFilePath=~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME".pub
 vmDeploySshPublicKey=$(<$keyFilePath)
 
 echo "Public IP VM vNext"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V2" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-vNext" --verbose \
 	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
@@ -15,7 +15,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-V2" --ve
 	domainNameLabel="$VM_SRC_NAME_VNEXT"
 
 echo "Network Interface VM vNext"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V2" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-vNext" --verbose \
 	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
@@ -30,7 +30,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-V2" --ve
 	ipConfigName="$IP_CONFIG_NAME"
 
 echo "VM vNext"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-V2" --verbose \
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-vNext" --verbose \
 	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	location="$LOCATION" \
