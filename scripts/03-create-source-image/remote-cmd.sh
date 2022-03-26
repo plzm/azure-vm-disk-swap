@@ -10,4 +10,4 @@ sudo touch /patrick_was_here/foo.txt
 # Other configuration etc. etc.
 
 #sudo waagent -deprovision+user -force -verbose
-#sudo waagent -deprovision -force -verbose
+sudo waagent -deprovision -force -verbose
