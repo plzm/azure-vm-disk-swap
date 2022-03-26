@@ -69,7 +69,7 @@ jobs:
       - name: Capture Source VM
         if: success()
         run: |
-          ./scripts/03-create-source-image/07-capture-vm.sh
+          ./scripts/03-create-source-image/06-capture-vm.sh
 
       - name: Remove GH Runner SSH Access
         if: always()
@@ -91,7 +91,7 @@ jobs:
       - name: Clean up Azure resources
         if: always()
         run: |
-          ./scripts/03-create-source-image/08-cleanup.sh
+          ./scripts/03-create-source-image/07-cleanup.sh
 
       - name: Azure logout
         if: always()

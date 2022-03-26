@@ -7,7 +7,6 @@ sudo apt install nginx -y
 
 sudo mkdir /usr/patrick_was_here
 sudo touch /usr/patrick_was_here/foo.txt
-
 sudo chown -v -R root /patrick_was_here/
 sudo chmod 744 /patrick_was_here/
 
