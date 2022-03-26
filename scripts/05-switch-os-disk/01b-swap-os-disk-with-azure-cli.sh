@@ -7,7 +7,7 @@ vm1OsDiskIdVNext=$(echo "$(az disk show --subscription "$SUBSCRIPTION_ID" -g "$R
 
 echo "TODO TODO TODO how to set this in a pipeline"
 echo "Set the resource IDs of the OS disks to swap TO"
-newVmOsDiskIdVm1=$vm1OsDiskIdVNow
+newVmOsDiskIdVm1=$vm1OsDiskIdVNext
 
 echo "Deallocate VM so we can swap OS disk"
 az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
