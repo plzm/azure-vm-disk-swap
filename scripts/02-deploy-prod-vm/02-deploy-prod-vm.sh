@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu
 
 keyFilePath=~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME".pub
 vmDeploySshPublicKey=$(<$keyFilePath)
@@ -39,6 +39,7 @@ echo "Deploy Prod VM1 with initial OS"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --verbose \
 	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
+	tags="$VM_PROD_TAGS" \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
 	virtualMachineName="$VM_PROD_NAME_1" \

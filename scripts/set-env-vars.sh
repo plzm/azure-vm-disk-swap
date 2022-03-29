@@ -146,9 +146,7 @@ setEnvVar "HYPER_V_GENERATION" "V1"
 setEnvVar "OS_STATE" "Generalized"
 
 # ##################################################
-# Three VM OS blocks are provided.
-# All three OS disks are swappable.
-# We use three OSes for the three versions here, but of course you can just use the same OS across your versions.
+# Two VM OS blocks are provided: Ubuntu or RedHat. Or you can roll your own.
 # I swap OSes here to also show how to vary OS offer and SKU. Totally optional, feel free to stick with your one happy OS across many image versions.
 # ##################################################
 # az vm image list-skus -l $LOCATION --publisher RedHat --offer RHEL -o tsv --query '[].name'
@@ -205,6 +203,11 @@ setEnvVar "VM_IMG_DEF_VERSION_VNEXT" "1.0.0" # Could make this dynamic if, for e
 setEnvVar "VM_IMG_NAME_VNEXT" "$VM_SRC_NAME_VNEXT""-image"
 
 # Production VM
+
+# We have to double-escape here, because first this has to make it into an env var, then second we have to pass the tags object
+# to the VM ARM template with the double-quotes still escaped once so that ARM can properly set the tags.
+setEnvVar "VM_PROD_TAGS" "{\\\"AutoRefresh\\\":\\\"true\\\",\\\"Classification\\\":\\\"Production\\\"}"
+
 setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
 setEnvVar "VM_1_OS_DISK_NAME_VNOW" "$VM_PROD_NAME_1""-""$suffixVNow"
 setEnvVar "VM_1_OS_DISK_NAME_VNEXT" "$VM_PROD_NAME_1""-""$suffixVNext"
