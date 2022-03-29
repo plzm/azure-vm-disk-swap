@@ -206,12 +206,5 @@ setEnvVar "VM_IMG_DEF_VERSION_VNEXT" "1.0.0" # Could make this dynamic if, for e
 setEnvVar "VM_IMG_NAME_VNEXT" "$VM_SRC_NAME_VNEXT""-image"
 
 # Production VM
-
-# We have to double-escape here, because first this has to make it into an env var, then second we have to pass the tags object
-# to the VM ARM template with the double-quotes still escaped once so that ARM can properly set the tags.
-setEnvVar "VM_PROD_TAGS" "{\\\"AutoRefresh\\\":\\\"true\\\",\\\"Classification\\\":\\\"Production\\\"}"
-
 setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-setEnvVar "VM_1_OS_DISK_NAME_VNOW" "$VM_PROD_NAME_1""-""$VM_SUFFIX_VNOW"
-#setEnvVar "VM_1_OS_DISK_NAME_VNEXT" "$VM_PROD_NAME_1""-""$VM_SUFFIX_VNEXT"
 # ##################################################
