@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux
+set -eu
 
 keyFilePath=~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME".pub
 vmDeploySshPublicKey=$(<$keyFilePath)
@@ -9,6 +9,12 @@ if [ ! -z $USERNAME_UAMI ]
 then
 	uamiResourceId=$(echo "$(az identity show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_SECURITY"" --name ""$USERNAME_UAMI"" -o tsv --query 'id')" | sed "s/\r//")
 fi
+
+# Set OS disk name here so it's simple to adapt this into some sort of loop here if needed to generate many prod VMs.
+osDiskName="$VM_PROD_NAME_1""-""$VM_SUFFIX_VNOW"
+
+# Set VM tags here as we need to set the OS disk. Again, easy to adapt this into an eventual loop to generate many prod VMs.
+vmTags="{\"AutoRefresh\":\"true\",\"OSDiskName\":\"""$osDiskName""\",\"Classification\":\"Production\"}"
 
 echo "Deploy Prod VM1 Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-PIP" --verbose \
@@ -39,6 +45,7 @@ echo "Deploy Prod VM1 with initial OS"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --verbose \
 	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
+	tags="$vmTags" \
 	location="$LOCATION" \
 	userAssignedManagedIdentityResourceId="$uamiResourceId" \
 	virtualMachineName="$VM_PROD_NAME_1" \
@@ -51,7 +58,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --ver
 	adminUsername="$DEPLOYMENT_SSH_USER_NAME" \
 	adminSshPublicKey="$vmDeploySshPublicKey" \
 	virtualMachineTimeZone="$VM_TIME_ZONE" \
-	osDiskName="$VM_1_OS_DISK_NAME_VNOW" \
+	osDiskName="$osDiskName" \
 	osDiskStorageType="$OS_DISK_STORAGE_TYPE" \
 	osDiskSizeInGB="$OS_DISK_SIZE_IN_GB" \
 	dataDiskStorageType="$DATA_DISK_STORAGE_TYPE" \

@@ -87,6 +87,9 @@ setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
 # ##################################################
 # Variables to export to env vars
 
+setEnvVar "VM_SUFFIX_VNOW" "$suffixVNow"
+setEnvVar "VM_SUFFIX_VNEXT" "$suffixVNext"
+
 setEnvVar "NSG_RULE_SRC_ADDRESS_DEV" "$myLocalIpAddress"
 setEnvVar "NSG_RULE_NAME_DEV" "Dev-Inbound"
 setEnvVar "NSG_RULE_PRIORITY_DEV" 100
@@ -146,9 +149,7 @@ setEnvVar "HYPER_V_GENERATION" "V1"
 setEnvVar "OS_STATE" "Generalized"
 
 # ##################################################
-# Three VM OS blocks are provided.
-# All three OS disks are swappable.
-# We use three OSes for the three versions here, but of course you can just use the same OS across your versions.
+# Two VM OS blocks are provided: Ubuntu or RedHat. Or you can roll your own.
 # I swap OSes here to also show how to vary OS offer and SKU. Totally optional, feel free to stick with your one happy OS across many image versions.
 # ##################################################
 # az vm image list-skus -l $LOCATION --publisher RedHat --offer RHEL -o tsv --query '[].name'
@@ -195,17 +196,15 @@ setEnvVar "VM_AUTO_SHUTDOWN_NOTIFICATION_WEBHOOK_URL" "" # Provide if set enable
 setEnvVar "VM_AUTO_SHUTDOWN_NOTIFICATION_MINUTES_BEFORE" 15
 
 # Image source VM
-setEnvVar "VM_SRC_NAME_VNEXT" "$resourceNamingInfix""-""$osInfix""-""$suffixVNext"
+setEnvVar "VM_SRC_NAME_VNEXT" "$resourceNamingInfix""-""$osInfix""-""$VM_SUFFIX_VNEXT"
 
 # Azure Compute Gallery (used to be called Shared Image Gallery but let's-rename-things-gremlins visited)
 setEnvVar "GALLERY_NAME" "$resourceNamingInfix""_gallery_""$azureLocation"
 setEnvVar "VM_OS_TYPE" "Linux" # Linux | Windows
-setEnvVar "VM_IMG_DEF_NAME_VNEXT" "custom-""$osInfix""-""$OS_PUBLISHER_VNEXT""-""$OS_OFFER_VNEXT""-""$OS_SKU_VNEXT""-""$suffixVNext"
+setEnvVar "VM_IMG_DEF_NAME_VNEXT" "custom-""$osInfix""-""$OS_PUBLISHER_VNEXT""-""$OS_OFFER_VNEXT""-""$OS_SKU_VNEXT""-""$VM_SUFFIX_VNEXT"
 setEnvVar "VM_IMG_DEF_VERSION_VNEXT" "1.0.0" # Could make this dynamic if, for example, generating more than one image version per image definition.
 setEnvVar "VM_IMG_NAME_VNEXT" "$VM_SRC_NAME_VNEXT""-image"
 
 # Production VM
 setEnvVar "VM_PROD_NAME_1" "$resourceNamingInfix""-""$osInfix""-1"
-setEnvVar "VM_1_OS_DISK_NAME_VNOW" "$VM_PROD_NAME_1""-""$suffixVNow"
-setEnvVar "VM_1_OS_DISK_NAME_VNEXT" "$VM_PROD_NAME_1""-""$suffixVNext"
 # ##################################################
