@@ -10,7 +10,7 @@ cd "$scriptdir"
 ./03-create-admin-user.sh
 ./04-configure-prod-vm.sh
 ./05-delete-deploy-user.sh
-az vm deallocate --subscription "${{ env.SUBSCRIPTION_ID }}" -g "${{ env.RG_NAME_VM_PROD }}" --name "${{ env.VM_PROD_NAME_1 }}" --verbose
+az vm deallocate --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
 ../ssh/05-nsg-remove-gh-runner-ssh-vnet.sh
 ../ssh/02-cleanup-local-keys.sh
 ../ssh/03-cleanup-known-hosts.sh
