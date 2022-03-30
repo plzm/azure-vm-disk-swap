@@ -2,6 +2,6 @@
 # This is the script to run remotely on deployed VMs
 set -eux
 
-sudo mkdir -p /patrick_prod_vm
+sudo mkdir -p /usr/pz_prod_vm_deploy
 
 # Other configuration etc. etc.
