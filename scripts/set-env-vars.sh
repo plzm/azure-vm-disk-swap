@@ -129,7 +129,7 @@ setEnvVar "VNET_ENABLE_VM_PROTECTION" "Disabled" # Enabled or Disabled
 setEnvVar "SUBNET_NAME_SOURCE" "source"
 setEnvVar "SUBNET_PREFIX_SOURCE" "10.4.1.0/24"
 
-setEnvVar "SUBNET_NAME_PROD" "source"
+setEnvVar "SUBNET_NAME_PROD" "prod"
 setEnvVar "SUBNET_PREFIX_PROD" "10.4.254.0/24"
 
 setEnvVar "SUBNET_SERVICE_ENDPOINTS" ""
