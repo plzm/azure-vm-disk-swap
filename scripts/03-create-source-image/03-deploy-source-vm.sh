@@ -4,7 +4,7 @@ set -eu
 keyFilePath=~/.ssh/"$DEPLOYMENT_SSH_USER_KEY_NAME".pub
 vmDeploySshPublicKey=$(<$keyFilePath)
 
-echo "Public IP - Prod VM"
+echo "Public IP - Source VM"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-vNext" --verbose \
 	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
@@ -14,7 +14,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-PIP-vNext" -
 	publicIpSku="$VM_PUBLIC_IP_SKU" \
 	domainNameLabel="$VM_SRC_NAME_VNEXT"
 
-echo "Network Interface - Prod VM"
+echo "Network Interface - Source VM"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-vNext" --verbose \
 	-g "$RG_NAME_VM_SOURCE" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
@@ -22,7 +22,7 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "VM-NIC-vNext" -
 	networkInterfaceName="$VM_SRC_NAME_VNEXT" \
 	vnetResourceGroup="$RG_NAME_NET" \
 	vnetName="$VNET_NAME" \
-	subnetName="$SUBNET_NAME" \
+	subnetName="$SUBNET_NAME_SOURCE" \
 	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
 	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
 	publicIpResourceGroup="$RG_NAME_VM_SOURCE" \
