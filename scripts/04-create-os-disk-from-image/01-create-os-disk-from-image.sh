@@ -10,14 +10,20 @@ galleryImageRefVNext=$(echo "$(az sig image-version show --subscription "$SUBSCR
 echo "List VMs with tag AutoRefresh=true. We will create an OS disk for each of these."
 tagKey="AutoRefresh"
 tagValue="true"
-vms="$(az vm list --subscription ""$SUBSCRIPTION_ID"" --query "[?tags.""$tagKey""=='""$tagValue""'].{vmName:name, vmRg:resourceGroup, vmLocation:location}")"
 
-while read -r vmName vmRg vmLocation; do
-	vmDiskName="$vmName""-""$VM_SUFFIX_VNEXT"
-	echo "Create vNext OS disk ""$vmDiskName"" for VM ""$vmLocation""\\""$vmRg""\\""$vmName"
+vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" | project id, name, location, resourceGroup' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup}')"
 
-	az disk create --subscription "$SUBSCRIPTION_ID" -g "$vmRg" -l "$vmLocation" --verbose \
-		-n "$vmDiskName" --gallery-image-reference "$galleryImageRefVNext" \
+while read -r id name location resourceGroup; do
+	#echo $id
+	#echo $name
+	#echo $location
+	#echo $resourceGroup
+
+	diskName="$name""-""$VM_SUFFIX_VNEXT"
+	echo "Create vNext OS disk ""$diskName"" for VM ""$location""\\""$resourceGroup""\\""$name"
+
+	az disk create --subscription "$SUBSCRIPTION_ID" -g "$resourceGroup" -l "$location" --verbose \
+		-n "$diskName" --gallery-image-reference "$galleryImageRefVNext" \
 		--os-type "$VM_OS_TYPE" --sku "$OS_DISK_STORAGE_TYPE"
 
-done< <(echo "${vms}" | jq -r '.[] | "\(.vmName) \(.vmRg) \(.vmLocation)"')
+done< <(echo "${vms}" | jq -r '.[] | "\(.id) \(.name) \(.location) \(.resourceGroup)"')
