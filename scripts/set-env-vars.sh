@@ -118,13 +118,20 @@ setEnvVar "RG_NAME_VM_PROD" "$resourceNamingInfix""-vm-prod-""$azureLocation"
 setEnvVar "USERNAME_UAMI" "$resourceNamingInfix""-vm-uami-""$azureLocation"
 
 # Network
-setEnvVar "NSG_NAME" "vm-nsg-""$azureLocation"
+setEnvVar "NSG_NAME_SOURCE" "nsg-source-""$azureLocation"
+setEnvVar "NSG_NAME_PROD" "nsg-prod-""$azureLocation"
+
 setEnvVar "VNET_NAME" "vm-vnet-""$azureLocation"
 setEnvVar "VNET_PREFIX" "10.4.0.0/16"
 setEnvVar "VNET_ENABLE_DDOS_PROTECTION" "Disabled" # Enabled or Disabled
 setEnvVar "VNET_ENABLE_VM_PROTECTION" "Disabled" # Enabled or Disabled
-setEnvVar "SUBNET_NAME" "subnet1"
-setEnvVar "SUBNET_PREFIX" "10.4.1.0/24"
+
+setEnvVar "SUBNET_NAME_SOURCE" "source"
+setEnvVar "SUBNET_PREFIX_SOURCE" "10.4.1.0/24"
+
+setEnvVar "SUBNET_NAME_PROD" "prod"
+setEnvVar "SUBNET_PREFIX_PROD" "10.4.254.0/24"
+
 setEnvVar "SUBNET_SERVICE_ENDPOINTS" ""
 setEnvVar "SUBNET_PRIVATE_ENDPOINT_NETWORK_POLICIES" "Enabled" # Enabled or Disabled
 setEnvVar "SUBNET_PRIVATE_LINK_NETWORK_POLICIES" "Enabled" # Enabled or Disabled

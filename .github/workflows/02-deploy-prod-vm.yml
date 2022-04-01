@@ -49,7 +49,7 @@ jobs:
       - name: Allow GH Runner SSH Access to VNet and VMs
         if: success()
         run: |
-          ./scripts/ssh/04-nsg-allow-gh-runner-ssh-vnet.sh
+          ./scripts/ssh/04-nsg-allow-gh-runner-ssh-vnet.sh "${{ env.NSG_NAME_PROD }}"
 
       - name: Create Admin User on Prod VM
         if: success()
@@ -76,7 +76,7 @@ jobs:
       - name: Remove GH Runner SSH Access
         if: always()
         run: |
-          ./scripts/ssh/05-nsg-remove-gh-runner-ssh-vnet.sh
+          ./scripts/ssh/05-nsg-remove-gh-runner-ssh-vnet.sh "${{ env.NSG_NAME_PROD }}"
 
       - name: Clean up SSH keys
         if: always()

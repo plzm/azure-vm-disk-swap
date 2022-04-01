@@ -16,8 +16,8 @@ osDiskName="$VM_PROD_NAME_1""-""$VM_SUFFIX_VNOW"
 # Set VM tags here as we need to set the OS disk. Again, easy to adapt this into an eventual loop to generate many prod VMs.
 vmTags="{\"AutoRefresh\":\"true\",\"OSDiskName\":\"""$osDiskName""\",\"Classification\":\"Production\"}"
 
-echo "Deploy Prod VM1 Public IP"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-PIP" --verbose \
+echo "Deploy Prod VM Public IP"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM-PIP" --verbose \
 	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_PUBLIC_IP" \
 	--parameters \
 	location="$LOCATION" \
@@ -26,23 +26,23 @@ az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-PIP" -
 	publicIpSku="$VM_PUBLIC_IP_SKU" \
 	domainNameLabel="$VM_PROD_NAME_1"
 
-echo "Deploy Prod VM1 Network Interface"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1-NIC" --verbose \
+echo "Deploy Prod VM Network Interface"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM-NIC" --verbose \
 	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_NIC" \
 	--parameters \
 	location="$LOCATION" \
 	networkInterfaceName="$VM_PROD_NAME_1" \
 	vnetResourceGroup="$RG_NAME_NET" \
 	vnetName="$VNET_NAME" \
-	subnetName="$SUBNET_NAME" \
+	subnetName="$SUBNET_NAME_PROD" \
 	enableAcceleratedNetworking="$VM_ENABLE_ACCELERATED_NETWORKING" \
 	privateIpAllocationMethod="$PRIVATE_IP_ALLOCATION_METHOD" \
 	publicIpResourceGroup="$RG_NAME_VM_PROD" \
 	publicIpName="$VM_PROD_NAME_1" \
 	ipConfigName="$IP_CONFIG_NAME"
 
-echo "Deploy Prod VM1 with initial OS"
-az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM1" --verbose \
+echo "Deploy Prod VM with initial OS"
+az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM" --verbose \
 	-g "$RG_NAME_VM_PROD" --template-uri "$TEMPLATE_VM" \
 	--parameters \
 	tags="$vmTags" \
