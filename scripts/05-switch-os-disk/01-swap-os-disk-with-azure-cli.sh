@@ -9,10 +9,13 @@ set -u
 # Get all VMs that have an OSDiskName tag (feel free to substitute your own logic for which VMs should be evaluated for OS disk swap)
 tagKey="OSDiskName"
 
+# Use an Azure Graph query to retrieve VMs in the subscription, and project properties we'll need below
 vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" | project id, name, location, resourceGroup, currentOsDiskName=properties.storageProfile.osDisk.name' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup, currentOsDiskName:currentOsDiskName}')"
 
+# Iterate through the VMs
 while read -r id name resourceGroup location currentOsDiskName
 do
+	# Get the value of the OSDiskName tag, which should contain the name of an existing disk in the same resource group as the VM itself
 	newOsDiskName=$(echo "$(az tag list --resource-id $id -o tsv --query "[properties.tags.""$tagKey""]")" | sed "s/\r//")
 	#echo $id
 	#echo $name
@@ -21,7 +24,10 @@ do
 	#echo "Current OS Disk Name=""$currentOsDiskName"
 	#echo "New OS Disk Name=""$newOsDiskName"
 
-	if [[ "$newOsDiskName" == "$currentOsDiskName" ]]
+	if [[ -z $newOsDiskName ]]
+	then
+		echo "$location""/""$resourceGroup""/""$name"": no OS disk name specified in tag ""$tagKey"
+	elif [[ "$newOsDiskName" == "$currentOsDiskName" ]]
 	then
 		echo "$location""/""$resourceGroup""/""$name"": no OS disk change needed"
 	else
@@ -53,14 +59,6 @@ do
 			# OPTIONAL in case you need to detach/re-attach data disks
 			#az vm disk attach --subscription "$SUBSCRIPTION_ID" -g "$resourceGroup" --verbose \
 			#	--vm-name "$name" -n "PROVIDE_DATA_DISK_NAME_HERE"
-
-			echo "Get VM FQDN and public IP address"
-			fqdn=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$resourceGroup"" -n ""$name"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-			ip=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$resourceGroup"" -n ""$name"" -o tsv --query 'ipAddress')" | sed "s/\r//")
-
-			echo "Clean VM out of SSH known hosts"
-			ssh-keygen -f ~/.ssh/known_hosts -R "$fqdn"
-			ssh-keygen -f ~/.ssh/known_hosts -R "$ip"
 		fi
 	fi
 done< <(echo "${vms}" | jq -r '.[] | "\(.id) \(.name) \(.resourceGroup) \(.location) \(.currentOsDiskName)"')
