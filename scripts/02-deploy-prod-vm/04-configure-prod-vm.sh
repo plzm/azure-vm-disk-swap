@@ -30,7 +30,7 @@ doTheSsh() {
 
 # ##################################################
 
-echo "Start Production VMs"
+echo "Start VM"
 az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
 
 # ##################################################
@@ -39,13 +39,30 @@ echo "Get Production VM FQDNs and public IP addresses"
 vmFqdn1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
 vmIp1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
-# We will run the script in remote-cmd.sh on deployed production VM next
-remoteCmd=" < ./remote-cmd.sh"
+# ##################################################
+
+# Prepare start of below SSH commands
+sshToVmCmdStart="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 
 # ##################################################
 
-sshToVm1="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
-fullCmdVm1="${sshToVm1} ${remoteCmd}"
-doTheSsh "$fullCmdVm1"
+# We will run the confiuration script in remote-cmd.sh on deployed production VM next
+remoteCmd=" < ./remote-cmd.sh"
+sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
+doTheSsh "$sshToVmCmdFull"
+
+# ##################################################
+
+# Now we will run script to add a "real" admin user on deployed production VM
+remoteCmd=" < ../vmadmin/create-user.sh ""$VM_ADMIN_SSH_USER_NAME" "$VM_ADMIN_SSH_PUBLIC_KEY"
+sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
+doTheSsh "$sshToVmCmdFull"
+
+# ##################################################
+
+# Now we will run script to delete deployment user from deployed production VM
+remoteCmd=" < ../vmadmin/delete-user.sh ""$DEPLOYMENT_SSH_USER_NAME"
+sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
+doTheSsh "$sshToVmCmdFull"
 
 # ##################################################
