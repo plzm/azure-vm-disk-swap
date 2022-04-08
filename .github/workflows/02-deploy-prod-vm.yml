@@ -56,11 +56,6 @@ jobs:
         run: |
           ./scripts/02-deploy-prod-vm/04-configure-prod-vm.sh
 
-      - name: Delete Deploy User from Prod VM
-        if: success()
-        run: |
-          ./scripts/02-deploy-prod-vm/05-delete-deploy-user.sh
-
       - name: Deallocate Prod VM
         if: always()
         uses: azure/CLI@v1
