@@ -42,7 +42,7 @@ vmIp1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g
 # ##################################################
 
 # Prepare start of below SSH commands
-sshToVmCmdStart="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+sshToVmCmdStart="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 
 # ##################################################
 
@@ -54,7 +54,7 @@ doTheSsh "$sshToVmCmdFull"
 # ##################################################
 
 # Now we will run script to add a "real" admin user on deployed production VM
-remoteCmd=" < ../vmadmin/create-user.sh \"""$VM_ADMIN_SSH_USER_NAME""\" \"""$VM_ADMIN_SSH_PUBLIC_KEY""\""
+remoteCmd=" < \"../vmadmin/create-user.sh '$VM_ADMIN_SSH_USER_NAME' '$VM_ADMIN_SSH_PUBLIC_KEY'\""
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
