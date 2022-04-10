@@ -54,7 +54,7 @@ doTheSsh "$sshToVmCmdFull"
 # ##################################################
 
 # Now we will run script to add a "real" admin user on deployed production VM
-remoteCmd=" < ../vmadmin/create-user.sh ""$VM_ADMIN_SSH_USER_NAME" "$VM_ADMIN_SSH_PUBLIC_KEY"
+remoteCmd=" < ../vmadmin/create-user.sh ""$VM_ADMIN_SSH_USER_NAME"" ""$VM_ADMIN_SSH_PUBLIC_KEY"
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
