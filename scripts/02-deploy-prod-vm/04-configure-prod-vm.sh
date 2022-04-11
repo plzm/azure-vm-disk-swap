@@ -30,19 +30,19 @@ doTheSsh() {
 
 # ##################################################
 
-echo "Start VM"
-az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
+#echo "Start VM"
+#az vm start --subscription "$SUBSCRIPTION_ID" -g "$RG_NAME_VM_PROD" --name "$VM_PROD_NAME_1" --verbose
 
 # ##################################################
 
 echo "Get Production VM FQDNs and public IP addresses"
-vmFqdn1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
-vmIp1=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
+vmFqdnProd=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'dnsSettings.fqdn')" | sed "s/\r//")
+vmIpProd=$(echo "$(az network public-ip show --subscription ""$SUBSCRIPTION_ID"" -g ""$RG_NAME_VM_PROD"" -n ""$VM_PROD_NAME_1"" -o tsv --query 'ipAddress')" | sed "s/\r//")
 
 # ##################################################
 
 # Prepare start of below SSH commands
-sshToVmCmdStart="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
+sshToVmCmdStart="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdnProd -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"
 
 # ##################################################
 
@@ -54,14 +54,14 @@ doTheSsh "$sshToVmCmdFull"
 # ##################################################
 
 # Now we will run script to add a "real" admin user on deployed production VM
-remoteCmd=" \"bash -s\" < ../vmadmin/create-user.sh "$VM_ADMIN_SSH_USER_NAME" "$VM_ADMIN_SSH_PUBLIC_KEY""
+remoteCmd=" \"bash -s\" < ../vmadmin/create-user.sh \""$VM_ADMIN_SSH_USER_NAME"\" \""$VM_ADMIN_SSH_PUBLIC_KEY_INFIX"\""
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
 # ##################################################
 
 # Now we will run script to delete deployment user from deployed production VM
-remoteCmd=" \"bash -s\" < ../vmadmin/delete-user.sh "$DEPLOYMENT_SSH_USER_NAME""
+remoteCmd=" \"bash -s\" < ../vmadmin/delete-user.sh \""$DEPLOYMENT_SSH_USER_NAME"\""
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
