@@ -54,7 +54,7 @@ jobs:
       - name: Configure Prod VM
         if: success()
         run: |
-          ./scripts/02-deploy-prod-vm/04-configure-prod-vm.sh
+          ./scripts/02-deploy-prod-vm/03-configure-prod-vm.sh
 
       - name: Deallocate Prod VM
         if: always()
