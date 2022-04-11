@@ -56,20 +56,15 @@ jobs:
         run: |
           ./scripts/ssh/04-nsg-allow-gh-runner-ssh-vnet.sh "${{ env.NSG_NAME_SOURCE }}"
 
-      - name: Create Admin User on Source VM
-        if: success()
-        run: |
-          ./scripts/03-create-source-image/04-create-admin-user.sh
-
       - name: Prepare Source VM for Capture
         if: success()
         run: |
-          ./scripts/03-create-source-image/05-prepare-vm-for-capture.sh
+          ./scripts/03-create-source-image/04-prepare-vm-for-capture.sh
 
       - name: Capture Source VM
         if: success()
         run: |
-          ./scripts/03-create-source-image/06-capture-vm.sh
+          ./scripts/03-create-source-image/05-capture-vm.sh
 
       - name: Remove GH Runner SSH Access
         if: always()
@@ -91,7 +86,7 @@ jobs:
       - name: Clean up Azure resources
         if: always()
         run: |
-          ./scripts/03-create-source-image/07-cleanup.sh
+          ./scripts/03-create-source-image/06-cleanup.sh
 
       - name: Azure logout
         if: always()
