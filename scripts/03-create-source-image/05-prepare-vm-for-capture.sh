@@ -48,7 +48,7 @@ echo $vmFqdnVNext
 echo "Connect to VM, run remote command, delete deployment user, and execute deprovision command"
 echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
 
-remoteCmd=" < ./remote-cmd.sh"
+remoteCmd=" \"bash -s\" < ./remote-cmd.sh"
 
 echo "vNext VM"
 sshToVm="ssh -t $DEPLOYMENT_SSH_USER_NAME@$vmFqdnVNext -o StrictHostKeyChecking=off -i ~/.ssh/""$DEPLOYMENT_SSH_USER_KEY_NAME"

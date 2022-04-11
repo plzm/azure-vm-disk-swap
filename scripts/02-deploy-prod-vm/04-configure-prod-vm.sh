@@ -47,21 +47,21 @@ sshToVmCmdStart="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking
 # ##################################################
 
 # We will run the confiuration script in remote-cmd.sh on deployed production VM next
-remoteCmd=" < ./remote-cmd.sh"
+remoteCmd=" \"bash -s\" < ./remote-cmd.sh"
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
 # ##################################################
 
 # Now we will run script to add a "real" admin user on deployed production VM
-remoteCmd=" \"bash -s\" < ../vmadmin/create-user.sh $VM_ADMIN_SSH_USER_NAME $VM_ADMIN_SSH_PUBLIC_KEY"
+remoteCmd=" \"bash -s\" < ../vmadmin/create-user.sh "$VM_ADMIN_SSH_USER_NAME" "$VM_ADMIN_SSH_PUBLIC_KEY""
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
 # ##################################################
 
 # Now we will run script to delete deployment user from deployed production VM
-remoteCmd=" < ../vmadmin/delete-user.sh ""$DEPLOYMENT_SSH_USER_NAME"
+remoteCmd=" \"bash -s\" < ../vmadmin/delete-user.sh "$DEPLOYMENT_SSH_USER_NAME""
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
 
