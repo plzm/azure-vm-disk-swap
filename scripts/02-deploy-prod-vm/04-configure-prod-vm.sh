@@ -46,7 +46,7 @@ sshToVmCmdStart="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdn1 -o StrictHostKeyChecking
 
 # ##################################################
 
-# We will run the confiuration script in remote-cmd.sh on deployed production VM next
+# We will run the configuration script in remote-cmd.sh on deployed production VM next
 remoteCmd=" \"bash -s\" < ./remote-cmd.sh"
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
