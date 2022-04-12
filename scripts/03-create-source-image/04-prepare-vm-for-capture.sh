@@ -55,7 +55,7 @@ sshToVmCmdStart="ssh $DEPLOYMENT_SSH_USER_NAME@$vmFqdnSource -o StrictHostKeyChe
 
 # ##################################################
 
-# Now we will run script to add a "real" admin user on deployed source VM
+# Now we will run script to add a "real" admin user on deployed source VM and configure SSH
 remoteCmd=" \"bash -s\" < ../vmadmin/create-user.sh \""$VM_ADMIN_SSH_USER_NAME"\" \""$VM_ADMIN_SSH_PUBLIC_KEY_INFIX"\""
 sshToVmCmdFull="${sshToVmCmdStart} ${remoteCmd}"
 doTheSsh "$sshToVmCmdFull"
@@ -63,7 +63,7 @@ doTheSsh "$sshToVmCmdFull"
 # ##################################################
 
 echo "Connect to VM, run remote command, delete deployment user, and execute deprovision command"
-echo "NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL"
+# NOTE - the environment where this is executed MUST have the SSH private key installed corresponding to the public key present on the VMs, else SSH login will FAIL
 
 # We will run the configuration script in remote-cmd.sh on deployed source VM next
 remoteCmd=" \"bash -s\" < ./remote-cmd.sh"
