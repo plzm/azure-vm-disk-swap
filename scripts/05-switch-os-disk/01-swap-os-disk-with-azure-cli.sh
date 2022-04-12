@@ -1,5 +1,5 @@
 #!/bin/bash
-set -u
+set -eu
 
 # Select all VMs with OSDiskName tag
 # Compare tag value to current OS disk name
@@ -9,32 +9,32 @@ set -u
 # Get all VMs that have an OSDiskName tag (feel free to substitute your own logic for which VMs should be evaluated for OS disk swap)
 tagKey="OSDiskName"
 
-# Use an Azure Graph query to retrieve VMs in the subscription, and project properties we'll need below
-vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" | project id, name, location, resourceGroup, currentOsDiskName=properties.storageProfile.osDisk.name' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup, currentOsDiskName:currentOsDiskName}')"
+# Use an Azure Graph query to retrieve VMs in the subscription with tag AutoRefresh = true, and project properties we'll need below
+vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" and tags.AutoRefresh =~ "true" | project id, name, location, resourceGroup, currentOsDiskName=properties.storageProfile.osDisk.name' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup, currentOsDiskName:currentOsDiskName}')"
 
 # Iterate through the VMs
 while read -r id name resourceGroup location currentOsDiskName
 do
 	# Get the value of the OSDiskName tag, which should contain the name of an existing disk in the same resource group as the VM itself
-	newOsDiskName=$(echo "$(az tag list --resource-id $id -o tsv --query "[properties.tags.""$tagKey""]")" | sed "s/\r//")
-	#echo $id
-	#echo $name
-	#echo $resourceGroup
-	#echo $location
-	#echo "Current OS Disk Name=""$currentOsDiskName"
-	#echo "New OS Disk Name=""$newOsDiskName"
+	newOsDiskName=$(echo "$(az tag list --resource-id $id -o tsv --query "[properties.tags.OSDiskName]")" | sed "s/\r//")
+	echo $id
+	echo $name
+	echo $resourceGroup
+	echo $location
+	echo "Current OS Disk Name=""$currentOsDiskName"
+	echo "New OS Disk Name=""$newOsDiskName"
 
 	if [[ -z $newOsDiskName ]]
 	then
-		echo "$location""/""$resourceGroup""/""$name"": no OS disk name specified in tag ""$tagKey"
+		echo "$location""/""$resourceGroup""/""$name"": OSDiskName tag is not set or value is empty"
 	elif [[ "$newOsDiskName" == "$currentOsDiskName" ]]
 	then
-		echo "$location""/""$resourceGroup""/""$name"": no OS disk change needed"
+		echo "$location""/""$resourceGroup""/""$name"": OS disk does NOT need to be changed"
 	else
 		echo "$location""/""$resourceGroup""/""$name"": OS disk needs to be changed"
 
 		newOsDiskId=$(echo "$(az disk show --subscription $SUBSCRIPTION_ID -g ""$resourceGroup"" -n ""$newOsDiskName"" -o tsv --query "id")" | sed "s/\r//")
-		#echo $newOsDiskId
+		echo $newOsDiskId
 
 		if [[ ! -z $newOsDiskId ]]
 		then
