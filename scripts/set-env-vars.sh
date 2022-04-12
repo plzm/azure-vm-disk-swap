@@ -58,8 +58,9 @@ suffixVNext=$(date -d "+1 month" +"%Y%m")
 # It's hard-coded here but of course if this is stored in the Key Vault used elsewhere here, you can just retrieve it from there at this point.
 vmAdminSshUserName="vmadmin"
 vmAdminSshKeyName="id_""$vmAdminSshUserName"
+vmAdminSshPublicKeyPrefix="ssh-rsa"
 vmAdminSshPublicKeyInfix="AAAAB3NzaC1yc2EAAAABJQAAAQEAg+4FzJlW5nqUa798vqYGanooy5HvSyG8sS6KjPu0sJAf+fkP6qpHY8k1m2/Z9Mahv2Y0moZDiVRHFMGH8qZU+AlYdvjGyjxHcIzDnsmHcV2ONxEiop4KMJLwecHUyf95ogicB1QYfK/6Q8pL9sDlXt8bAcSh6iP0u2d1g9QJaON2aniOpzn68xnKdGT974i7JQLN0SjaPiidZ2prc0cSIMBN26tGV7at2Jh5FIb1Jv8fXHnZebD/vgLilfCqLbuQjTpDVCskZ+OUAyvlBko3gBjRgd/jBprMqCpFLoGUBVkSSR0IkjTj2A6n2XyCyYRMFYrVrjwyU8I+IvO/6zJSEw=="
-vmAdminSshPublicKey="ssh-rsa ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName"
+vmAdminSshPublicKey="$vmAdminSshPublicKeyPrefix"" ""$vmAdminSshPublicKeyInfix"" ""$vmAdminSshUserName"
 
 deploySshUserName="deploy"
 deploySshKeyName="id_""$deploySshUserName"
@@ -80,6 +81,7 @@ setEnvVar "DEPLOYMENT_SSH_KEY_PASSPHRASE" "" # Use blank for convenience here as
 # VM Admin username - what a VM user would use eventually to work with a VM
 setEnvVar "VM_ADMIN_SSH_USER_NAME" "$vmAdminSshUserName"
 setEnvVar "VM_ADMIN_SSH_USER_KEY_NAME" "$vmAdminSshKeyName"
+setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY_INFIX" "$vmAdminSshPublicKeyInfix"
 setEnvVar "VM_ADMIN_SSH_PUBLIC_KEY" "$vmAdminSshPublicKey"
 
 # ##################################################

@@ -2,7 +2,7 @@
 set -eux
 
 # This uses VMAccessForLinux extension. Ensure this extension is not disallowed in your environment.
-# If it is, you will need to use the custom script extension and an explicit script instead; see adjacent file.
+# If it is, you will need to use an explicit script instead
 
 echo "Delete user and home folder from VM"
 echo "Usage: ./delete-user-with-azure-cli.sh \$vmResourceGroupName \$vmName \$vmUserName"
