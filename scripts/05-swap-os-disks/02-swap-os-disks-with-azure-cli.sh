@@ -1,22 +1,18 @@
 #!/bin/bash
 set -eu
 
-# Select all VMs with OSDiskName tag
+# Select all VMs with OsDiskName tag
 # Compare tag value to current OS disk name
-# If they differ, swap to the OS disk name in the OSDiskName tag value
+# If they differ, swap to the OS disk name in the OsDiskName tag value
 # The tag value reflects what the OS disk SHOULD be - so modify the tag, then the script/pipeline will adjust the VM's state to what the tag says
 
-# Get all VMs that have an OSDiskName tag (feel free to substitute your own logic for which VMs should be evaluated for OS disk swap)
-tagKey="OSDiskName"
-
 # Use an Azure Graph query to retrieve VMs in the subscription with tag AutoRefresh = true, and project properties we'll need below
-vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" and tags.AutoRefresh =~ "true" | project id, name, location, resourceGroup, currentOsDiskName=properties.storageProfile.osDisk.name' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup, currentOsDiskName:currentOsDiskName}')"
+vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" and tags.AutoRefresh =~ "true" | project id, name, location, resourceGroup, currentOsDiskName=properties.storageProfile.osDisk.name, newOsDiskName=tags.OsDiskName' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup, currentOsDiskName:currentOsDiskName, newOsDiskName:newOsDiskName}')"
 
 # Iterate through the VMs
-while read -r id name resourceGroup location currentOsDiskName
+while read -r id name resourceGroup location currentOsDiskName newOsDiskName
 do
-	# Get the value of the OSDiskName tag, which should contain the name of an existing disk in the same resource group as the VM itself
-	newOsDiskName=$(echo "$(az tag list --resource-id $id -o tsv --query "[properties.tags.OSDiskName]")" | sed "s/\r//")
+	# Get the value of the OsDiskName tag, which should contain the name of an existing disk in the same resource group as the VM itself
 	echo $id
 	echo $name
 	echo $resourceGroup
@@ -26,12 +22,12 @@ do
 
 	if [[ -z $newOsDiskName ]]
 	then
-		echo "$location""/""$resourceGroup""/""$name"": OSDiskName tag is not set or value is empty"
+		echo "$location""/""$resourceGroup""/""$name"": OsDiskName tag is not set or value is empty. No change will be made to VM."
 	elif [[ "$newOsDiskName" == "$currentOsDiskName" ]]
 	then
-		echo "$location""/""$resourceGroup""/""$name"": OS disk does NOT need to be changed"
+		echo "$location""/""$resourceGroup""/""$name"": OS disk does NOT need to be changed. No change will be made to VM."
 	else
-		echo "$location""/""$resourceGroup""/""$name"": OS disk needs to be changed"
+		echo "$location""/""$resourceGroup""/""$name"": OS disk needs to be changed."
 
 		newOsDiskId=$(echo "$(az disk show --subscription $SUBSCRIPTION_ID -g ""$resourceGroup"" -n ""$newOsDiskName"" -o tsv --query "id")" | sed "s/\r//")
 		echo $newOsDiskId
@@ -61,4 +57,4 @@ do
 			#	--vm-name "$name" -n "PROVIDE_DATA_DISK_NAME_HERE"
 		fi
 	fi
-done< <(echo "${vms}" | jq -r '.[] | "\(.id) \(.name) \(.resourceGroup) \(.location) \(.currentOsDiskName)"')
+done< <(echo "${vms}" | jq -r '.[] | "\(.id) \(.name) \(.resourceGroup) \(.location) \(.currentOsDiskName) \(.newOsDiskName)"')
