@@ -3,8 +3,8 @@
 ![01-Deploy-Infrastructure](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/01-deploy-infra.yml/badge.svg)  
 ![02-Deploy-Prod-VM](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/02-deploy-prod-vm.yml/badge.svg)  
 ![03-Create-Source-Image](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/03-create-source-image.yml/badge.svg)  
-![04-Create-OS-Disk-From-Image](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/04-create-os-disk-from-image.yml/badge.svg)  
-![05-Swap-OS-Disk](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/05-swap-os-disk.yml/badge.svg)  
+![04-Create-OS-Disks-From-Image](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/04-create-os-disks-from-image.yml/badge.svg)  
+![05-Swap-OS-Disks](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/05-swap-os-disks.yml/badge.svg)  
 ![Cleanup](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/cleanup.yml/badge.svg)  
 
 ## Summary
