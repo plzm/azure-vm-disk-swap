@@ -1,11 +1,10 @@
-name: 04-Create-OS-Disk-From-Image
-
+name: 05-Swap-OS-Disks
 on: 
   workflow_dispatch:
 
 jobs:
   deploy:
-    name: Create OS Disk from Image
+    name: Swap OS Disks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,10 +30,15 @@ jobs:
         run: |
           ./scripts/set-env-vars.sh
 
-      - name: Create OS Disk from Image
+      - name: Tag VMs with new OsDiskName tag
         if: success()
         run: |
-          ./scripts/04-create-os-disk-from-image/01-create-os-disk-from-image.sh
+          ./scripts/05-swap-os-disks/01-tag-vms-with-new-os-disk-name.sh
+
+      - name: Swap OS Disks
+        if: success()
+        run: |
+          ./scripts/05-swap-os-disks/02-swap-os-disks-with-azure-cli.sh
 
       - name: Azure logout
         if: always()

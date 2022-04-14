@@ -14,7 +14,7 @@ fi
 osDiskName="$VM_PROD_NAME_1""-""$VM_SUFFIX_VNOW"
 
 # Set VM tags here as we need to set the OS disk. Again, easy to adapt this into an eventual loop to generate many prod VMs.
-vmTags="{\"AutoRefresh\":\"true\",\"OSDiskName\":\"""$osDiskName""\",\"Classification\":\"Production\"}"
+vmTags="{\"AutoRefresh\":\"true\",\"OsDiskName\":\"""$osDiskName""\",\"Classification\":\"Production\"}"
 
 echo "Deploy Prod VM Public IP"
 az deployment group create --subscription "$SUBSCRIPTION_ID" -n "Prod-VM-PIP" --verbose \
