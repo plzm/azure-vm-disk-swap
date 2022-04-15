@@ -1,10 +1,10 @@
-name: 05-Swap-OS-Disks
+name: 05-Update-VM-Tag
 on: 
   workflow_dispatch:
 
 jobs:
   deploy:
-    name: Swap OS Disks
+    name: Update VM Tag
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,12 +33,7 @@ jobs:
       - name: Tag VMs with new OsDiskName tag
         if: success()
         run: |
-          ./scripts/05-swap-os-disks/01-tag-vms-with-new-os-disk-name.sh
-
-      - name: Swap OS Disks
-        if: success()
-        run: |
-          ./scripts/05-swap-os-disks/02-swap-os-disks-with-azure-cli.sh
+          ./scripts/05-update-vm-tag/01-tag-vms-with-new-os-disk-name.sh
 
       - name: Azure logout
         if: always()
