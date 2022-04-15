@@ -10,13 +10,13 @@ set -eu
 vms="$(az graph query -q 'Resources | where type =~ "microsoft.compute/virtualmachines" and tags.AutoRefresh =~ "true" | project id, name, location, resourceGroup, currentOsDiskName=properties.storageProfile.osDisk.name, newOsDiskName=tags.OsDiskName' --subscription ""$SUBSCRIPTION_ID"" --query 'data[].{id:id, name:name, location:location, resourceGroup:resourceGroup, currentOsDiskName:currentOsDiskName, newOsDiskName:newOsDiskName}')"
 
 # Iterate through the VMs
-while read -r id name resourceGroup location currentOsDiskName newOsDiskName
+while read -r id name location resourceGroup currentOsDiskName newOsDiskName
 do
 	# Get the value of the OsDiskName tag, which should contain the name of an existing disk in the same resource group as the VM itself
 	echo $id
 	echo $name
-	echo $resourceGroup
 	echo $location
+	echo $resourceGroup
 	echo "Current OS Disk Name=""$currentOsDiskName"
 	echo "New OS Disk Name=""$newOsDiskName"
 
@@ -57,4 +57,4 @@ do
 			#	--vm-name "$name" -n "PROVIDE_DATA_DISK_NAME_HERE"
 		fi
 	fi
-done< <(echo "${vms}" | jq -r '.[] | "\(.id) \(.name) \(.resourceGroup) \(.location) \(.currentOsDiskName) \(.newOsDiskName)"')
+done< <(echo "${vms}" | jq -r '.[] | "\(.id) \(.name) \(.location) \(.resourceGroup) \(.currentOsDiskName) \(.newOsDiskName)"')
