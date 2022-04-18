@@ -36,7 +36,7 @@ The workflows as well as the script folders, and scripts in the script folders, 
 
 Several script folders contain a `00-all.sh` script file, which runs the other scripts in that folder as well as shared scripts and other shared steps needed. Each `00-all.sh` script is designed to replicate the corresponding GHA workflow so you can easily work either in your local environment or in GHA.
 
-This script sets envuironment variables both in a local development environment as well as a GitHub runner, such that successive GHA steps in the workflow can all access the environment variables. See my blog post [Don't Repeat Yourself: Environment Variables in GitHub Actions and locally](https://plzm.blog/202203-env-vars) for details.
+This script sets environment variables both in a local development environment as well as a GitHub runner, such that successive GHA steps in the workflow can all access the environment variables. See my blog post [Don't Repeat Yourself: Environment Variables in GitHub Actions and locally](https://plzm.blog/202203-env-vars) for details.
 
 #### [scripts/create-service-principal.sh](scripts/create-service-principal.sh)
 
@@ -44,7 +44,7 @@ Use this script to create an Azure Service Principal in your Azure subscription.
 
 You will need to persist the output of this script as a GitHub repository secret so that your GitHub workflows can authenticate to Azure and run commands there. See the [Azure Developer documentation](https://docs.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Cwindows#use-the-azure-login-action-with-a-service-principal-secret) for how to do this.
 
-NOTE: you must do this before running the GitHub workflows in this repo. Otherwise, your workflows will fail since your GitHub runner will not have an Azure authentication context.
+> NOTE: you must do this before running the GHA workflows in this repo. Otherwise, your workflows will fail since your GitHub runner will not have an Azure authentication context.
 
 #### [scripts/ssh/](scripts/ssh/)
 
@@ -52,7 +52,7 @@ Scripts to manage SSH keys and known hosts, and to add and remove Azure Network 
 
 This implementation uses the principle of least access to configure VMs by creating and using "transient" SSH keys for Azure VM deployment and configuration. These SSH keys (private and public pair) are used within the GHA workflow, and then removed from the VM as well as the local/runner environment after use. This ensures that the runner or the local environment _can no longer access the VM after deployment!_
 
-For later production use, the workflow is provided a public SSH key only for a "real" production user account to add to the VM. The corresponding private SSH key is never provided to the workflow. In this way, the workflow can deploy and configure a VM, and prepare it for eventual use by the "real" account, without the workflow or the GitHub runner or local environment ever having the "real" user account _private_ SSH key.
+For later production use, the workflow is provided a public SSH key _only_, for a "real" production user account to add to the VM. The corresponding private SSH key is never provided to the workflow. In this way, the workflow can deploy and configure a VM, and prepare it for eventual use by the "real" account, without the workflow or the GitHub runner or local environment ever having the "real" user account _private_ SSH key.
 
 See my blog post [Using transient SSH keys on GitHub Actions Runners for Azure VM deployment and configuration](https://plzm.blog/202204-gha-ssh-vms) for details on this approach and when it is relevant, e.g. in highly regulated/compliant environments where certain Azure VM agents or extensions may not be available.
 
@@ -72,7 +72,7 @@ Scripts to deploy foundational Azure infrastructure used throughout the implemen
 
 You can run these scripts individually, or run [00-all.sh](scripts/01-deploy-infra/00-all.sh), or run the GHA workflow [01-deploy-infra.yml](.github/workflows/01-deploy-infra.yml), to deploy these infrastructure components so the remaining scripts and workflows work.
 
-Alternately, if you have your own versions of these infrastructure components, you can use those. Just alter the environment variables script appropriately so that the various scripts and workflows know how to find your existing infrastructure components.
+Alternately, if you have your own versions of these infrastructure components, you can use those. Just alter [set-env-vars.sh](scripts/set-env-vars.sh) appropriately so that the various scripts and workflows know how to find your existing infrastructure components.
 
 #### [scripts/02-deploy-prod-vm/](scripts/02-deploy-prod-vm/)
 
@@ -86,9 +86,11 @@ After the VM is deployed, a configuration script is run on it over SSH. The cont
 
 > NOTE: This could also be done with the Azure remote script extension, but see my blog post [Using transient SSH keys on GitHub Actions Runners for Azure VM deployment and configuration](https://plzm.blog/202204-gha-ssh-vms) for a discussion of why this extension may not always be available.
 
-The scripts in this directory or the corresponding [02-deploy-prod-vm.yml](.github/workflows/02-deploy-prod-vm.yml) workflow do not need to be run consistently with the following scripts. This directory and workflow are here for convenience, to provide a durable VM which the following workflows and steps will use.
+The scripts in this directory or the corresponding [02-deploy-prod-vm.yml](.github/workflows/02-deploy-prod-vm.yml) workflow do not need to be run ongoing, each time the following scripts or corresponding GHA workflows are run. This directory and workflow are here for convenience, to provide a durable VM which the following workflows and steps will use.
 
 If you have your own durable VM which you would like to use with the following, simply modify [set-env-vars.sh](scripts/set-env-vars.sh) accordingly.
+
+> NOTE: the production VM is deployed with a set of Azure tags; see [02-deploy-prod-vm.sh](https://github.com/plzm/azure-vm-disk-swap/blob/main/scripts/02-deploy-prod-vm/02-deploy-prod-vm.sh#L17). If you use your own Azure VM deployment approach, MAKE SURE to add these tags so that later steps work correctly!
 
 #### [scripts/03-create-source-image/](scripts/03-create-source-image/)
 
