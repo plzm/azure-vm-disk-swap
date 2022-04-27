@@ -21,4 +21,4 @@ jobs:
       - name: Run Action Linting
         uses: cfy9/action-linting@main
         with:
-          arguments: "-color"
+          additional_arguments: "-color"
