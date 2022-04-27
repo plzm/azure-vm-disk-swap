@@ -1,0 +1,23 @@
+name: Validate GHA Workflows
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/*'
+  pull_request:
+    branches:
+      - main
+      - 'release/*'
+
+jobs:
+  lint_workflows:
+    name: Lint Workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - uses: cschleiden/actions-linter@v1
+        with:
+          workflows: '[".github/workflows/*.yml"]'
