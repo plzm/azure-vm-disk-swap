@@ -7,6 +7,7 @@
 ![05-Update-VM-Tag](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/05-update-vm-tag.yml/badge.svg?service=github)  
 ![06-Swap-OS-Disks](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/06-swap-os-disks.yml/badge.svg)  
 ![Cleanup](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/cleanup.yml/badge.svg)  
+![Validate Workflows](https://github.com/plzm/azure-vm-disk-swap/actions/workflows/validate-workflows.yml/badge.svg)  
 
 ## Summary
 
